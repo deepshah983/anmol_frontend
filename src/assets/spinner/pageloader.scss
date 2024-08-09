@@ -1,0 +1,87 @@
+
+/* PageLoader.css */
+.page-loader {
+    position: fixed !important;
+    top: 0%;
+    left: 8%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    z-index: 99999999;
+    @media (max-width: 1599.98px) {
+        left: 12%;
+    }
+    @media (max-width: 1399.98px) {
+        left: 14%;
+    }
+    @media (max-width: 1199.98px) {
+        left: 17%;
+    }
+    @media (max-width: 991.98px) {
+        left: 0%;
+    }
+  }
+  
+  // .loader {
+  //   border: 5px solid #f3f3f3;
+  //   border-top: 5px solid #3498db;
+  //   border-radius: 50%;
+  //   width: 50px;
+  //   height: 50px;
+  //   animation: spin 2s linear infinite;
+  // }
+  
+  // @keyframes spin {
+  //   0% { transform: rotate(0deg); }
+  //   100% { transform: rotate(360deg); }
+  // }
+  
+  
+  .dot-gathering {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: #fff;
+    color: transparent;
+    margin: -1px 0;
+    // filter: blur(1px);
+    // filter: blur(0.2px);
+  }
+  .dot-gathering::before, .dot-gathering::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -50px;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: #b6312d;
+    color: transparent;
+    opacity: 0;
+    // filter: blur(0.2px);
+    animation: dot-gathering 2s infinite ease-in-out;
+  }
+  .dot-gathering::after {
+    animation-delay: 0.8s;
+    background-color: #009bdc;
+  }
+  
+  @keyframes dot-gathering {
+    0% {
+      opacity: 0;
+      transform: translateX(0);
+    }
+    35%, 60% {
+      opacity: 1;
+      transform: translateX(50px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100px);
+    }
+  }
