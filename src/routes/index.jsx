@@ -23,6 +23,9 @@ import Users from "../pages/Users/index";
 // Tradingform
 import Tradingform from "../pages/Tradingform/index";
 
+// strategy
+import Strategy from "../pages/Strategy/index";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -33,6 +36,9 @@ const authProtectedRoutes = [
 
    // Tradingform
    { path: "/trading-form", component: <Tradingform /> },
+
+   // Strategy
+   { path: "/strategy", component: <Strategy /> },
 
   //this route should be at the end of all other routes | eslint-disable-next-line react/display-name
   {

@@ -139,21 +139,27 @@ const index = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Image",
-        accessor: "image",
-        filterable: true,
+        Header: "Checking",
         Cell: (cellProps) => {
-          return <Image {...cellProps} />;
+          return (
+            <div className="d-flex gap-3">
+              <Link
+                to="#"
+                className="text-success"
+                onClick={() => {
+                  const customerData = cellProps.row.original;
+                  handleCustomerClick(customerData);
+                }}
+              >
+                <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
+                <UncontrolledTooltip placement="top" target="edittooltip">
+                  Edit
+                </UncontrolledTooltip>
+              </Link>
+            </div>
+          );
         },
       },
-      // {
-      //   Header: "Image Alt Text",
-      //   accessor: "altText",
-      //   filterable: true,
-      //   Cell: (cellProps) => {
-      //     return <Name {...cellProps} />;
-      //   },
-      // },
       {
         Header: "Name",
         accessor: "name",
@@ -172,18 +178,26 @@ const index = (props) => {
       },
       {
         Header: "Mobile No.",
-        accessor: "Mobile No.",
+        accessor: "mobile_no.",
         filterable: true,
         Cell: (cellProps) => {
-          return <Number {...cellProps} />;
+          return <Designation {...cellProps} />;
+        },
+      },
+      {
+        Header: "Entry Balance",
+        accessor: "entry_balance",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Designation {...cellProps} />;
         },
       },
       {
         Header: "Total Balance",
-        accessor: "Number",
+        accessor: "total_balance",
         filterable: true,
         Cell: (cellProps) => {
-          return <Number {...cellProps} />;
+          return <Designation {...cellProps} />;
         },
       },
       {
@@ -203,6 +217,27 @@ const index = (props) => {
                 <UncontrolledTooltip placement="top" target="edittooltip">
                   Edit
                 </UncontrolledTooltip>
+              </Link>
+              <Link
+                to="#"
+                className="text-success"
+                onClick={() => {
+                  const customerData = cellProps.row.original;
+                  handleCustomerClick(customerData);
+                }}
+              >
+                <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
+                <UncontrolledTooltip placement="top" target="edittooltip">
+                  Select Script
+                </UncontrolledTooltip>
+                <div className="text-success-script">
+                  <div>H1</div>
+                  <div>H2</div>
+                  <div>H3</div>
+                  <div>H4</div>
+                  <div>H5</div>
+                  <div>H6</div>
+                </div>
               </Link>
               <Link
                 to="#"
@@ -325,69 +360,6 @@ const index = (props) => {
                 <Row>
                   <Col className="col-12">
                     <div className="mb-3">
-                      <div className="col-md-12">
-                        <div className="form-group d-flex">
-                          <div>
-                            <label className="d-block mt-1 mb-1">Image(height:150px, width: 150px)</label>
-                            <img
-                              id="editCatImagePrimary"
-                              className="rounded me-50 imgBox"
-                              src={addImagePrimary}
-                              alt="Icon"
-                            />
-                          </div>
-                          <div className="d-flex align-items-end mt-75 ms-1"></div>
-                        </div>
-                      </div>
-
-                      <div className="col-md-12 mt-1">
-                        <Button
-                          tag={Label}
-                          className="btn btn-primary btn-sm"
-                          size="sm"
-                          color="primary"
-                        >
-                          Upload
-                          <input
-                            type="file"
-                            id="image"
-                            onChange={onChangeAddPrimary}
-                            name="image"
-                            accept="image/*"
-                            alt="image"
-                            hidden
-                          />
-                        </Button>
-                        <button
-                          className="btn btn-danger btn-sm ms-1"
-                          onClick={handleDelPri}
-                        >
-                          Reset
-                        </button>
-                      </div>
-                    </div>
-                    {/* <div className="col-12">
-                            <div className="mb-3">
-                              <Label className="form-label">
-                              Image  Alt Text
-                              </Label>
-                              <Input
-                                name="altText"
-                                type="text"
-                                placeholder="Enter Alt Text"
-                                onChange={validation.handleChange}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.altText || ""}
-                                invalid={
-                                  validation.touched.altText &&
-                                  validation.errors.altText
-                                    ? true
-                                    : false
-                                }
-                              />
-                            </div>
-                    </div> */}
-                    <div className="mb-3">
                       <Label className="form-label">Name<small className="asterisk">*</small></Label>
                       <Input
                         name="name"
@@ -437,16 +409,16 @@ const index = (props) => {
                         placeholder="Enter Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
-                        value={validation.values.Number || ""}
+                        value={validation.values?.Number || ""}
                         invalid={
-                          validation.touched.Number && validation.errors.Number
+                          validation.touched?.Number && validation.errors?.Number
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.Number && validation.errors.Number ? (
+                      {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.Number}
+                          {validation.errors?.Number}
                         </FormFeedback>
                       ) : null}
                     </div>

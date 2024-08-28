@@ -20,17 +20,14 @@ import { useFormik } from "formik";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
-import withRouter from "../../components/Common/withRouter";
+import withRouter from "../../../components/Common/withRouter";
 
-//Import Breadcrumb
-import Breadcrumb from "../../components/Common/Breadcrumb";
-
-import avatar from "../../assets/images/users/avatar.png";
+import avatar from "../../../assets/images/users/avatar.png";
 // actions
-import { editProfile, resetProfileFlag } from "../../store/actions";
+import { editProfile, resetProfileFlag } from "../../../store/actions";
 
-import { postData } from "../../components/api";
-import { ToastElement, success, error } from "../../components/toast";
+import { postData } from "../../../components/api";
+import { ToastElement, success, error } from "../../../components/toast";
 
 const UserProfile = (props) => {
   //meta title
@@ -65,13 +62,13 @@ const UserProfile = (props) => {
     initialValues: {
       user_name: name || "",
       user_id: id || "",
-      old_password: (navigation && navigation.old_password) || "",
+      total_quantity: (navigation && navigation.total_quantity) || "",
       new_password: (navigation && navigation.new_password) || "",
       confirm_password: (navigation && navigation.confirm_password) || "",
     },
     validationSchema: Yup.object({
       user_name: Yup.string().required("Please Enter Your Username"),
-      old_password: Yup.string().required("Please Enter Your Old Password"),
+      total_quantity: Yup.string().required("This Field cannot be blank"),
       new_password: Yup.string()
         .required("Please Enter Your New Password")
         .min(6, "Password must be at least 6 characters long"), // Adjust the minimum length as needed
@@ -85,8 +82,8 @@ const UserProfile = (props) => {
           "not-same-as-old",
           "New password must not be the same as the old password",
           function (value) {
-            const old_password = this.parent.old_password;
-            return value !== old_password;
+            const total_quantity = this.parent.total_quantity;
+            return value !== total_quantity;
           }
         ),
     }),
@@ -109,10 +106,7 @@ const UserProfile = (props) => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
         <Container fluid>
-          {/* Render Breadcrumb */}
-          <Breadcrumb title="Anmol" titleUrl="/dashboard" breadcrumbItem="Profile" />
 
           <Form
             className="form-horizontal"
@@ -124,126 +118,114 @@ const UserProfile = (props) => {
           >
             <Card>
               <CardBody>
-                <div className="text-end">
-                  <button type="submit" className="btn btn btn-primary">
-                    Update
-                  </button>
-                </div>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardBody>
-                <h4 className="card-title mb-4">Change User Name & Password</h4>
-                <div className="form-group mb-3">
-                  <Label className="form-label">User Name</Label>
-                  <Input
-                    name="user_name"
-                    // value={name}
-                    className="form-control"
-                    placeholder="Enter User Name"
-                    type="text"
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.user_name || ""}
-                    invalid={
-                      validation.touched.user_name &&
-                        validation.errors.user_name
-                        ? true
-                        : false
-                    }
-                  />
-
-                  {validation.touched.user_name &&
-                    validation.errors.user_name ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.user_name}
-                    </FormFeedback>
-                  ) : null}
-                  <Input name="user_id" value={id} type="hidden" />
+                <h4 className="card-title mb-4">Trading Form</h4>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="form-group trading-form mb-3">
+                      <Label className="form-label">Select Script</Label>
+                      <select className="col-md-6 select-script" id="cars" name="cars">
+                        <option value="" disabled selected>Select Script Name</option>
+                        <option value="TATA POWER">TATA POWER</option>
+                        <option value="BCG">BCG</option>
+                        <option value="SIEMENS">SIEMENS</option>
+                        <option value="LALPATHLAB">LALPATHLAB</option>
+                        <option value="HINDCOPPER">HINDCOPPER</option>
+                        <option value="M & M">M & M</option>
+                        <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                        <option value="RADHE DEVLOPERS">RADHE DEVLOPERS</option>
+                      </select>
+                      <Input name="user_id" value={id} type="hidden" />
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="form-group trading-form mb-3">
+                      <Label className="form-label">Select  Category</Label>
+                      <select className="col-md-6 select-script" id="cars" name="cars">
+                        <option value="" disabled selected>Select  Category(NSE/FO)</option>
+                        <option value="NSE">NSE</option>
+                        <option value="BSE">BSE</option>
+                      </select>
+                      <Input name="user_id" value={id} type="hidden" />
+                    </div>
+                  </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <div className="form-group mb-3">
-                      <Label className="form-label">Old Password</Label>
+                      <Label className="form-label">Qty (Fixed/Exposure)</Label>
                       <Input
-                        name="old_password"
+                        name="total_quantity"
                         // value={name}
                         className="form-control"
-                        placeholder="Enter Old Password"
-                        type="password"
+                        placeholder="Enter Quantity"
+                        type="number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
-                        value={validation.values.old_password || ""}
+                        value={validation.values.total_quantity || ""}
                         invalid={
-                          validation.touched.old_password &&
-                            validation.errors.old_password
+                          validation.touched.total_quantity &&
+                            validation.errors.total_quantity
                             ? true
                             : false
                         }
                       />
 
-                      {validation.touched.old_password &&
-                        validation.errors.old_password ? (
+                      {validation.touched.total_quantity &&
+                        validation.errors.total_quantity ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.old_password}
+                          {validation.errors.total_quantity}
                         </FormFeedback>
                       ) : null}
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <div className="form-group mb-3">
-                      <Label className="form-label">New Password</Label>
-                      <Input
-                        name="new_password"
-                        // value={name}
-                        className="form-control"
-                        placeholder="Enter New Password"
-                        type="password"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.new_password || ""}
-                        invalid={
-                          validation.touched.new_password &&
-                            validation.errors.new_password
-                            ? true
-                            : false
-                        }
-                      />
-
-                      {validation.touched.new_password &&
-                        validation.errors.new_password ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.new_password}
-                        </FormFeedback>
-                      ) : null}
+                  <div className="col-md-6">
+                    <div className="form-group trading-form mb-3">
+                      <Label className="form-label">Select  Category</Label>
+                      <select className="col-md-6 select-script" id="cars" name="cars">
+                        <option value="" disabled selected>Select  Category(NSE/FO)</option>
+                        <option value="Intraday">Intraday</option>
+                        <option value="Delivery">Delivery</option>
+                      </select>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <div className="form-group mb-3">
-                      <Label className="form-label">Confirm Password</Label>
-                      <Input
-                        name="confirm_password"
-                        // value={name}
-                        className="form-control"
-                        placeholder="Enter Confirm Password"
-                        type="password"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.confirm_password || ""}
-                        invalid={
-                          validation.touched.confirm_password &&
-                            validation.errors.confirm_password
-                            ? true
-                            : false
-                        }
-                      />
-
-                      {validation.touched.confirm_password &&
-                        validation.errors.confirm_password ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.confirm_password}
-                        </FormFeedback>
-                      ) : null}
+                  <div className="col-md-6">
+                    <div className="form-group  mb-3">
+                    <Label className="form-label">Select Strategy</Label>
+                    <div className="form-group trading-form mb-3">
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy1" />
+                        Silver
+                    </Label>
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy2" />
+                        Gold
+                    </Label>
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy3" />
+                        Platinum
+                    </Label>
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy4" />
+                        Diamond
+                    </Label>
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy5" />
+                        Titanium
+                    </Label>
+                    <Label className="trading-form-checkbox">
+                        <input type="checkbox" name="strategy6" />
+                        Ruby
+                    </Label>
+                    </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="form-group trading-form mb-3">
+                      <Label className="form-label">Entry Order</Label>
+                      <div className="form-group trading-form mb-3">
+                        <input type="button" value="LIMIT" class="market-button"/>
+                        <input type="button" value="MARKET" class="market-button"/>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -252,7 +234,7 @@ const UserProfile = (props) => {
           </Form>
         </Container>
         <ToastElement />
-      </div>
+      
     </React.Fragment>
   );
 };

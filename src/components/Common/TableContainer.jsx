@@ -216,8 +216,8 @@ const TableContainer = ({
           </Col>
         )}
         {isAddCustList && (
-          <Col sm="11">
-            <div className="text-sm-end">
+          <Col sm="12">
+            <div className="text-sm-start" >
               <Button
                 type="button"
                 color="success"

@@ -10,8 +10,8 @@ import SidebarContent from "./SidebarContent";
 import { Link } from "react-router-dom";
 
 import logo from "../../assets/images/ishan_group_logo.png";
-import logoLightPng from "../../assets/images/AngelOne-Logo.png";
-import logoLightSvg from "../../assets/images/AngelOne-Logo.png";
+import logoLightPng from "../../assets/images/vishal-4-wealth-whithout-background-white.png";
+import logoLightSvg from "../../assets/images/anmol-bull.png";
 import logoDark from "../../assets/images/logo-dark.png";
 
 const Sidebar = (props) => {
@@ -30,10 +30,10 @@ const Sidebar = (props) => {
 
           <Link to="/dashboard" className="logo logo-light">
             <span className="logo-sm">
-              <img src={logoLightSvg} alt="" height="22" />
+              <img src={logoLightSvg} alt="" height="25" />
             </span>
             <span className="logo-lg">
-              <img src={logoLightPng} alt="" height="35" />
+              <img src={logoLightPng} alt="" height="50" />
             </span>
           </Link>
         </div>

@@ -17,8 +17,8 @@ $sidebar-width-sm:  160px;
 $layout-collapsed-min-height: 1760px;
 
 // Vertical Sidebar - Dark
-$sidebar-dark-bg: #1f1f1f; //2c313a
-$sidebar-dark-menu-item-color: #a6b0cf;
+$sidebar-dark-bg:linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(166,128,73,1) 0%, rgba(189,154,100,1) 100%); //2c313a
+$sidebar-dark-menu-item-color: #000;
 $sidebar-dark-menu-sub-item-color: #79829c;
 $sidebar-dark-menu-item-icon-color: #6a7187;
 $sidebar-dark-menu-item-hover-color: #ffffff;
