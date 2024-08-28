@@ -11,12 +11,19 @@ const Activeusers = () => {
   return (
     <React.Fragment>
       <Card className="overflow-hidden">
-        <div className="bg-primary bg-soft">
+        <div className="bg-soft">
           <Row>
-            <Col xs="7">
+            <Col xs="9">
               <div className="text-primary p-3">
-              <img src={coinOne} alt="" height="35px" width="35px" />
-                <h5 className="text-primary m-0">Active Users </h5>
+                <div className="logo-bg">
+                  <img src={coinOne} alt="" height="35px" width="35px" />
+                </div>
+                <h5 className="text-primary m-0">Active Users</h5>
+              </div>
+            </Col>
+            <Col xs="3">
+              <div className="text-primary total-numbers p-3">
+                  <h2 className="numbers">180</h2>
               </div>
             </Col>
           </Row>

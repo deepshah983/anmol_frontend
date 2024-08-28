@@ -773,3 +773,65 @@ textarea.form-control {
 .imageSizeText {
   color: #f46a6a;
 }
+
+
+
+// vishal4wealth scss
+
+.trading-form{
+  display: flex;
+  flex-direction: column;
+  .select-script{
+      display: block;
+      width: 100%;
+      padding: 0.47rem 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--bs-gray-700);
+      background-color: var(--bs-custom-white);
+      background-clip: padding-box;
+      border: 1px solid var(--bs-input-border-color);
+      border-radius: 0.25rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  .market-button{
+    background-color: #3eb0a6; 
+    border: none;
+    color: white; 
+    padding: 8px 32px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px;
+    margin: 0px 10px; 
+    cursor: pointer;
+    border-radius: 4px;
+    &:first-child{
+      margin: 0px;
+    }
+    &:hover{
+      background-color: #181b24;
+    }
+  }
+}
+.form-group{
+  .trading-form{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    .trading-form-checkbox{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 33%;
+        input{
+          margin-right: 8px;
+        }
+    }
+  }
+}
+
+.text-success-script{
+    display: none;
+}

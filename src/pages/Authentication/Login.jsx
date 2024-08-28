@@ -27,7 +27,7 @@ import {
 import { loginUser, socialLogin } from "../../store/actions";
 
 // import images
-import profile from "../../assets/images/AngelOne-Logo.png";
+import profile from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 import logo from "../../assets/images/ishan_group_logo.png";
 import backgroundVideo from "../../assets/video/219832_small.mp4";
 

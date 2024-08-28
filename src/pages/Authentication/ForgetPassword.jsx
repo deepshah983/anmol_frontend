@@ -30,7 +30,7 @@ import { ToastElement, success, error } from "../../components/toast";
 // import images
 import profile from "../../assets/images/profile-img.png";
 //import logo from "../../assets/images/logo.svg";
-import logo from "../../assets/images/AngelOne-Logo.png";
+import logo from "../../assets/images/vishal-4-wealth.png";
 
 const ForgetPasswordPage = (props) => {
   //meta title
