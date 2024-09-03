@@ -26,6 +26,9 @@ import Tradingform from "../pages/Tradingform/index";
 // strategy
 import Strategy from "../pages/Strategy/index";
 
+// Order Log
+import OrderLog from "../pages/OrderLog/index";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
@@ -39,6 +42,9 @@ const authProtectedRoutes = [
 
    // Strategy
    { path: "/strategy", component: <Strategy /> },
+
+   // Order Log
+   { path: "/order-log", component: <OrderLog /> },
 
   //this route should be at the end of all other routes | eslint-disable-next-line react/display-name
   {
