@@ -2,7 +2,7 @@ import React, { useState } from "react";
 //Import Breadcrumb
 import Breadcrumbs from "../../../src/components/Common/Breadcrumb";
 import withRouter from "../../components/Common/withRouter";
-import Strategy from "./stategy-inner/index";
+import OrderLog from "./OrderLog-inner/index";
 
 import {
   Container,
@@ -24,10 +24,10 @@ const index = () => {
       <ToastElement />
       <div className="page-content">
         <Container fluid>
-          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Strategy" />
+          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Trading Forms" />
           <div className="card">
             <div className="card-body">
-                <Strategy />
+                <OrderLog />
             </div>
           </div>
         </Container>

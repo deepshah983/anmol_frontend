@@ -180,9 +180,15 @@ const SidebarContent = (props) => {
               </Link>
             </li>
             <li>
-              <Link to="/trading-form">
+              <Link to="/strategy">
                 <i className="bx bx-basket"></i>
                 <span>{props.t("Strategy")}</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/order-log">
+                <i className="bx bx-pie-chart"></i>
+                <span>{props.t("Order Log")}</span>
               </Link>
             </li>
           </ul>

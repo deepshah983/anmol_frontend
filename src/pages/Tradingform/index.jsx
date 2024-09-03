@@ -2,7 +2,7 @@ import React, { useState } from "react";
 //Import Breadcrumb
 import Breadcrumbs from "../../../src/components/Common/Breadcrumb";
 import withRouter from "../../components/Common/withRouter";
-import Tradingform from "../Tradingform/Tradingform/index";
+import Tradingform from "./Tradingform/index";
 
 import {
   Container,

@@ -7514,6 +7514,12 @@
   content: "\F01B4";
 }
 
+.mdis-delete::before {
+  content: "\F01B4";
+  font-size: 18px;
+  font-weight: 500;
+}
+
 .mdi-delete-alert::before {
   content: "\F10A5";
 }
@@ -16936,6 +16942,12 @@
 
 .mdi-plus::before {
   content: "\F0415";
+}
+
+.mdis-plus::before {
+  content: "\F0415";
+  font-size: 20px;
+  font-weight: 900;
 }
 
 .mdi-plus-box::before {
