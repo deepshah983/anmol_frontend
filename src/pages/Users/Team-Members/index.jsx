@@ -57,6 +57,7 @@ const index = (props) => {
       });
   };
   const [modal, setModal] = useState(false);
+  const [modalCheck, setModalCheck] = useState(false);
   const [navList, setNavList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
@@ -135,6 +136,21 @@ const index = (props) => {
     toggle();
   };
 
+  const handleCheckingClick = (arg) => {
+    const nav = arg;
+
+    setNav({
+      id: nav.id,
+      name: nav.name,
+      position: nav.position,
+      image: nav.image,
+      altText: nav.altText
+    });
+    setAddImagePrimary(nav.image);
+    setIsEdit(true);
+    toggleCheck();
+  };
+
   // Customber Column
   const columns = useMemo(
     () => [
@@ -148,12 +164,12 @@ const index = (props) => {
                 className="text-success"
                 onClick={() => {
                   const customerData = cellProps.row.original;
-                  handleCustomerClick(customerData);
+                  handleCheckingClick(customerData);
                 }}
               >
                 <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
                 <UncontrolledTooltip placement="top" target="edittooltip">
-                  Edit
+                  Edit  
                 </UncontrolledTooltip>
               </Link>
             </div>
@@ -222,8 +238,7 @@ const index = (props) => {
                 to="#"
                 className="text-success"
                 onClick={() => {
-                  const customerData = cellProps.row.original;
-                  handleCustomerClick(customerData);
+                  
                 }}
               >
                 <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
@@ -231,12 +246,12 @@ const index = (props) => {
                   Select Script
                 </UncontrolledTooltip>
                 <div className="text-success-script">
-                  <div>H1</div>
-                  <div>H2</div>
-                  <div>H3</div>
-                  <div>H4</div>
-                  <div>H5</div>
-                  <div>H6</div>
+                  <div>Assign Script</div>
+                  <div>unassign Script</div>
+                  <div>Assign License</div>
+                  <div>Reset Password</div>
+                  <div>Update Affiliate Commission</div>
+                  <div>Update Pay Per Order Rate</div>
                 </div>
               </Link>
               <Link
@@ -266,6 +281,15 @@ const index = (props) => {
       setNav(null);
     } else {
       setModal(true);
+    }
+  };
+
+  const toggleCheck = () => {
+    if (modalCheck) {
+      setModalCheck(false);
+      setNav(null);
+    } else {
+      setModalCheck(true);
     }
   };
 
@@ -304,6 +328,12 @@ const index = (props) => {
     setIsEdit(false);
     toggle();
   };
+  const handleCheckingClicks = () => {
+    setNavList("");
+    setAddImagePrimary(thumb);
+    setIsEdit(false);
+    toggleCheck();
+  };
   const [form, setForm] = useState(null);
   const onChangeAddPrimary = (e) => {
     const reader = new FileReader(),
@@ -340,13 +370,14 @@ const index = (props) => {
             isAddCustList={true}
             isPagination={true}
             handleCustomerClick={handleCustomerClicks}
+            handleCheckingClick={handleCheckingClicks}
             customPageSize={20}
             className="custom-header-css"
           />
 
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
-              {!!isEdit ? "Edit Team Member" : "Add Team Member"}
+              {!!isEdit ? "Add User" : "Add User"}
             </ModalHeader>
             <ModalBody>
               <Form
@@ -439,6 +470,112 @@ const index = (props) => {
               </Form>
             </ModalBody>
           </Modal>
+
+          <Modal isOpen={modalCheck} toggle={toggleCheck}>
+            <ModalHeader toggle={toggleCheck} tag="h4">
+              {!!isEdit ? "My Tread Setting" : "My Tread Setting"}
+            </ModalHeader>
+            <ModalBody>
+              <Form
+                id="createTeamMembers"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validation.handleSubmit();
+                  return false;
+                }}
+              >
+                <Row>
+                  <Col className="col-12">
+                    <div className="mb-3 form-controls">
+                      <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
+                      <select name="name" id="" className="form-control">
+                        <option option value="" disabled selected>Select User ID</option>
+                        <option value="name">name 1</option>
+                        <option value="name">name 2</option>
+                        <option value="name">name 3</option>
+                        <option value="name">name 4</option>
+                        <option value="name">name 5</option>
+                        <option value="name">name 6</option>
+                        <option value="name">name 6</option>
+                      </select>
+                      {validation.touched.name && validation.errors.name ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.name}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3 form-controls">
+                      <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
+                      <select name="name" id="" className="form-control">
+                      <option option value="" disabled selected>Select Password</option>
+                        <option value="name">name 1</option>
+                        <option value="name">name 2</option>
+                        <option value="name">name 3</option>
+                        <option value="name">name 4</option>
+                        <option value="name">name 5</option>
+                        <option value="name">name 6</option>
+                        <option value="name">name 6</option>
+                      </select>
+                      {validation.touched.Email && validation.errors.Email ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.Email}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3 form-controls">
+                      <Label className="form-label">User Key<small className="asterisk">*</small></Label>
+                      <select name="name" id="" className="form-control">
+                        <option option value="" disabled selected>Select User Key</option>
+                        <option value="name">name 1</option>
+                        <option value="name">name 2</option>
+                        <option value="name">name 3</option>
+                        <option value="name">name 4</option>
+                        <option value="name">name 5</option>
+                        <option value="name">name 6</option>
+                        <option value="name">name 6</option>
+                      </select>
+                      {validation.touched?.Number && validation.errors?.Number ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors?.Number}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3 form-controls">
+                      <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
+                      <select name="name" id="" className="form-control"> 
+                        <option option value="" disabled selected>Select Appkey</option>
+                        <option value="name">name 1</option>
+                        <option value="name">name 2</option>
+                        <option value="name">name 3</option>
+                        <option value="name">name 4</option>
+                        <option value="name">name 5</option>
+                        <option value="name">name 6</option>
+                        <option value="name">name 6</option>
+                      </select>
+                      {validation.touched?.Number && validation.errors?.Number ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors?.Number}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <div className="text-end">
+                      <button
+                        type="submit"
+                        className="btn btn-success save-customer"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </Col>
+                </Row>
+              </Form>
+            </ModalBody>
+          </Modal>
+
         </CardBody>
       </Card>
     </React.Fragment>

@@ -18,7 +18,7 @@ const Activeusers = () => {
                   <div className="logo-bg">
                     <img src={totalCapital} alt="" height="35px" width="35px" />
                   </div>
-                  <h5 className="text-primary m-0">Active Users</h5>
+                  <h5 className="text-primary m-0">Total Fund</h5>
                 </div>
               </Col>
               <Col xs="5">

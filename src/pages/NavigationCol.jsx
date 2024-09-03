@@ -18,6 +18,30 @@ const Designation = (cell) => {
   return cell.value ? cell.value : "";
 };
 
+const ID = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Type = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Symbol = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const OrderType = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const TrigPrice = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Qty = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
 const Title = (cell) => {
   return cell.value ? cell.value : "";
 };
@@ -180,5 +204,11 @@ export {
     Count,
     Pincode,
     UpdateType,
-    Number
+    Number,
+    ID,
+    Type,
+    Symbol,
+    OrderType,
+    TrigPrice,
+    Qty
 };

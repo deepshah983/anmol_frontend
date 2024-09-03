@@ -118,7 +118,7 @@ const UserProfile = (props) => {
           >
             <Card>
               <CardBody>
-                <h4 className="card-title mb-4">Trading Form</h4>
+                <h4 className="card-title mb-4">Strategy</h4>
                 <div className="row">
                   <div className="col-md-6">
                     <div className="form-group trading-form mb-3">
