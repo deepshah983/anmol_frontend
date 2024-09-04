@@ -22,7 +22,7 @@ import {
 } from "reactstrap";
 
 //Import Breadcrumb
-import { postData } from "../../../components/api";
+import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
 import thumb from "../../../assets/images/friends.svg";
@@ -47,7 +47,7 @@ const index = (props) => {
   }, []);
 
   const getNavigation = () => {
-    postData("aboutus/getTeamMembers")
+    getData("/clients")
       .then((response) => {
 
         const myArray = response.data.data;
@@ -70,22 +70,28 @@ const index = (props) => {
     initialValues: {
       id: (navigation && navigation.id) || "",
       name: (navigation && navigation.name) || "",
-      position: (navigation && navigation.position) || "",
-      altText: (navigation && navigation.altText) || "",
+      email: (navigation && navigation.email) || "",
+      phone: (navigation && navigation.phone) || "",
+      // position: (navigation && navigation.position) || "",
+      // altText: (navigation && navigation.altText) || "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter Name"),
-      position: Yup.string().required("Please Enter Designation"),
+      name: Yup.string().required("Please Enter User Name"),
+      email: Yup.string().required("Please Enter Email"),
+      phone: Yup.string().required("Please Enter Mobile Number"),
+      //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
-      let form = themeConfig.functions.read_form("createTeamMembers");
+      console.log(values);
+      
+      let form = themeConfig.functions.read_form("createClient");
       let formData = new FormData();
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
       if (isEdit) {
         formData.append("id", values.id);
-        updateNavigation(formData);
+        updateNavigation(values.id, formData);
       } else {
 
         addNewNavigation(formData);
@@ -100,24 +106,26 @@ const index = (props) => {
   const addNewNavigation = (form_data) => {
 
 
-    postData("aboutus/createTeamMembers", form_data)
+    postData("/clients", form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        setNavs(response.data.data);
+        getNavigation();
         return success(response.data.message);
       });
   };
 
-  const updateNavigation = (form_data) => {
+  const updateNavigation = (id, form_data) => {
 
-    postData("aboutus/editTeamMembers", form_data)
+    updateData(`/clients/${id}`, form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        setNavs(response.data.data);
+        console.log(response.data.data);
+        
+        getNavigation();
         return success(response.data.message);
       });
   };
@@ -125,8 +133,10 @@ const index = (props) => {
     const nav = arg;
 
     setNav({
-      id: nav.id,
+      id: nav._id,
       name: nav.name,
+      email: nav.email,
+      phone: nav.phone,
       position: nav.position,
       image: nav.image,
       altText: nav.altText
@@ -140,8 +150,10 @@ const index = (props) => {
     const nav = arg;
 
     setNav({
-      id: nav.id,
+      id: nav._id,
       name: nav.name,
+      email: nav.email,
+      phone: nav.phone,
       position: nav.position,
       image: nav.image,
       altText: nav.altText
@@ -194,7 +206,7 @@ const index = (props) => {
       },
       {
         Header: "Mobile No.",
-        accessor: "mobile_no.",
+        accessor: "phone",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
@@ -302,13 +314,11 @@ const index = (props) => {
   };
 
   const handleDeleteCustomer = () => {
-    if (navigation && navigation.id) {
+    console.log(navigation);
+    
+    if (navigation && navigation._id) {
 
-      let data = {
-        id: navigation.id,
-      };
-
-      postData("aboutus/deleteTeamMembers", data)
+      deleteData(`/clients/${navigation._id}`)
         .then((response) => {
           if (response.data.error) {
             return error(response.data.message);
@@ -316,7 +326,7 @@ const index = (props) => {
 
           setDeleteModal(false);
           setNav("");
-          setNavs(response.data.data);
+          getNavigation();
           return success(response.data.message);
         });
     }
@@ -377,13 +387,15 @@ const index = (props) => {
 
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
-              {!!isEdit ? "Add User" : "Add User"}
+              {!!isEdit ? "Add Client" : "Edit Client"}
             </ModalHeader>
             <ModalBody>
               <Form
-                id="createTeamMembers"
+                id="createClient"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  console.log("edit");
+                  
                   validation.handleSubmit();
                   return false;
                 }}
@@ -395,7 +407,7 @@ const index = (props) => {
                       <Input
                         name="name"
                         type="text"
-                        placeholder="Enter Name"
+                        placeholder="Enter User Name"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
                         value={validation.values.name || ""}
@@ -414,42 +426,42 @@ const index = (props) => {
                     <div className="mb-3">
                       <Label className="form-label">Email<small className="asterisk">*</small></Label>
                       <Input
-                        name="Email"
-                        type="Email"
+                        name="email"
+                        type="email"
                         placeholder="Enter Email"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
-                        value={validation.values.Email || ""}
+                        value={validation.values.email || ""}
                         invalid={
-                          validation.touched.Email && validation.errors.Email
+                          validation.touched.email && validation.errors.email
                             ? true
                             : false
                         }
                       />
-                      {validation.touched.Email && validation.errors.Email ? (
+                      {validation.touched.email && validation.errors.email ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.Email}
+                          {validation.errors.email}
                         </FormFeedback>
                       ) : null}
                     </div>
                     <div className="mb-3">
                       <Label className="form-label">Mobile No.<small className="asterisk">*</small></Label>
                       <Input
-                        name="Number"
-                        type="Number"
-                        placeholder="Enter Number"
+                        name="phone"
+                        type="number"
+                        placeholder="Enter Phone Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
-                        value={validation.values?.Number || ""}
+                        value={validation.values?.phone || ""}
                         invalid={
-                          validation.touched?.Number && validation.errors?.Number
+                          validation.touched?.phone && validation.errors?.phone
                             ? true
                             : false
                         }
                       />
-                      {validation.touched?.Number && validation.errors?.Number ? (
+                      {validation.touched?.phone && validation.errors?.phone ? (
                         <FormFeedback type="invalid">
-                          {validation.errors?.Number}
+                          {validation.errors?.phone}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -480,8 +492,8 @@ const index = (props) => {
                 id="createTeamMembers"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  validation.handleSubmit();
-                  return false;
+                 // validation.handleSubmit();
+                  //return false;
                 }}
               >
                 <Row>
@@ -498,11 +510,11 @@ const index = (props) => {
                         <option value="name">name 6</option>
                         <option value="name">name 6</option>
                       </select>
-                      {validation.touched.name && validation.errors.name ? (
+                      {/* {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
                           {validation.errors.name}
                         </FormFeedback>
-                      ) : null}
+                      ) : null} */}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
@@ -516,11 +528,11 @@ const index = (props) => {
                         <option value="name">name 6</option>
                         <option value="name">name 6</option>
                       </select>
-                      {validation.touched.Email && validation.errors.Email ? (
+                      {/* {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
                           {validation.errors.Email}
                         </FormFeedback>
-                      ) : null}
+                      ) : null} */}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
@@ -534,11 +546,11 @@ const index = (props) => {
                         <option value="name">name 6</option>
                         <option value="name">name 6</option>
                       </select>
-                      {validation.touched?.Number && validation.errors?.Number ? (
+                      {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}
                         </FormFeedback>
-                      ) : null}
+                      ) : null} */}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
@@ -552,11 +564,11 @@ const index = (props) => {
                         <option value="name">name 6</option>
                         <option value="name">name 6</option>
                       </select>
-                      {validation.touched?.Number && validation.errors?.Number ? (
+                      {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}
                         </FormFeedback>
-                      ) : null}
+                      ) : null} */}
                     </div>
                   </Col>
                 </Row>

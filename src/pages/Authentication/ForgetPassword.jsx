@@ -34,7 +34,7 @@ import logo from "../../assets/images/vishal-4-wealth.png";
 
 const ForgetPasswordPage = (props) => {
   //meta title
-    document.title = "Forget Password | Anmol Admin & Dashboard Template";
+    document.title = "Forget Password | Vishal Wealth Admin & Dashboard Template";
  
     const [isAuthEmail, setIsAuthEmail] = useState(null);
     const [isAuthOtp, setIsAuthOtp] = useState(null);
@@ -166,7 +166,7 @@ const changePassword = (values) => {
                   <div className="row mb-4">
                   <div className="col-xl-12 text-center">
                     <a href="/">
-                      <img src={logo} alt="Anmol Login" className="img-fluid" height="100px" width="230px" />
+                      <img src={logo} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
                     </a>
                   </div>
               </div>
