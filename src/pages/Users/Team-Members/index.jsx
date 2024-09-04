@@ -167,9 +167,9 @@ const index = (props) => {
                   handleCheckingClick(customerData);
                 }}
               >
-                <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
+                <i className="mdi mdi-account-check font-size-18" id="edittooltip" />
                 <UncontrolledTooltip placement="top" target="edittooltip">
-                  Edit  
+                  Pin Check  
                 </UncontrolledTooltip>
               </Link>
             </div>

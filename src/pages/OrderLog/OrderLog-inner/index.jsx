@@ -29,12 +29,12 @@ import thumb from "../../../assets/images/friends.svg";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import TradingTableContainer from "../../../components/Common/TradingTableContainer";
+import OrderTableContainer from "../../../components/Common/OrderTableContainer";
 
 import { success, error } from "../../../components/toast";
 
 // Column
-import { Image, Name, ID, Type, Symbol, OrderType, TrigPrice, Price, Qty, Designation, Email } from "../../NavigationCol";
+import { Image, Name, ID, Type, Symbol, OrderType, TrigPrice, Price, Qty, Instrument, Strategy, Source, Mode, Message, ReceivedAt, Designation, Email } from "../../NavigationCol";
 import HideShowSection from "../../../components/Common/HideShowSection";
 
 const index = (props) => {
@@ -218,6 +218,54 @@ const index = (props) => {
           return <Qty {...cellProps} />;
         },
       },
+      {
+        Header: "Instrument",
+        accessor: "instrument",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Instrument {...cellProps} />;
+        },
+      },
+      {
+        Header: "Strategy",
+        accessor: "strategy",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Strategy {...cellProps} />;
+        },
+      },
+      {
+        Header: "Source",
+        accessor: "source",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Source {...cellProps} />;
+        },
+      },
+      {
+        Header: "Mode",
+        accessor: "mode",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Mode {...cellProps} />;
+        },
+      },
+      {
+        Header: "Message",
+        accessor: "message",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Message {...cellProps} />;
+        },
+      },
+      {
+        Header: "ReceivedAt",
+        accessor: "receivedAt",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <ReceivedAt {...cellProps} />;
+        },
+      },
     ],
     []
   );
@@ -309,7 +357,7 @@ const index = (props) => {
       />
       <Card>
         <CardBody>
-          <TradingTableContainer
+          <OrderTableContainer
             columns={columns}
             data={navs}
             cnt={count}
@@ -493,7 +541,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
@@ -511,7 +559,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
@@ -529,7 +577,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
@@ -547,7 +595,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">

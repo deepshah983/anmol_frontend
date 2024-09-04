@@ -42,6 +42,30 @@ const Qty = (cell) => {
   return cell.value ? cell.value : "";
 };
 
+const Instrument = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Strategy = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Source = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Mode = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Message = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const ReceivedAt = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
 const Title = (cell) => {
   return cell.value ? cell.value : "";
 };
@@ -210,5 +234,11 @@ export {
     Symbol,
     OrderType,
     TrigPrice,
-    Qty
+    Qty,
+    Instrument,
+    Strategy,
+    Source,
+    Mode,
+    Message,
+    ReceivedAt
 };
