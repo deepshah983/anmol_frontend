@@ -38,7 +38,7 @@ const Dashboard = props => {
   }, [dispatch]);
 
   //meta title
-  document.title="Dashboard | Anmol Admin & Dashboard Template";
+  document.title="Dashboard | Vishal Wealth Admin & Dashboard Template";
 
   return (
     <React.Fragment>

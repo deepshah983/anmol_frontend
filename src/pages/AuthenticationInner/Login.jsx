@@ -18,7 +18,7 @@ const Login = () => {
   const [show, setShow] = useState(false);
 
   //meta title
-  document.title = "Login | Anmol Admin & Dashboard Template";
+  document.title = "Login | Vishal Wealth Admin & Dashboard Template";
 
   // Form validation 
   const validation = useFormik({

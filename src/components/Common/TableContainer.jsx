@@ -225,7 +225,7 @@ const TableContainer = ({
                 onClick={handleCustomerClick}
               >
                 <i className="mdi mdi-plus me-1" />
-                Add User
+                Create
               </Button>
             </div>
           </Col>
