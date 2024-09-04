@@ -33,7 +33,7 @@ import backgroundVideo from "../../assets/video/219832_small.mp4";
 
 const Login = (props) => {
   //meta title
-  document.title = "Login | Anmol Admin & Dashboard Template";
+  document.title = "Login | Vishal Wealth Admin & Dashboard Template";
   const dispatch = useDispatch();
 
   const validation = useFormik({
@@ -75,7 +75,7 @@ const Login = (props) => {
         <div className="row mb-4">
             <div className="col-xl-12 text-center">
               <a href="/">
-                <img src={profile} alt="Anmol Login" className="img-fluid" height="100px" width="230px" />
+                <img src={profile} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
               </a>
             </div>
         </div>

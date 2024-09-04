@@ -35,9 +35,24 @@ instance.interceptors.response.use(
 
 export default instance;
 
+// Function to send a GET request with data
+export const getData = (url, data) => {
+  return instance.get(url, data);
+};
+
 // Function to send a POST request with data
 export const postData = (url, data) => {
   return instance.post(url, data);
+};
+
+// Function to send a PUT request with data
+export const updateData = (url, data) => {
+  return instance.put(url, data);
+};
+
+// Function to send a DELeTE request with data
+export const deleteData = (url, data) => {
+  return instance.delete(url, data);
 };
 
 // Function to send a POST request with data

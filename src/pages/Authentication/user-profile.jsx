@@ -112,7 +112,7 @@ const UserProfile = (props) => {
       <div className="page-content">
         <Container fluid>
           {/* Render Breadcrumb */}
-          <Breadcrumb title="Anmol" titleUrl="/dashboard" breadcrumbItem="Profile" />
+          <Breadcrumb title="Vishal Wealth" titleUrl="/dashboard" breadcrumbItem="Profile" />
 
           <Form
             className="form-horizontal"
