@@ -62,6 +62,22 @@ const index = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
 
+  const [showFields, setShowFields] = useState(false);
+  const [limitShowFields, setLimitShowFields] = useState(false);
+
+  const handleSelectionChange = (event) => {
+    if (event.target.value === 'sLL') {
+      setShowFields(true);
+    } else {
+      setShowFields(false);
+    }
+    if (event.target.value === 'market') {
+      setLimitShowFields(true);
+    } else {
+      setLimitShowFields(false);
+    }
+  };
+
   // validation
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -382,107 +398,163 @@ const index = (props) => {
                   <Col className="col-12">
                   <div className="add-treads">
                     <div className="add-tread-beside">
-                      <div className="add-tread col-md-5">
-                        <Label className="form-label ">Terminal Symbol</Label>
-                        <select className="select-script" id="cars" name="cars">
-                          <option value="" disabled selected>Select Symbol</option>
-                          <option value="TATA POWER">NIFTY</option>
-                          <option value="BCG">BANK NIFTY</option>
-                          <option value="SIEMENS">SIEMENS</option>
-                          <option value="LALPATHLAB">LALPATHLAB</option>
-                          <option value="HINDCOPPER">HINDCOPPER</option>
-                          <option value="M & M">M & M</option>
-                          <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                        </select>
+                        <div className="add-tread col-md-5">
+                          <Label className="form-label ">Terminal Symbol</Label>
+                          <select className="select-script" id="cars" name="cars">
+                            <option value="" disabled selected>Select Symbol</option>
+                            <option value="TATA POWER">NIFTY</option>
+                            <option value="BCG">BANK NIFTY</option>
+                            <option value="SIEMENS">SIEMENS</option>
+                            <option value="LALPATHLAB">LALPATHLAB</option>
+                            <option value="HINDCOPPER">HINDCOPPER</option>
+                            <option value="M & M">M & M</option>
+                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                          </select>
+                        </div>
+                        <div className="add-tread col-md-5">
+                          <Label className="form-label">Chart Symbol</Label>
+                          <select className="select-script" id="cars" name="cars">
+                            <option value="" disabled selected>Select Chart Symbol</option>
+                            <option value="TATA POWER">NIFTY</option>
+                            <option value="BCG">BANK NIFTY</option>
+                            <option value="SIEMENS">SIEMENS</option>
+                            <option value="LALPATHLAB">LALPATHLAB</option>
+                            <option value="HINDCOPPER">HINDCOPPER</option>
+                            <option value="M & M">M & M</option>
+                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                          </select>
+                        </div>
+                        <div className="add-tread col-md-2">
+                          <Label className="form-label">Option Type</Label>
+                          <select className="select-script" id="cars" name="cars">
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="">CE</option>
+                            <option value="">PE</option>
+                          </select>
+                        </div>
                       </div>
-                      <div className="add-tread col-md-5">
-                        <Label className="form-label">Chart Symbol</Label>
-                        <select className="select-script" id="cars" name="cars">
-                          <option value="" disabled selected>Select Chart Symbol</option>
-                          <option value="TATA POWER">NIFTY</option>
-                          <option value="BCG">BANK NIFTY</option>
-                          <option value="SIEMENS">SIEMENS</option>
-                          <option value="LALPATHLAB">LALPATHLAB</option>
-                          <option value="HINDCOPPER">HINDCOPPER</option>
-                          <option value="M & M">M & M</option>
-                          <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                        </select>
+                      <div className="add-tread-beside">
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label md-1">Dynamic Expiry</Label>
+                          <select className="select-script" id="cars" name="cars">
+                            <option value="" disabled selected>Select Expiry Date</option>
+                            <option value="">5th September</option>
+                            <option value="">12th September</option>
+                            <option value="">19th September</option>
+                            <option value="">26th September</option>
+                            <option value="">3rd October</option>
+                            <option value="">10th October</option>
+                            <option value="">17th October</option>
+                            <option value="">24th October</option>
+                            <option value="">31st October</option>
+                          </select>
                       </div>
-                      <div className="add-tread col-md-2">
-                        <Label className="form-label">Option Type</Label>
-                        <select className="select-script" id="cars" name="cars">
-                          <option value="" disabled selected>Select Option</option>
-                          <option value="">CE</option>
-                          <option value="">PE</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="add-tread-beside">
                       <div className="add-tread col-md-3">
-                        <Label className="form-label md-1">Dynamic Expiry</Label>
-                        <select className="select-script" id="cars" name="cars">
-                          <option value="" disabled selected>Select Expiry Date</option>
-                          <option value="">5th September</option>
-                          <option value="">12th September</option>
-                          <option value="">19th September</option>
-                          <option value="">26th September</option>
-                          <option value="">3rd October</option>
-                          <option value="">10th October</option>
-                          <option value="">17th October</option>
-                          <option value="">24th October</option>
-                          <option value="">31st October</option>
+                        <Label className="form-label">Dynamic Strike</Label>
+                        <select className="col-md-6 select-script" id="cars" name="cars">
+                          <option value="" disabled selected>Select Strike</option>
+                          <option value="Intraday">25100</option>
+                          <option value="Delivery">25200</option>
                         </select>
-                    </div>
-                    <div className="add-tread col-md-3">
-                      <Label className="form-label">Dynamic Strike</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select Strike</option>
-                        <option value="Intraday">25100</option>
-                        <option value="Delivery">25200</option>
-                      </select>
-                    </div>
-                    <div className="add-tread col-md-3">
-                      <Label className="form-label">Qty Type</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select Qty</option>
-                        <option value="Intraday">FIXED</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
-                    </div>
-                    <div className="add-tread col-md-3">
-                      <Label className="form-label">ProdType</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select  Prod Type</option>
-                        <option value="Intraday">MIS</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
-                    </div>
+                      </div>
+                      <div className="add-tread col-md-3">
+                        <Label className="form-label">Qty Type</Label>
+                        <select className="col-md-6 select-script" id="cars" name="cars">
+                          <option value="" disabled selected>Select Qty</option>
+                          <option value="Intraday">FIXED</option>
+                          <option value="Delivery">Delivery</option>
+                        </select>
+                      </div>
+                      <div className="add-tread col-md-3">
+                        <Label className="form-label">ProdType</Label>
+                        <select className="col-md-6 select-script" id="cars" name="cars">
+                          <option value="" disabled selected>Select  Prod Type</option>
+                          <option value="Intraday">MIS</option>
+                          <option value="Delivery">Delivery</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="add-tread-beside">
-                    <div className="add-tread col-md-4">
-                      <Label className="form-label">Entry Order</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select  Prod Type</option>
-                        <option value="Intraday">SLL</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
+                      <div className="add-tread col-md-4">
+                        <Label className="form-label">Entry Order</Label>
+                        <select className="col-md-6 select-script" id="options" name="options" onChange={handleSelectionChange}>
+                          <option value="" disabled selected>Select  Prod Type</option>
+                          <option value="sLL">SLL</option>
+                          <option value="market">MARKET</option>
+                          <option value="option2">Option 2</option>
+                        </select>
+                      </div>
+                      <div className="add-tread col-md-4">
+                        <Label className="form-label">Exit Order</Label>
+                        <select className="col-md-6 select-script" id="cars" name="cars">
+                          <option value="" disabled selected>Select Exit Order</option>
+                          <option value="Intraday">MARKET</option>
+                          <option value="Delivery">Delivery</option>
+                        </select>
+                      </div>
+                      <div className="add-tread col-md-4">
+                        <Label className="form-label">Strategy</Label>
+                        <select className="col-md-6 select-script" id="cars" name="cars">
+                          <option value="" disabled selected>Select</option>
+                          <option value="Intraday">MIS</option>
+                          <option value="Delivery">Delivery</option>
+                        </select>
+                      </div>
                     </div>
-                    <div className="add-tread col-md-4">
-                      <Label className="form-label">Exit Order</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select  Prod Type</option>
-                        <option value="Intraday">Market</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
+                    <div className="add-tread-beside">
+                      <div className="add-tread  col-md-12">
+                        {showFields && (
+                            <div>
+                              <div className="for-sll">
+                                <div className="add-tread col-md-6">
+                                  <label htmlFor="field1">Price</label>
+                                  <input className="select-script" type="number" id="field1" placeholder="Price" name="field1" />
+                                </div>
+
+                                <div className="add-tread col-md-6">
+                                  <label htmlFor="field2">Trigger Price</label>
+                                  <input className="select-script" type="number" id="field2" placeholder="Trigger Price" name="field2" />
+                                </div>
+                              </div>
+
+                              <div className="for-sll">
+                              <div className="add-tread col-md-4">
+                                  <label htmlFor="field3">Target</label>
+                                  <input type="number" id="field3" name="field3" />
+                                </div>
+                                <div className="add-tread col-md-4">
+                                  <label htmlFor="field4">StopLoss</label>
+                                  <input type="number" id="field4" name="field4" />
+                                </div>
+
+                                <div className="add-tread col-md-4">
+                                  <label htmlFor="field5">TSL(Pts)</label>
+                                  <input type="number" id="field5" name="field5" />
+                                </div>
+
+                              </div>
+                            </div>
+                          )}
+                      </div>
                     </div>
-                    <div className="add-tread col-md-4">
-                      <Label className="form-label">Strategy</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select</option>
-                        <option value="Intraday">MIS</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
-                    </div>
+                    <div className="add-tread-beside">
+                      <div className="add-tread  col-md-12">
+                        {limitShowFields && (
+                            <div>
+                              <div className="for-sll">
+                                <div className="add-tread col-md-6">
+                                  <label htmlFor="field1">Price Buffer Type</label>
+                                  <input className="select-script" type="number" id="field1" placeholder="Price" name="field1" />
+                                </div>
+
+                                <div className="add-tread col-md-6">
+                                  <label htmlFor="field2">Price Buffer</label>
+                                  <input className="select-script" type="number" id="field2" placeholder="Price Buffer" name="field2" />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                      </div>
                     </div>
                   </div>
                     

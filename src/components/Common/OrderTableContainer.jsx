@@ -15,6 +15,38 @@ import { Filter, DefaultColumnFilter } from "./filters";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { height } from "dom7";
+
+    // Ensure the script runs after the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        const startDateInput = document.getElementById('start-date');
+        const endDateInput = document.getElementById('end-date');
+        const dateDifferenceOutput = document.getElementById('date-difference');
+
+        startDateInput.addEventListener('change', calculateDateDifference);
+        endDateInput.addEventListener('change', calculateDateDifference);
+
+        function calculateDateDifference() {
+            const startDateValue = startDateInput.value;
+            const endDateValue = endDateInput.value;
+
+            if (startDateValue && endDateValue) {
+                const startDate = new Date(startDateValue);
+                const endDate = new Date(endDateValue);
+
+                if (startDate <= endDate) {
+                    const timeDifference = endDate.getTime() - startDate.getTime();
+                    const daysDifference = timeDifference / (1000 * 3600 * 24);
+                    dateDifferenceOutput.textContent = `${daysDifference} days`;
+                } else {
+                    dateDifferenceOutput.textContent = 'End date must be after start date';
+                }
+            } else {
+                dateDifferenceOutput.textContent = '';
+            }
+        }
+    });
+
+
 // Define a default UI for filtering
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -121,11 +153,6 @@ const TradingTableContainer = ({
     setPageSize(Number(event.target.value));
   };
 
-  const onClickDelete = (navigation) => {
-    setNav(navigation);
-    setDeleteModal(true);
-  };
-
   const onChangeInInput = (event) => {
     const page = event.target.value ? Number(event.target.value) - 1 : 0;
     gotoPage(page);
@@ -168,13 +195,7 @@ const TradingTableContainer = ({
             </div>
           )}
         </Col>
-        {/* {isGlobalFilter && (
-          <GlobalFilter
-            preGlobalFilteredRows={preGlobalFilteredRows}
-            globalFilter={state.globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
-        )} */}
+
         {isAddOptions && (
           <Col sm="11">
             <div className="text-sm-end">
@@ -223,25 +244,40 @@ const TradingTableContainer = ({
         {isAddCustList && (
           <Col sm="12">
             <div className="text-sm-start" >
-              <Button
-                type="button"
-                color="success"
-                className="btn-rounded mb-2 me-2"
-                onClick={handleCustomerClick}
-              >
-                <i className="mdi mdis-plus " />
-              </Button>
-              <Button
-                type="button"
-                color="danger"
-                className="btn-rounded mb-2 me-2"
-                onClick={() => {
-                  const customerData = cellProps.row.original;
-                  onClickDelete(customerData);
-                }}
-              >
-                <i className="mdi mdis-delete " />
-              </Button>
+                <div className="add-orderlog col-md-12">
+                  <div class="col-5">
+                    <select className="select-script col-5" id="cars" name="cars">
+                        <option value="" disabled selected>All Script</option>
+                        <option value="TATA POWER">NIFTY</option>
+                        <option value="BCG">BANK NIFTY</option>
+                        <option value="SIEMENS">SIEMENS</option>
+                        <option value="LALPATHLAB">LALPATHLAB</option>
+                        <option value="HINDCOPPER">HINDCOPPER</option>
+                        <option value="M & M">M & M</option>
+                        <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                    </select>
+                    <select className="select-script col-5" id="cars" name="cars">
+                        <option value="" disabled selected>All Strategy</option>
+                        <option value="TATA POWER">NIFTY</option>
+                        <option value="BCG">BANK NIFTY</option>
+                        <option value="SIEMENS">SIEMENS</option>
+                        <option value="LALPATHLAB">LALPATHLAB</option>
+                        <option value="HINDCOPPER">HINDCOPPER</option>
+                        <option value="M & M">M & M</option>
+                        <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                    </select>
+                    </div>
+                    <div class="date-range-container col-5">
+                        <input type="date" id="start-date" />
+                        <span><b>To</b></span>
+                        <input type="date" id="end-date" />
+                        <span class="date-difference" id="date-difference"></span>
+                    </div>
+                    <div class="total-records col-2">
+                        <h5>Total Records: 8</h5>
+                    </div>
+   
+                </div>
             </div>
           </Col>
         )}
@@ -345,3 +381,4 @@ TradingTableContainer.propTypes = {
 };
 
 export default TradingTableContainer;
+
