@@ -508,7 +508,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {/* {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
@@ -526,7 +526,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {/* {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
@@ -544,7 +544,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
@@ -562,7 +562,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">

@@ -945,6 +945,35 @@ textarea.form-control {
       border-radius: 0.25rem;
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
+    input[type="radio"]{
+      width: auto;
+      padding: 0.47rem 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--bs-gray-700);
+      background-color: var(--bs-custom-white);
+      background-clip: padding-box;
+      border: 1px solid var(--bs-input-border-color);
+      appearance: auto;
+      border-radius: 0.25rem;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      margin: 0px 20px;
+    }
+    .price-buffer{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-bottom: 15px;
+      padding: 0px;
+      .price-buffer{
+        padding: 0px; align-items: center; margin-right: 15px;
+        input[type="radio"]{
+          margin-right: 6px;
+          margin-left: 0px;
+        }
+      }
+    }
   }
 }
 
