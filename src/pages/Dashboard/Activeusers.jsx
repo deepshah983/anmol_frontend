@@ -3,7 +3,6 @@ import React from "react"
 import { Row, Col, Card, CardBody } from "reactstrap"
 import { Link } from "react-router-dom"
 
-import avatar1 from "../../assets/images/users/avatar.png"
 import profileImg from "../../assets/images/profile-img.png"
 import coinOne from "../../assets/images/coin 1.svg"
 
@@ -18,7 +17,7 @@ const Activeusers = () => {
                 <div className="logo-bg">
                   <img src={coinOne} alt="" height="35px" width="35px" />
                 </div>
-                <h5 className="text-primary m-0">Active Users</h5>
+                <h5 className="text-primary m-0">Active Client</h5>
               </div>
             </Col>
             <Col xs="3">

@@ -18,7 +18,7 @@ const WelcomeComp = () => {
                   <div className="logo-bg">
                   <img src={totalUsers} alt="" height="35px" width="35px" />
                   </div>
-                  <h5 className="text-primary m-0">Totle User</h5>
+                  <h5 className="text-primary m-0">Totle Client</h5>
               </div>
             </Col>
             <Col xs="3">

@@ -18,7 +18,7 @@ const Inactiveusers = () => {
                   <div className="logo-bg">
                     <img src={coinOne} alt="" height="35px" width="35px" />
                   </div>
-                  <h5 className="text-primary m-0">Inactive Users</h5>
+                  <h5 className="text-primary m-0">Inactive Client</h5>
                 </div>
               </Col>
               <Col xs="3">
