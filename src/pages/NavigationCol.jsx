@@ -10,6 +10,21 @@ const Name = (cell) => {
   return cell.value ? cell.value : "";
 };
 
+const Status = (cell) => {
+  const hasValue = cell.value ? true : false;
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        width: '10px',
+        height: '10px',
+        borderRadius: '50%',
+        backgroundColor: hasValue ? 'green' : 'red'
+      }}
+    />
+  );
+};
+
 const Url = (cell) => {
   return cell.value ? cell.value : "";
 };
@@ -200,6 +215,7 @@ const Number = (cell) => {
 export {
     Id,
     Name,
+    Status,
     Url,
     Description,
     Title,

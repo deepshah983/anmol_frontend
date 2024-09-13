@@ -34,7 +34,7 @@ import TableContainer from "../../../components/Common/TableContainer";
 import { success, error } from "../../../components/toast";
 
 // Column
-import { Image, Name, Designation, Email } from "../../NavigationCol";
+import { Image, Name, Status, Designation, Email } from "../../NavigationCol";
 import HideShowSection from "../../../components/Common/HideShowSection";
 
 const index = (props) => {
@@ -152,6 +152,7 @@ const index = (props) => {
     setNav({
       id: nav._id,
       name: nav.name,
+      status: nav.status,
       email: nav.email,
       phone: nav.phone,
       position: nav.position,
@@ -166,6 +167,14 @@ const index = (props) => {
   // Customber Column
   const columns = useMemo(
     () => [
+      {
+        Header: "Status",
+        accessor: "status",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Status {...cellProps} />;
+        },
+      },
       {
         Header: "Checking",
         Cell: (cellProps) => {
@@ -188,6 +197,7 @@ const index = (props) => {
           );
         },
       },
+
       {
         Header: "Name",
         accessor: "name",
@@ -498,72 +508,58 @@ const index = (props) => {
               >
                 <Row>
                   <Col className="col-12">
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                        <option option value="" disabled selected>Select User ID</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 6</option>
-                      </select>
+                      
+                      <Input
+                        name="portal_id"
+                        type="text"
+                        placeholder="Select User ID"
+                        
+                      />
                       {/* {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
                           {validation.errors.name}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                      <option option value="" disabled selected>Select Password</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 6</option>
-                      </select>
+                      <Input
+                        name="portal_password"
+                        type="text"
+                        placeholder="Select Password"
+                        
+                      />
                       {/* {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
                           {validation.errors.Email}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                        <option option value="" disabled selected>Select User Key</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 6</option>
-                      </select>
+                      <Input
+                        name="portal_password"
+                        type="text"
+                        placeholder="Select User Key"
+                        
+                      />
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control"> 
-                        <option option value="" disabled selected>Select Appkey</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 6</option>
-                      </select>
+                     
+                      <Input
+                        name="portal_appkey"
+                        type="text"
+                        placeholder="Select Appkey"
+                        
+                      />
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}
