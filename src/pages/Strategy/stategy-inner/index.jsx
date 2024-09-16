@@ -223,8 +223,8 @@ const UserProfile = (props) => {
                     <div className="form-group trading-form mb-3">
                       <Label className="form-label">Entry Order</Label>
                       <div className="form-group trading-form mb-3">
-                        <input type="button" value="LIMIT" class="market-button"/>
-                        <input type="button" value="MARKET" class="market-button"/>
+                        <input type="button" value="LIMIT" className="market-button"/>
+                        <input type="button" value="MARKET" className="market-button"/>
                       </div>
                     </div>
                   </div>

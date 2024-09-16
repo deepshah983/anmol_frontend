@@ -449,7 +449,7 @@ const index = (props) => {
                       <Input
                         name="phone"
                         type="number"
-                        placeholder="Enter Phone Number"
+                        placeholder="Enter Mobile Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
                         value={validation.values?.phone || ""}
