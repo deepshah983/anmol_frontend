@@ -1,242 +1,427 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import PropTypes from "prop-types";
+import * as Yup from "yup";
 import {
+  Card,
+  CardBody,
+  Col,
   Container,
   Row,
-  Col,
-  Card,
-  Alert,
-  CardBody,
-  Button,
-  Label,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  UncontrolledTooltip,
   Input,
   FormFeedback,
+  Label,
   Form,
+  Button,
 } from "reactstrap";
 
-// Formik Validation
-import * as Yup from "yup";
-import { useFormik } from "formik";
+import {
+  getData,
+  postData,
+  updateData,
+  deleteData,
+} from "../../../components/api";
+import DeleteModal from "../../../components/Common/DeleteModal";
+import TableContainer from "../../../components/Common/TableContainer";
+import { success, error } from "../../../components/toast";
+import HideShowSection from "../../../components/Common/HideShowSection";
+import { Strategy } from "../../NavigationCol"; // Ensure this is correctly imported
 
-//redux
-import { useSelector, useDispatch } from "react-redux";
-
-import withRouter from "../../../components/Common/withRouter";
-
-import avatar from "../../../assets/images/users/avatar.png";
-// actions
-import { editProfile, resetProfileFlag } from "../../../store/actions";
-
-import { postData } from "../../../components/api";
-import { ToastElement, success, error } from "../../../components/toast";
-
-const UserProfile = (props) => {
-  //meta title
-  document.title = "Profile | Skote - React Admin & Dashboard Template";
-
-  const dispatch = useDispatch();
-
-  const [name, setname] = useState("");
-  const [id, setid] = useState(1);
-  const [navigation, setNav] = useState(null);
+const StrategyManagement = () => {
+  const [strategies, setStrategies] = useState([]);
+  const [count, setCount] = useState(0);
+  const [modal, setModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [strategy, setStrategy] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("authUser")) {
-      const obj = JSON.parse(localStorage.getItem("authUser"));
-      if (
-        import.meta.env.VITE_APP_DEFAULTAUTH === "fake" ||
-        import.meta.env.VITE_APP_DEFAULTAUTH === "jwt"
-      ) {
-        setname(obj.username);
-        setid(obj.id);
-      }
-      setTimeout(() => {
-        dispatch(resetProfileFlag());
-      }, 3000);
+    getStrategies();
+  }, []);
+
+  const getStrategies = async () => {
+    try {
+      const response = await getData("/strategies");
+      console.log(response.data.data);
+      
+      setStrategies(response.data.data);
+      setCount(response.data.data.length);
+    } catch (err) {
+      error("Failed to load strategies");
     }
-  }, [dispatch]);
+  };
 
   const validation = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
-
     initialValues: {
-      user_name: name || "",
-      user_id: id || "",
-      total_quantity: (navigation && navigation.total_quantity) || "",
-      new_password: (navigation && navigation.new_password) || "",
-      confirm_password: (navigation && navigation.confirm_password) || "",
-    },
-    validationSchema: Yup.object({
-      user_name: Yup.string().required("Please Enter Your Username"),
-      total_quantity: Yup.string().required("This Field cannot be blank"),
-      new_password: Yup.string()
-        .required("Please Enter Your New Password")
-        .min(6, "Password must be at least 6 characters long"), // Adjust the minimum length as needed
-      confirm_password: Yup.string()
-        .required("Please Confirm Your New Password")
-        .oneOf(
-          [Yup.ref("new_password"), null],
-          "New and Confirm Passwords must match"
-        )
-        .test(
-          "not-same-as-old",
-          "New password must not be the same as the old password",
-          function (value) {
-            const total_quantity = this.parent.total_quantity;
-            return value !== total_quantity;
-          }
-        ),
-    }),
 
-    onSubmit: (values) => {
-      handleUpdate(values);
+      id: (strategy && strategy.id) || "",
+      name: (strategy && strategy.name) || "",
+
+      max_open_pos: strategy?.max_open_pos || "",
+      max_long_pos: strategy?.max_long_pos || "",
+      max_short_pos: strategy?.max_short_pos || "",
+      trades_per_day: strategy?.trades_per_day || "",
+      orders_per_day: strategy?.orders_per_day || "",
+      trades_per_scrip: strategy?.trades_per_scrip || "",
+      quantity_multiplier: strategy?.quantity_multiplier || "",
+    },
+
+    
+    validationSchema: Yup.object({
+      name: Yup.string().required("Please Enter Strategy Name"),
+      max_open_pos: Yup.number().required("Please Enter Max Open Positions"),
+      max_long_pos: Yup.number().required("Please Enter Max Long Positions"),
+      max_short_pos: Yup.number().required("Please Enter Max Short Positions"),
+      trades_per_day: Yup.number().required("Please Enter Trades Per Day"),
+      orders_per_day: Yup.number().required("Please Enter Orders Per Day"),
+      trades_per_scrip: Yup.number().required("Please Enter Trades Per Scrip"),
+      quantity_multiplier: Yup.number().required("Please Enter Quantity Multiplier"),
+    }),
+    onSubmit: async (values) => {
+      const formData = new FormData();
+      Object.keys(values).forEach((key) => formData.append(key, values[key]));
+
+      try {
+        if (isEdit) {
+          await updateData(`/strategies/${values.id}`, formData);
+        } else {
+          await postData("/strategies", formData);
+        }
+        getStrategies();
+        success(isEdit ? "Strategy Updated Successfully" : "Strategy Added Successfully");
+        toggle();
+      } catch (err) {
+        error("Failed to save strategy");
+      }
+
+      validation.resetForm();
     },
   });
 
-  const handleUpdate = (values) => {
-    postData("/authorization/change-password", values).then((res) => {
-      if (res.data.error) {
-        return error(res.data.message);
-      }
-
-      localStorage.setItem("authUser", JSON.stringify(res.data.data));
-      return success(res.data.message);
+  const handleStrategyClick = (strategyData) => {
+    setStrategy({
+      id: strategyData._id,
+      name: strategyData.name,
+      max_open_pos: strategyData.maxOpenPos,
+      max_long_pos: strategyData.maxLongPos,
+      max_short_pos: strategyData.maxShortPos,
+      trades_per_day: strategyData.tradesPerDay,
+      orders_per_day: strategyData.ordersPerDay,
+      trades_per_scrip: strategyData.tradesPerScrip,
+      quantity_multiplier: strategyData.quantityMultiplier,
     });
+    console.log(strategyData);
+    
+    setIsEdit(true);
+    toggle();
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Strategy Name",
+        accessor: "name",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Max Open Positions",
+        accessor: "maxOpenPos",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Max Long Positions",
+        accessor: "maxLongPos",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Max Short Positions",
+        accessor: "maxShortPos",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Trades Per Day",
+        accessor: "tradesPerDay",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Orders Per Day",
+        accessor: "ordersPerDay",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Trades Per Scrip",
+        accessor: "tradesPerScrip",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Quantity Multiplier",
+        accessor: "quantityMultiplier",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
+        Header: "Action",
+        Cell: ({ row }) => (
+          <div className="d-flex gap-3">
+            <Link
+              to="#"
+              className="text-success"
+              onClick={() => handleStrategyClick(row.original)}
+            >
+              <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
+              <UncontrolledTooltip placement="top" target="edittooltip">
+                Edit
+              </UncontrolledTooltip>
+            </Link>
+
+            <Link
+              to="#"
+              className="text-danger"
+              onClick={() => onClickDelete(row.original)}
+            >
+              <i className="mdi mdi-delete font-size-18" id="deletetooltip" />
+              <UncontrolledTooltip placement="top" target="deletetooltip">
+                Delete
+              </UncontrolledTooltip>
+            </Link>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const toggle = () => {
+    if (modal) {
+      setModal(false);
+      setStrategy(null);
+    } else {
+      setModal(true);
+    }
+  };
+
+  const onClickDelete = (strategy) => {
+    setStrategy(strategy);
+    setDeleteModal(true);
+  };
+
+  const handleDeleteStrategy = async () => {
+    try {
+      await deleteData(`/strategies/${strategy._id}`);
+      success("Strategy Deleted Successfully");
+      getStrategies();
+    } catch (err) {
+      error("Failed to delete strategy");
+    }
+    setDeleteModal(false);
+  };
+
+  const handleCustomerClicks = () => {
+   
+    setIsEdit(false);
+    toggle();
   };
 
   return (
-    <React.Fragment>
+    <>
+      <DeleteModal
+        show={deleteModal}
+        onDeleteClick={handleDeleteStrategy}
+        onCloseClick={() => setDeleteModal(false)}
+      />
+      <div className="page-content">
         <Container fluid>
+          <HideShowSection
+            title="Total Strategies"
+            toggle={false}
+            count={count}
+          >
+            <Button
+              color="primary"
+              className="btn btn-primary me-1 float-end"
+              onClick={toggle}
+            >
+              + Add Strategy
+            </Button>
+          </HideShowSection>
 
+          <Row>
+            <Col lg="12">
+              <Card>
+                <CardBody>
+                  <TableContainer
+
+                    columns={columns}
+                    data={strategies}
+                    isGlobalFilter={true}
+                    isAddCustList={true}
+                    isPagination={true}
+                    handleCustomerClick={handleCustomerClicks}
+                    customPageSize={20}
+                    className="custom-header-css"
+                  />
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle} tag="h4">
+          {isEdit ? "Edit Strategy" : "Add Strategy"}
+        </ModalHeader>
+        <ModalBody>
           <Form
-            className="form-horizontal"
+            id="createStrategy"
             onSubmit={(e) => {
               e.preventDefault();
               validation.handleSubmit();
-              return false;
             }}
           >
-            <Card>
-              <CardBody>
-                <h4 className="card-title mb-4">Strategy</h4>
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="form-group trading-form mb-3">
-                      <Label className="form-label">Select Script</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select Script Name</option>
-                        <option value="TATA POWER">TATA POWER</option>
-                        <option value="BCG">BCG</option>
-                        <option value="SIEMENS">SIEMENS</option>
-                        <option value="LALPATHLAB">LALPATHLAB</option>
-                        <option value="HINDCOPPER">HINDCOPPER</option>
-                        <option value="M & M">M & M</option>
-                        <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                        <option value="RADHE DEVLOPERS">RADHE DEVLOPERS</option>
-                      </select>
-                      <Input name="user_id" value={id} type="hidden" />
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group trading-form mb-3">
-                      <Label className="form-label">Select  Category</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select  Category(NSE/FO)</option>
-                        <option value="NSE">NSE</option>
-                        <option value="BSE">BSE</option>
-                      </select>
-                      <Input name="user_id" value={id} type="hidden" />
-                    </div>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <div className="form-group mb-3">
-                      <Label className="form-label">Qty (Fixed/Exposure)</Label>
-                      <Input
-                        name="total_quantity"
-                        // value={name}
-                        className="form-control"
-                        placeholder="Enter Quantity"
-                        type="number"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.total_quantity || ""}
-                        invalid={
-                          validation.touched.total_quantity &&
-                            validation.errors.total_quantity
-                            ? true
-                            : false
-                        }
-                      />
+            <Row>
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="name">Strategy Name</Label>
+                <Input
+                  name="name"
+                  id="name"
+                  placeholder="Strategy Name"
+                  type="text"
+                  value={validation.values.name}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.name && validation.errors.name}
+                />
+                <FormFeedback>{validation.errors.name}</FormFeedback>
+              </Col>
 
-                      {validation.touched.total_quantity &&
-                        validation.errors.total_quantity ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.total_quantity}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group trading-form mb-3">
-                      <Label className="form-label">Select  Category</Label>
-                      <select className="col-md-6 select-script" id="cars" name="cars">
-                        <option value="" disabled selected>Select  Category(NSE/FO)</option>
-                        <option value="Intraday">Intraday</option>
-                        <option value="Delivery">Delivery</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group  mb-3">
-                    <Label className="form-label">Select Strategy</Label>
-                    <div className="form-group trading-form mb-3">
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy1" />
-                        Silver
-                    </Label>
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy2" />
-                        Gold
-                    </Label>
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy3" />
-                        Platinum
-                    </Label>
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy4" />
-                        Diamond
-                    </Label>
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy5" />
-                        Titanium
-                    </Label>
-                    <Label className="trading-form-checkbox">
-                        <input type="checkbox" name="strategy6" />
-                        Ruby
-                    </Label>
-                    </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-group trading-form mb-3">
-                      <Label className="form-label">Entry Order</Label>
-                      <div className="form-group trading-form mb-3">
-                        <input type="button" value="LIMIT" className="market-button"/>
-                        <input type="button" value="MARKET" className="market-button"/>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="max_open_pos">Max Open Positions</Label>
+                <Input
+                  name="max_open_pos"
+                  id="max_open_pos"
+                  placeholder="Max Open Positions"
+                  type="number"
+                  value={isEdit && validation.values.max_open_pos == 0 ? 0 : validation.values.max_open_pos || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={
+                    validation.touched.max_open_pos && validation.errors.max_open_pos
+                  }
+                />
+                <FormFeedback>{validation.errors.max_open_pos}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="max_long_pos">Max Long Positions</Label>
+                <Input
+                  name="max_long_pos"
+                  id="max_long_pos"
+                  placeholder="Max Long Positions"
+                  type="number"
+                  value={isEdit && validation.values.max_long_pos == 0 ? 0 : validation.values.max_long_pos || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.max_long_pos && validation.errors.max_long_pos}
+                />
+                <FormFeedback>{validation.errors.max_long_pos}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="max_short_pos">Max Short Positions</Label>
+                <Input
+                  name="max_short_pos"
+                  id="max_short_pos"
+                  placeholder="Max Short Positions"
+                  type="number"
+                  value={isEdit && validation.values.max_short_pos == 0 ? 0 : validation.values.max_short_pos || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.max_short_pos && validation.errors.max_short_pos}
+                />
+                <FormFeedback>{validation.errors.max_short_pos}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="trades_per_day">Trades Per Day</Label>
+                <Input
+                  name="trades_per_day"
+                  id="trades_per_day"
+                  placeholder="Trades Per Day"
+                  type="number"
+                  value={isEdit && validation.values.trades_per_day == 0 ? 0 : validation.values.trades_per_day || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.trades_per_day && validation.errors.trades_per_day}
+                />
+                <FormFeedback>{validation.errors.trades_per_day}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="orders_per_day">Orders Per Day</Label>
+                <Input
+                  name="orders_per_day"
+                  id="orders_per_day"
+                  placeholder="Orders Per Day"
+                  type="number"
+                  value={isEdit && validation.values.orders_per_day == 0 ? 0 : validation.values.orders_per_day || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.orders_per_day && validation.errors.orders_per_day}
+                />
+                <FormFeedback>{validation.errors.orders_per_day}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="trades_per_scrip">Trades Per Scrip</Label>
+                <Input
+                  name="trades_per_scrip"
+                  id="trades_per_scrip"
+                  placeholder="Trades Per Scrip"
+                  type="number"
+                  value={isEdit && validation.values.trades_per_scrip == 0 ? 0 : validation.values.trades_per_scrip || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.trades_per_scrip && validation.errors.trades_per_scrip}
+                />
+                <FormFeedback>{validation.errors.trades_per_scrip}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3" md={12}>
+                <Label htmlFor="quantity_multiplier">Quantity Multiplier</Label>
+                <Input
+                  name="quantity_multiplier"
+                  id="quantity_multiplier"
+                  placeholder="Quantity Multiplier"
+                  type="number"
+                  value={isEdit && validation.values.quantity_multiplier == 0 ? 0 : validation.values.quantity_multiplier || ""}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.quantity_multiplier && validation.errors.quantity_multiplier}
+                />
+                <FormFeedback>{validation.errors.quantity_multiplier}</FormFeedback>
+              </Col>
+
+              <Col className="mb-3">
+                <Button color="primary" type="submit">
+                  {isEdit ? "Update" : "Submit"}
+                </Button>
+              </Col>
+            </Row>
           </Form>
-        </Container>
-        <ToastElement />
-      
-    </React.Fragment>
+        </ModalBody>
+      </Modal>
+    </>
   );
 };
 
-export default withRouter(UserProfile);
+StrategyManagement.propTypes = {
+  history: PropTypes.object,
+};
+
+export default StrategyManagement;
