@@ -62,7 +62,7 @@ const Instrument = (cell) => {
 };
 
 const Strategy = (cell) => {
-  return cell.value ? cell.value : "";
+  return cell.value !== undefined && cell.value !== null ? cell.value : "";
 };
 
 const Source = (cell) => {

@@ -72,6 +72,7 @@ const index = (props) => {
       name: (navigation && navigation.name) || "",
       email: (navigation && navigation.email) || "",
       phone: (navigation && navigation.phone) || "",
+      status: (navigation && navigation.status) || "",
       // position: (navigation && navigation.position) || "",
       // altText: (navigation && navigation.altText) || "",
     },
@@ -79,6 +80,7 @@ const index = (props) => {
       name: Yup.string().required("Please Enter User Name"),
       email: Yup.string().required("Please Enter Email"),
       phone: Yup.string().required("Please Enter Mobile Number"),
+      status: Yup.string().required("Please Select Status"),
       //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
@@ -131,7 +133,9 @@ const index = (props) => {
   };
   const handleCustomerClick = (arg) => {
     const nav = arg;
-
+  
+    const status = nav.status ? nav.status : 0;
+    console.log(status);
     setNav({
       id: nav._id,
       name: nav.name,
@@ -139,6 +143,7 @@ const index = (props) => {
       phone: nav.phone,
       position: nav.position,
       image: nav.image,
+      status: status,
       altText: nav.altText
     });
     setAddImagePrimary(nav.image);
@@ -459,7 +464,7 @@ const index = (props) => {
                       <Input
                         name="phone"
                         type="number"
-                        placeholder="Enter Phone Number"
+                        placeholder="Enter Mobile Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
                         value={validation.values?.phone || ""}
@@ -472,6 +477,30 @@ const index = (props) => {
                       {validation.touched?.phone && validation.errors?.phone ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.phone}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3">
+                      <Label className="form-label">Status<small className="asterisk">*</small></Label>
+                      <Input
+                        type="select"
+                        name="status"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={isEdit && validation.values.status == 0 ? 0 : validation.values.status || ""}
+                        invalid={
+                          validation.touched.status && validation.errors.status
+                            ? true
+                            : false
+                        }
+                      >
+                        <option value="">Select Status</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                      </Input>
+                      {validation.touched.status && validation.errors.status ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.status}
                         </FormFeedback>
                       ) : null}
                     </div>
