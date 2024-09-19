@@ -31,6 +31,7 @@ import TableContainer from "../../../components/Common/TableContainer";
 import { success, error } from "../../../components/toast";
 import HideShowSection from "../../../components/Common/HideShowSection";
 import { Strategy } from "../../NavigationCol"; // Ensure this is correctly imported
+import themeConfig from "../../../configs/themeConfig";
 
 const StrategyManagement = () => {
   const [strategies, setStrategies] = useState([]);
@@ -62,59 +63,90 @@ const StrategyManagement = () => {
 
       id: (strategy && strategy.id) || "",
       name: (strategy && strategy.name) || "",
-
-      max_open_pos: strategy?.max_open_pos || "",
-      max_long_pos: strategy?.max_long_pos || "",
-      max_short_pos: strategy?.max_short_pos || "",
-      trades_per_day: strategy?.trades_per_day || "",
-      orders_per_day: strategy?.orders_per_day || "",
-      trades_per_scrip: strategy?.trades_per_scrip || "",
-      quantity_multiplier: strategy?.quantity_multiplier || "",
+      maxOpenPos: (strategy?.maxOpenPos) || "",
+      maxLongPos: (strategy?.maxLongPos) || "",
+      maxShortPos: (strategy?.maxShortPos) || "",
+      tradesPerDay: (strategy?.tradesPerDay) || "",
+      ordersPerDay: (strategy?.ordersPerDay) || "",
+      tradesPerScrip: (strategy?.tradesPerScrip) || "",
+      quantityMultiplier: (strategy?.quantityMultiplier) || "",
     },
 
     
     validationSchema: Yup.object({
       name: Yup.string().required("Please Enter Strategy Name"),
-      max_open_pos: Yup.number().required("Please Enter Max Open Positions"),
-      max_long_pos: Yup.number().required("Please Enter Max Long Positions"),
-      max_short_pos: Yup.number().required("Please Enter Max Short Positions"),
-      trades_per_day: Yup.number().required("Please Enter Trades Per Day"),
-      orders_per_day: Yup.number().required("Please Enter Orders Per Day"),
-      trades_per_scrip: Yup.number().required("Please Enter Trades Per Scrip"),
-      quantity_multiplier: Yup.number().required("Please Enter Quantity Multiplier"),
+      maxOpenPos: Yup.number().required("Please Enter Max Open Positions"),
+      maxLongPos: Yup.number().required("Please Enter Max Long Positions"),
+      maxShortPos: Yup.number().required("Please Enter Max Short Positions"),
+      tradesPerDay: Yup.number().required("Please Enter Trades Per Day"),
+      ordersPerDay: Yup.number().required("Please Enter Orders Per Day"),
+      tradesPerScrip: Yup.number().required("Please Enter Trades Per Scrip"),
+      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
     }),
-    onSubmit: async (values) => {
-      const formData = new FormData();
-      Object.keys(values).forEach((key) => formData.append(key, values[key]));
+    onSubmit: (values) => {
+      let form = themeConfig.functions.read_form("createStrategy");
+      let formData = new FormData();
+      Object.keys(form).map((key) => {
+        formData.append(key, form[key]);
+      });
+    
+      if (isEdit) {
 
-      try {
-        if (isEdit) {
-          await updateData(`/strategies/${values.id}`, formData);
-        } else {
-          await postData("/strategies", formData);
+        updateStratagy(values.id, formData);
+      } else {
+        addNewStratagy(formData);
+      }
+      
+    }
+  });
+
+  const addNewStratagy = (form_data) => {
+
+    postData("/add-strategy", form_data).then(
+      (response) => {
+        if (response?.data?.error) {
+          return error(response?.data?.message);
         }
         getStrategies();
-        success(isEdit ? "Strategy Updated Successfully" : "Strategy Added Successfully");
+        validation.resetForm();
         toggle();
-      } catch (err) {
-        error("Failed to save strategy");
-      }
+        return success(response?.data?.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
 
-      validation.resetForm();
-    },
-  });
+  const updateStratagy = (id, form_data) => {
+
+    updateData(`/strategy/${id}`, form_data).then(
+      (response) => {
+        if (response?.data?.error) {
+          return error(response?.data?.message);
+        }
+        getStrategies();
+        validation.resetForm();
+        toggle();
+        return success(response?.data?.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
 
   const handleStrategyClick = (strategyData) => {
     setStrategy({
       id: strategyData._id,
       name: strategyData.name,
-      max_open_pos: strategyData.maxOpenPos,
-      max_long_pos: strategyData.maxLongPos,
-      max_short_pos: strategyData.maxShortPos,
-      trades_per_day: strategyData.tradesPerDay,
-      orders_per_day: strategyData.ordersPerDay,
-      trades_per_scrip: strategyData.tradesPerScrip,
-      quantity_multiplier: strategyData.quantityMultiplier,
+      maxOpenPos: strategyData.maxOpenPos,
+      maxLongPos: strategyData.maxLongPos,
+      maxShortPos: strategyData.maxShortPos,
+      tradesPerDay: strategyData.tradesPerDay,
+      ordersPerDay: strategyData.ordersPerDay,
+      tradesPerScrip: strategyData.tradesPerScrip,
+      quantityMultiplier: strategyData.quantityMultiplier,
     });
     console.log(strategyData);
     
@@ -212,7 +244,7 @@ const StrategyManagement = () => {
 
   const handleDeleteStrategy = async () => {
     try {
-      await deleteData(`/strategies/${strategy._id}`);
+      await deleteData(`/strategy/${strategy._id}`);
       success("Strategy Deleted Successfully");
       getStrategies();
     } catch (err) {
@@ -301,110 +333,110 @@ const StrategyManagement = () => {
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="max_open_pos">Max Open Positions</Label>
+                <Label htmlFor="maxOpenPos">Max Open Positions</Label>
                 <Input
-                  name="max_open_pos"
-                  id="max_open_pos"
+                  name="maxOpenPos"
+                  id="maxOpenPos"
                   placeholder="Max Open Positions"
                   type="number"
-                  value={isEdit && validation.values.max_open_pos == 0 ? 0 : validation.values.max_open_pos || ""}
+                  value={isEdit && validation.values.maxOpenPos == 0 ? 0 : validation.values.maxOpenPos || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
                   invalid={
-                    validation.touched.max_open_pos && validation.errors.max_open_pos
+                    validation.touched.maxOpenPos && validation.errors.maxOpenPos
                   }
                 />
-                <FormFeedback>{validation.errors.max_open_pos}</FormFeedback>
+                <FormFeedback>{validation.errors.maxOpenPos}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="max_long_pos">Max Long Positions</Label>
+                <Label htmlFor="maxLongPos">Max Long Positions</Label>
                 <Input
-                  name="max_long_pos"
-                  id="max_long_pos"
+                  name="maxLongPos"
+                  id="maxLongPos"
                   placeholder="Max Long Positions"
                   type="number"
-                  value={isEdit && validation.values.max_long_pos == 0 ? 0 : validation.values.max_long_pos || ""}
+                  value={isEdit && validation.values.maxLongPos == 0 ? 0 : validation.values.maxLongPos || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.max_long_pos && validation.errors.max_long_pos}
+                  invalid={validation.touched.maxLongPos && validation.errors.maxLongPos}
                 />
-                <FormFeedback>{validation.errors.max_long_pos}</FormFeedback>
+                <FormFeedback>{validation.errors.maxLongPos}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="max_short_pos">Max Short Positions</Label>
+                <Label htmlFor="maxShortPos">Max Short Positions</Label>
                 <Input
-                  name="max_short_pos"
-                  id="max_short_pos"
+                  name="maxShortPos"
+                  id="maxShortPos"
                   placeholder="Max Short Positions"
                   type="number"
-                  value={isEdit && validation.values.max_short_pos == 0 ? 0 : validation.values.max_short_pos || ""}
+                  value={isEdit && validation.values.maxShortPos == 0 ? 0 : validation.values.maxShortPos || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.max_short_pos && validation.errors.max_short_pos}
+                  invalid={validation.touched.maxShortPos && validation.errors.maxShortPos}
                 />
-                <FormFeedback>{validation.errors.max_short_pos}</FormFeedback>
+                <FormFeedback>{validation.errors.maxShortPos}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="trades_per_day">Trades Per Day</Label>
+                <Label htmlFor="tradesPerDay">Trades Per Day</Label>
                 <Input
-                  name="trades_per_day"
-                  id="trades_per_day"
+                  name="tradesPerDay"
+                  id="tradesPerDay"
                   placeholder="Trades Per Day"
                   type="number"
-                  value={isEdit && validation.values.trades_per_day == 0 ? 0 : validation.values.trades_per_day || ""}
+                  value={isEdit && validation.values.tradesPerDay == 0 ? 0 : validation.values.tradesPerDay || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.trades_per_day && validation.errors.trades_per_day}
+                  invalid={validation.touched.tradesPerDay && validation.errors.tradesPerDay}
                 />
-                <FormFeedback>{validation.errors.trades_per_day}</FormFeedback>
+                <FormFeedback>{validation.errors.tradesPerDay}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="orders_per_day">Orders Per Day</Label>
+                <Label htmlFor="ordersPerDay">Orders Per Day</Label>
                 <Input
-                  name="orders_per_day"
-                  id="orders_per_day"
+                  name="ordersPerDay"
+                  id="ordersPerDay"
                   placeholder="Orders Per Day"
                   type="number"
-                  value={isEdit && validation.values.orders_per_day == 0 ? 0 : validation.values.orders_per_day || ""}
+                  value={isEdit && validation.values.ordersPerDay == 0 ? 0 : validation.values.ordersPerDay || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.orders_per_day && validation.errors.orders_per_day}
+                  invalid={validation.touched.ordersPerDay && validation.errors.ordersPerDay}
                 />
-                <FormFeedback>{validation.errors.orders_per_day}</FormFeedback>
+                <FormFeedback>{validation.errors.ordersPerDay}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="trades_per_scrip">Trades Per Scrip</Label>
+                <Label htmlFor="tradesPerScrip">Trades Per Scrip</Label>
                 <Input
-                  name="trades_per_scrip"
-                  id="trades_per_scrip"
+                  name="tradesPerScrip"
+                  id="tradesPerScrip"
                   placeholder="Trades Per Scrip"
                   type="number"
-                  value={isEdit && validation.values.trades_per_scrip == 0 ? 0 : validation.values.trades_per_scrip || ""}
+                  value={isEdit && validation.values.tradesPerScrip == 0 ? 0 : validation.values.tradesPerScrip || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.trades_per_scrip && validation.errors.trades_per_scrip}
+                  invalid={validation.touched.tradesPerScrip && validation.errors.tradesPerScrip}
                 />
-                <FormFeedback>{validation.errors.trades_per_scrip}</FormFeedback>
+                <FormFeedback>{validation.errors.tradesPerScrip}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="quantity_multiplier">Quantity Multiplier</Label>
+                <Label htmlFor="quantityMultiplier">Quantity Multiplier</Label>
                 <Input
-                  name="quantity_multiplier"
-                  id="quantity_multiplier"
+                  name="quantityMultiplier"
+                  id="quantityMultiplier"
                   placeholder="Quantity Multiplier"
                   type="number"
-                  value={isEdit && validation.values.quantity_multiplier == 0 ? 0 : validation.values.quantity_multiplier || ""}
+                  value={isEdit && validation.values.quantityMultiplier == 0 ? 0 : validation.values.quantityMultiplier || ""}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.quantity_multiplier && validation.errors.quantity_multiplier}
+                  invalid={validation.touched.quantityMultiplier && validation.errors.quantityMultiplier}
                 />
-                <FormFeedback>{validation.errors.quantity_multiplier}</FormFeedback>
+                <FormFeedback>{validation.errors.quantityMultiplier}</FormFeedback>
               </Col>
 
               <Col className="mb-3">

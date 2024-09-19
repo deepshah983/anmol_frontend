@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { isEmpty } from "lodash";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -25,23 +23,19 @@ import {
 import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
-import thumb from "../../../assets/images/friends.svg";
 
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import TableContainer from "../../../components/Common/TableContainer";
 
 import { success, error } from "../../../components/toast";
 
 // Column
-import { Image, Name, Status, Designation, Email } from "../../NavigationCol";
-import HideShowSection from "../../../components/Common/HideShowSection";
+import { Name, Status, Designation, Email } from "../../NavigationCol";
 
 const index = (props) => {
-  const dispatch = useDispatch();
   const [navs, setNavs] = useState([]);
   const [count, setCount] = useState(0);
-  const [addImagePrimary, setAddImagePrimary] = useState(thumb);
   useEffect(() => {
     getNavigation();
   }, []);
@@ -58,7 +52,6 @@ const index = (props) => {
   };
   const [modal, setModal] = useState(false);
   const [modalCheck, setModalCheck] = useState(false);
-  const [navList, setNavList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
 
@@ -99,9 +92,7 @@ const index = (props) => {
         addNewNavigation(formData);
 
       }
-      validation.resetForm();
-      setAddImagePrimary(thumb);
-      toggle();
+     
     },
   });
 
@@ -110,11 +101,21 @@ const index = (props) => {
 
     postData("/clients", form_data)
       .then((response) => {
+        console.log(response);
+        
         if (response.data.error) {
-          return error(response.data.message);
+          return error(response.data.error);
         }
         getNavigation();
+        validation.resetForm();
+        toggle();
         return success(response.data.message);
+       
+      
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
       });
   };
 
@@ -125,10 +126,15 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        console.log(response.data.data);
         
         getNavigation();
+        validation.resetForm();
+        toggle();
         return success(response.data.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
       });
   };
   const handleCustomerClick = (arg) => {
@@ -146,7 +152,7 @@ const index = (props) => {
       status: status,
       altText: nav.altText
     });
-    setAddImagePrimary(nav.image);
+   
     setIsEdit(true);
     toggle();
   };
@@ -164,7 +170,6 @@ const index = (props) => {
       image: nav.image,
       altText: nav.altText
     });
-    setAddImagePrimary(nav.image);
     setIsEdit(true);
     toggleCheck();
   };
@@ -348,35 +353,13 @@ const index = (props) => {
   };
 
   const handleCustomerClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
     setIsEdit(false);
     toggle();
   };
   const handleCheckingClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
     setIsEdit(false);
     toggleCheck();
   };
-  const [form, setForm] = useState(null);
-  const onChangeAddPrimary = (e) => {
-    const reader = new FileReader(),
-      files = e.target.files;
-    reader.onload = () => {
-      setAddImagePrimary(reader.result);
-    };
-    reader.readAsDataURL(files[0]);
-    setForm({ ...form, icon: e.target.files });
-  };
-
-  const handleDelPri = (e) => {
-    e.preventDefault();
-    document.getElementById("editCatImagePrimary").value = "";
-    setAddImagePrimary(thumb);
-  };
-
-
 
   return (
     <React.Fragment>
