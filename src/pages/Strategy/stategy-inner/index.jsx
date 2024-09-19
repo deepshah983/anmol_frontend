@@ -49,7 +49,7 @@ const StrategyManagement = () => {
     try {
       const response = await getData("/strategies");
       console.log(response.data.data);
-      
+
       setStrategies(response.data.data);
       setCount(response.data.data.length);
     } catch (err) {
@@ -60,19 +60,17 @@ const StrategyManagement = () => {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
-
-      id: (strategy && strategy.id) || "",
-      name: (strategy && strategy.name) || "",
-      maxOpenPos: (strategy?.maxOpenPos) || "",
-      maxLongPos: (strategy?.maxLongPos) || "",
-      maxShortPos: (strategy?.maxShortPos) || "",
-      tradesPerDay: (strategy?.tradesPerDay) || "",
-      ordersPerDay: (strategy?.ordersPerDay) || "",
-      tradesPerScrip: (strategy?.tradesPerScrip) || "",
-      quantityMultiplier: (strategy?.quantityMultiplier) || "",
+      id: strategy?.id || "",
+      name: strategy?.name || "",
+      maxOpenPos: strategy?.maxOpenPos || "",
+      maxLongPos: strategy?.maxLongPos || "",
+      maxShortPos: strategy?.maxShortPos || "",
+      tradesPerDay: strategy?.tradesPerDay || "",
+      ordersPerDay: strategy?.ordersPerDay || "",
+      tradesPerScrip: strategy?.tradesPerScrip || "",
+      quantityMultiplier: strategy?.quantityMultiplier || "",
     },
 
-    
     validationSchema: Yup.object({
       name: Yup.string().required("Please Enter Strategy Name"),
       maxOpenPos: Yup.number().required("Please Enter Max Open Positions"),
@@ -81,60 +79,45 @@ const StrategyManagement = () => {
       tradesPerDay: Yup.number().required("Please Enter Trades Per Day"),
       ordersPerDay: Yup.number().required("Please Enter Orders Per Day"),
       tradesPerScrip: Yup.number().required("Please Enter Trades Per Scrip"),
-      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
+      quantityMultiplier: Yup.number().required(
+        "Please Enter Quantity Multiplier"
+      ),
     }),
-    onSubmit: (values) => {
-      let form = themeConfig.functions.read_form("createStrategy");
-      let formData = new FormData();
-      Object.keys(form).map((key) => {
-        formData.append(key, form[key]);
-      });
-    
-      if (isEdit) {
-
-        updateStratagy(values.id, formData);
-      } else {
-        addNewStratagy(formData);
-      }
+    onSubmit: async (values) => {
+      const formData = new FormData();
       
-    }
+      // Append all values to the FormData object
+      Object.keys(values).forEach((key) => formData.append(key, values[key]));
+    
+      try {
+        if (isEdit) {
+          // Using template literals correctly
+          await updateData(`/strategy/${values.id}`, formData);
+        } else {
+          await postData("/strategy", formData);
+        }
+    
+        // Refresh the strategies after success
+        getStrategies();
+    
+        // Show success message
+        success(
+          isEdit
+            ? "Strategy Updated Successfully"
+            : "Strategy Added Successfully"
+        );
+    
+        // Toggle the form/modal (if any)
+        toggle();
+      } catch (err) {
+        // Show error message in case of failure
+        error("Failed to save strategy");
+      }
+    
+      // Reset form validation after submission
+      validation.resetForm();
+    },
   });
-
-  const addNewStratagy = (form_data) => {
-
-    postData("/add-strategy", form_data).then(
-      (response) => {
-        if (response?.data?.error) {
-          return error(response?.data?.message);
-        }
-        getStrategies();
-        validation.resetForm();
-        toggle();
-        return success(response?.data?.message);
-      })
-      .catch((err) => {
-        console.log(err?.response?.data?.error);
-        return error(err?.response?.data?.error);
-      });
-  };
-
-  const updateStratagy = (id, form_data) => {
-
-    updateData(`/strategy/${id}`, form_data).then(
-      (response) => {
-        if (response?.data?.error) {
-          return error(response?.data?.message);
-        }
-        getStrategies();
-        validation.resetForm();
-        toggle();
-        return success(response?.data?.message);
-      })
-      .catch((err) => {
-        console.log(err?.response?.data?.error);
-        return error(err?.response?.data?.error);
-      });
-  };
 
   const handleStrategyClick = (strategyData) => {
     setStrategy({
@@ -149,7 +132,7 @@ const StrategyManagement = () => {
       quantityMultiplier: strategyData.quantityMultiplier,
     });
     console.log(strategyData);
-    
+
     setIsEdit(true);
     toggle();
   };
@@ -254,7 +237,6 @@ const StrategyManagement = () => {
   };
 
   const handleCustomerClicks = () => {
-   
     setIsEdit(false);
     toggle();
   };
@@ -287,7 +269,6 @@ const StrategyManagement = () => {
               <Card>
                 <CardBody>
                   <TableContainer
-
                     columns={columns}
                     data={strategies}
                     isGlobalFilter={true}
@@ -339,11 +320,16 @@ const StrategyManagement = () => {
                   id="maxOpenPos"
                   placeholder="Max Open Positions"
                   type="number"
-                  value={isEdit && validation.values.maxOpenPos == 0 ? 0 : validation.values.maxOpenPos || ""}
+                  value={
+                    isEdit && validation.values.maxOpenPos == 0
+                      ? 0
+                      : validation.values.maxOpenPos || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
                   invalid={
-                    validation.touched.maxOpenPos && validation.errors.maxOpenPos
+                    validation.touched.maxOpenPos &&
+                    validation.errors.maxOpenPos
                   }
                 />
                 <FormFeedback>{validation.errors.maxOpenPos}</FormFeedback>
@@ -356,10 +342,17 @@ const StrategyManagement = () => {
                   id="maxLongPos"
                   placeholder="Max Long Positions"
                   type="number"
-                  value={isEdit && validation.values.maxLongPos == 0 ? 0 : validation.values.maxLongPos || ""}
+                  value={
+                    isEdit && validation.values.maxLongPos == 0
+                      ? 0
+                      : validation.values.maxLongPos || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.maxLongPos && validation.errors.maxLongPos}
+                  invalid={
+                    validation.touched.maxLongPos &&
+                    validation.errors.maxLongPos
+                  }
                 />
                 <FormFeedback>{validation.errors.maxLongPos}</FormFeedback>
               </Col>
@@ -371,10 +364,17 @@ const StrategyManagement = () => {
                   id="maxShortPos"
                   placeholder="Max Short Positions"
                   type="number"
-                  value={isEdit && validation.values.maxShortPos == 0 ? 0 : validation.values.maxShortPos || ""}
+                  value={
+                    isEdit && validation.values.maxShortPos == 0
+                      ? 0
+                      : validation.values.maxShortPos || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.maxShortPos && validation.errors.maxShortPos}
+                  invalid={
+                    validation.touched.maxShortPos &&
+                    validation.errors.maxShortPos
+                  }
                 />
                 <FormFeedback>{validation.errors.maxShortPos}</FormFeedback>
               </Col>
@@ -386,10 +386,17 @@ const StrategyManagement = () => {
                   id="tradesPerDay"
                   placeholder="Trades Per Day"
                   type="number"
-                  value={isEdit && validation.values.tradesPerDay == 0 ? 0 : validation.values.tradesPerDay || ""}
+                  value={
+                    isEdit && validation.values.tradesPerDay == 0
+                      ? 0
+                      : validation.values.tradesPerDay || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.tradesPerDay && validation.errors.tradesPerDay}
+                  invalid={
+                    validation.touched.tradesPerDay &&
+                    validation.errors.tradesPerDay
+                  }
                 />
                 <FormFeedback>{validation.errors.tradesPerDay}</FormFeedback>
               </Col>
@@ -401,10 +408,17 @@ const StrategyManagement = () => {
                   id="ordersPerDay"
                   placeholder="Orders Per Day"
                   type="number"
-                  value={isEdit && validation.values.ordersPerDay == 0 ? 0 : validation.values.ordersPerDay || ""}
+                  value={
+                    isEdit && validation.values.ordersPerDay == 0
+                      ? 0
+                      : validation.values.ordersPerDay || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.ordersPerDay && validation.errors.ordersPerDay}
+                  invalid={
+                    validation.touched.ordersPerDay &&
+                    validation.errors.ordersPerDay
+                  }
                 />
                 <FormFeedback>{validation.errors.ordersPerDay}</FormFeedback>
               </Col>
@@ -416,10 +430,17 @@ const StrategyManagement = () => {
                   id="tradesPerScrip"
                   placeholder="Trades Per Scrip"
                   type="number"
-                  value={isEdit && validation.values.tradesPerScrip == 0 ? 0 : validation.values.tradesPerScrip || ""}
+                  value={
+                    isEdit && validation.values.tradesPerScrip == 0
+                      ? 0
+                      : validation.values.tradesPerScrip || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.tradesPerScrip && validation.errors.tradesPerScrip}
+                  invalid={
+                    validation.touched.tradesPerScrip &&
+                    validation.errors.tradesPerScrip
+                  }
                 />
                 <FormFeedback>{validation.errors.tradesPerScrip}</FormFeedback>
               </Col>
@@ -431,12 +452,21 @@ const StrategyManagement = () => {
                   id="quantityMultiplier"
                   placeholder="Quantity Multiplier"
                   type="number"
-                  value={isEdit && validation.values.quantityMultiplier == 0 ? 0 : validation.values.quantityMultiplier || ""}
+                  value={
+                    isEdit && validation.values.quantityMultiplier == 0
+                      ? 0
+                      : validation.values.quantityMultiplier || ""
+                  }
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.quantityMultiplier && validation.errors.quantityMultiplier}
+                  invalid={
+                    validation.touched.quantityMultiplier &&
+                    validation.errors.quantityMultiplier
+                  }
                 />
-                <FormFeedback>{validation.errors.quantityMultiplier}</FormFeedback>
+                <FormFeedback>
+                  {validation.errors.quantityMultiplier}
+                </FormFeedback>
               </Col>
 
               <Col className="mb-3">
