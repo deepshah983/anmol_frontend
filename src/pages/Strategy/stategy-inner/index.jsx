@@ -31,6 +31,7 @@ import TableContainer from "../../../components/Common/TableContainer";
 import { success, error } from "../../../components/toast";
 import HideShowSection from "../../../components/Common/HideShowSection";
 import { Strategy } from "../../NavigationCol"; // Ensure this is correctly imported
+import themeConfig from "../../../configs/themeConfig";
 
 const StrategyManagement = () => {
   const [strategies, setStrategies] = useState([]);
