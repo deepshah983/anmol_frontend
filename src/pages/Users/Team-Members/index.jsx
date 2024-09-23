@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { isEmpty } from "lodash";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -25,23 +23,19 @@ import {
 import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
-import thumb from "../../../assets/images/friends.svg";
 
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import TableContainer from "../../../components/Common/TableContainer";
 
 import { success, error } from "../../../components/toast";
 
 // Column
-import { Image, Name, Designation, Email } from "../../NavigationCol";
-import HideShowSection from "../../../components/Common/HideShowSection";
+import { Name, Status, Designation, Email } from "../../NavigationCol";
 
 const index = (props) => {
-  const dispatch = useDispatch();
   const [navs, setNavs] = useState([]);
   const [count, setCount] = useState(0);
-  const [addImagePrimary, setAddImagePrimary] = useState(thumb);
   useEffect(() => {
     getNavigation();
   }, []);
@@ -58,7 +52,6 @@ const index = (props) => {
   };
   const [modal, setModal] = useState(false);
   const [modalCheck, setModalCheck] = useState(false);
-  const [navList, setNavList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
 
@@ -72,6 +65,7 @@ const index = (props) => {
       name: (navigation && navigation.name) || "",
       email: (navigation && navigation.email) || "",
       phone: (navigation && navigation.phone) || "",
+      status: (navigation && navigation.status) || "",
       // position: (navigation && navigation.position) || "",
       // altText: (navigation && navigation.altText) || "",
     },
@@ -79,6 +73,7 @@ const index = (props) => {
       name: Yup.string().required("Please Enter User Name"),
       email: Yup.string().required("Please Enter Email"),
       phone: Yup.string().required("Please Enter Mobile Number"),
+      status: Yup.string().required("Please Select Status"),
       //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
@@ -97,9 +92,7 @@ const index = (props) => {
         addNewNavigation(formData);
 
       }
-      validation.resetForm();
-      setAddImagePrimary(thumb);
-      toggle();
+     
     },
   });
 
@@ -108,11 +101,21 @@ const index = (props) => {
 
     postData("/clients", form_data)
       .then((response) => {
+        console.log(response);
+        
         if (response.data.error) {
-          return error(response.data.message);
+          return error(response.data.error);
         }
         getNavigation();
+        validation.resetForm();
+        toggle();
         return success(response.data.message);
+       
+      
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
       });
   };
 
@@ -123,15 +126,22 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        console.log(response.data.data);
         
         getNavigation();
+        validation.resetForm();
+        toggle();
         return success(response.data.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
       });
   };
   const handleCustomerClick = (arg) => {
     const nav = arg;
-
+  
+    const status = nav.status ? nav.status : 0;
+    console.log(status);
     setNav({
       id: nav._id,
       name: nav.name,
@@ -139,9 +149,10 @@ const index = (props) => {
       phone: nav.phone,
       position: nav.position,
       image: nav.image,
+      status: status,
       altText: nav.altText
     });
-    setAddImagePrimary(nav.image);
+   
     setIsEdit(true);
     toggle();
   };
@@ -152,13 +163,13 @@ const index = (props) => {
     setNav({
       id: nav._id,
       name: nav.name,
+      status: nav.status,
       email: nav.email,
       phone: nav.phone,
       position: nav.position,
       image: nav.image,
       altText: nav.altText
     });
-    setAddImagePrimary(nav.image);
     setIsEdit(true);
     toggleCheck();
   };
@@ -166,6 +177,14 @@ const index = (props) => {
   // Customber Column
   const columns = useMemo(
     () => [
+      {
+        Header: "Status",
+        accessor: "status",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Status {...cellProps} />;
+        },
+      },
       {
         Header: "Checking",
         Cell: (cellProps) => {
@@ -188,6 +207,7 @@ const index = (props) => {
           );
         },
       },
+
       {
         Header: "Name",
         accessor: "name",
@@ -333,35 +353,13 @@ const index = (props) => {
   };
 
   const handleCustomerClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
     setIsEdit(false);
     toggle();
   };
   const handleCheckingClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
     setIsEdit(false);
     toggleCheck();
   };
-  const [form, setForm] = useState(null);
-  const onChangeAddPrimary = (e) => {
-    const reader = new FileReader(),
-      files = e.target.files;
-    reader.onload = () => {
-      setAddImagePrimary(reader.result);
-    };
-    reader.readAsDataURL(files[0]);
-    setForm({ ...form, icon: e.target.files });
-  };
-
-  const handleDelPri = (e) => {
-    e.preventDefault();
-    document.getElementById("editCatImagePrimary").value = "";
-    setAddImagePrimary(thumb);
-  };
-
-
 
   return (
     <React.Fragment>
@@ -449,7 +447,7 @@ const index = (props) => {
                       <Input
                         name="phone"
                         type="number"
-                        placeholder="Enter Phone Number"
+                        placeholder="Enter Mobile Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
                         value={validation.values?.phone || ""}
@@ -462,6 +460,30 @@ const index = (props) => {
                       {validation.touched?.phone && validation.errors?.phone ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.phone}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3">
+                      <Label className="form-label">Status<small className="asterisk">*</small></Label>
+                      <Input
+                        type="select"
+                        name="status"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={isEdit && validation.values.status == 0 ? 0 : validation.values.status || ""}
+                        invalid={
+                          validation.touched.status && validation.errors.status
+                            ? true
+                            : false
+                        }
+                      >
+                        <option value="">Select Status</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                      </Input>
+                      {validation.touched.status && validation.errors.status ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.status}
                         </FormFeedback>
                       ) : null}
                     </div>
@@ -498,72 +520,58 @@ const index = (props) => {
               >
                 <Row>
                   <Col className="col-12">
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                        <option option value="" disabled selected>Select User ID</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </select>
+                      
+                      <Input
+                        name="portal_id"
+                        type="text"
+                        placeholder="Select User ID"
+                        
+                      />
                       {/* {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
                           {validation.errors.name}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                      <option option value="" disabled selected>Select Password</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </select>
+                      <Input
+                        name="portal_password"
+                        type="text"
+                        placeholder="Select Password"
+                        
+                      />
                       {/* {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
                           {validation.errors.Email}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
-                        <option option value="" disabled selected>Select User Key</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </select>
+                      <Input
+                        name="portal_password"
+                        type="text"
+                        placeholder="Select User Key"
+                        
+                      />
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3 form-controls">
+                    <div className="mb-3">
                       <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control"> 
-                        <option option value="" disabled selected>Select Appkey</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </select>
+                     
+                      <Input
+                        name="portal_appkey"
+                        type="text"
+                        placeholder="Select Appkey"
+                        
+                      />
                       {/* {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
                           {validation.errors?.Number}

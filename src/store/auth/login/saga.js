@@ -35,6 +35,7 @@ function* loginUser({ payload: { user, history } }) {
       if(response.success){
         // Store tokens and user data in localStorage
         localStorage.setItem("accessToken", response.accessToken);
+        localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("authUser", JSON.stringify(response.user));
         
         // Redirect to dashboard
