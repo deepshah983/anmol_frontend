@@ -45,8 +45,25 @@ const index = (props) => {
   const getNavigation = () => {
     getData("/clients")
       .then((response) => {
-        setNavs(response?.data?.data?.clients);
-        setStrategy(response?.data?.data?.strategies);
+        let clients = response?.data?.data?.clients;
+        let strategies = response?.data?.data?.strategies;
+        
+        clients = clients.map(client => {
+          // Find the strategy that matches the client's assigned strategy
+          const assignedStrategy = strategies.find(strategy => client?.assignedstrategy === strategy?._id);
+          
+          if (assignedStrategy) {
+            // Replace the assigned strategy ID with the strategy name
+            client.assignedstrategy = assignedStrategy?.name;
+          }
+          
+          return client;
+        });
+        
+        // After processing, update state with the modified clients and strategies
+        
+        setNavs(clients);
+        setStrategy(strategies);
         
       });
   };
@@ -328,7 +345,7 @@ const index = (props) => {
       },
       {
         Header: "Assign Stratagies",
-        accessor: "assignStrategies",
+        accessor: "assignedstrategy",
         filterable: true,
         Cell: (cellProps) => {
           return <Name {...cellProps} />;
