@@ -32,10 +32,12 @@ import { success, error } from "../../../components/toast";
 
 // Column
 import { Name, Status, Designation, Email } from "../../NavigationCol";
+import { map } from 'lodash';
 
 const index = (props) => {
   const [navs, setNavs] = useState([]);
-  const [count, setCount] = useState(0);
+  const [strategy, setStrategy] = useState([]);
+
   useEffect(() => {
     getNavigation();
   }, []);
@@ -43,19 +45,35 @@ const index = (props) => {
   const getNavigation = () => {
     getData("/clients")
       .then((response) => {
-
-        const myArray = response.data.data;
-        const count = myArray.length;
-        setNavs(response.data.data);
-        setCount(count);
+        let clients = response?.data?.data?.clients;
+        let strategies = response?.data?.data?.strategies;
+        
+        clients = clients.map(client => {
+          // Find the strategy that matches the client's assigned strategy
+          const assignedStrategy = strategies.find(strategy => client?.assignedstrategy === strategy?._id);
+          
+          if (assignedStrategy) {
+            // Replace the assigned strategy ID with the strategy name
+            client.assignedstrategy = assignedStrategy?.name;
+          }
+          
+          return client;
+        });
+        
+        // After processing, update state with the modified clients and strategies
+        
+        setNavs(clients);
+        setStrategy(strategies);
+        
       });
   };
   const [modal, setModal] = useState(false);
   const [modalCheck, setModalCheck] = useState(false);
+  const [modalAssignStrategy, setModalAssignStrategy] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
 
-  // validation
+  // validation user form
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -65,6 +83,7 @@ const index = (props) => {
       name: (navigation && navigation.name) || "",
       email: (navigation && navigation.email) || "",
       phone: (navigation && navigation.phone) || "",
+      entryBalance: (navigation && navigation.entryBalance) || "",
       status: (navigation && navigation.status) || "",
       // position: (navigation && navigation.position) || "",
       // altText: (navigation && navigation.altText) || "",
@@ -73,11 +92,18 @@ const index = (props) => {
       name: Yup.string().required("Please Enter User Name"),
       email: Yup.string().required("Please Enter Email"),
       phone: Yup.string().required("Please Enter Mobile Number"),
-      status: Yup.string().required("Please Select Status"),
+      entryBalance: Yup.string().required("Please Enter Entry Balance"),
+      status: Yup.string().test('conditional-required', 'Please Select Status', function(value) {
+        // If the initial status is 0, don't require a value
+        if (navigation?.status == 0 || navigation?.status == '0') {
+          return true;
+        }
+        // Otherwise, require a non-empty value
+        return value !== undefined && value !== null && value !== '';
+      }),
       //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
-      console.log(values);
       
       let form = themeConfig.functions.read_form("createClient");
       let formData = new FormData();
@@ -86,17 +112,17 @@ const index = (props) => {
       });
       if (isEdit) {
         formData.append("id", values.id);
-        updateNavigation(values.id, formData);
+        updateUser(values.id, formData);
       } else {
 
-        addNewNavigation(formData);
+        addUser(formData);
 
       }
      
     },
   });
 
-  const addNewNavigation = (form_data) => {
+  const addUser = (form_data) => {
 
 
     postData("/clients", form_data)
@@ -119,7 +145,7 @@ const index = (props) => {
       });
   };
 
-  const updateNavigation = (id, form_data) => {
+  const updateUser = (id, form_data) => {
 
     updateData(`/clients/${id}`, form_data)
       .then((response) => {
@@ -137,24 +163,93 @@ const index = (props) => {
         return error(err?.response?.data?.error);
       });
   };
+
+   // validation
+   const validationAssignStratagy = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
+    enableReinitialize: true,
+    
+    initialValues: {
+      id: (navigation && navigation.id) || "",
+      assignedstrategy: (navigation && navigation.assignedstrategy) || "",
+
+    },
+    validationAssignStratagySchema: Yup.object({
+      assignedstrategy: Yup.string().required("Please Select Strategy"),
+    }),
+    onSubmit: (values) => {
+      console.log(values);
+      
+      let form = themeConfig.functions.read_form("assignStrategy");
+      console.log(form);
+      let formData = new FormData();
+      Object.keys(form).map((key) => {
+        
+        
+        formData.append(key, form[key]);
+      });
+
+        formData.append("id", values.id);
+        updateAssignStrategy(values.id, formData);
+     
+    },
+  });
+
+  const updateAssignStrategy = (id, form_data) => {
+
+    updateData(`/client/assignStrategy/${id}`, form_data)
+      .then((response) => {
+        if (response.data.error) {
+          return error(response.data.message);
+        }
+        
+        getNavigation();
+        validationAssignStratagy.resetForm();
+        toggleAssignStrategy();
+        return success(response.data.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
+
   const handleCustomerClick = (arg) => {
     const nav = arg;
   
     const status = nav.status ? nav.status : 0;
-    console.log(status);
+
     setNav({
       id: nav._id,
       name: nav.name,
       email: nav.email,
       phone: nav.phone,
       position: nav.position,
-      image: nav.image,
-      status: status,
-      altText: nav.altText
+      entryBalance: nav.entryBalance,
+      status: status
     });
    
     setIsEdit(true);
     toggle();
+  };
+
+  const assignStrategyClick = (arg) => {
+    const nav = arg;
+  
+    const status = nav.status ? nav.status : 0;
+   
+    setNav({
+      id: nav._id,
+      name: nav.name,
+      email: nav.email,
+      phone: nav.phone,
+      position: nav.position,
+      entryBalance: nav.entryBalance,
+      status: status
+    });
+   
+    setIsEdit(true);
+    toggleAssignStrategy();
   };
 
   const handleCheckingClick = (arg) => {
@@ -167,8 +262,7 @@ const index = (props) => {
       email: nav.email,
       phone: nav.phone,
       position: nav.position,
-      image: nav.image,
-      altText: nav.altText
+      entryBalance: nav.entryBalance
     });
     setIsEdit(true);
     toggleCheck();
@@ -234,7 +328,7 @@ const index = (props) => {
       },
       {
         Header: "Entry Balance",
-        accessor: "entry_balance",
+        accessor: "entryBalance",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
@@ -246,6 +340,14 @@ const index = (props) => {
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
+        },
+      },
+      {
+        Header: "Assign Stratagies",
+        accessor: "assignedstrategy",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Name {...cellProps} />;
         },
       },
       {
@@ -278,15 +380,14 @@ const index = (props) => {
                   Select Script
                 </UncontrolledTooltip>
                 <div className="text-success-script">
-                  <div>Assign Script</div>
-                  <div>unassign Script</div>
-                  <div>Assign License</div>
-                  <div>Reset Password</div>
-                  <div>Update Affiliate Commission</div>
-                  <div>Update Pay Per Order Rate</div>
+                  <div    onClick={() => {
+                  const customerData = cellProps.row.original;
+                  assignStrategyClick(customerData);
+                }}>Assign Strategy</div>
+                  <div>unassign Strategy</div>
                 </div>
               </Link>
-              <Link
+              {/* <Link
                 to="#"
                 className="text-danger"
                 onClick={() => {
@@ -298,7 +399,7 @@ const index = (props) => {
                 <UncontrolledTooltip placement="top" target="deletetooltip">
                   Delete
                 </UncontrolledTooltip>
-              </Link>
+              </Link> */}
             </div>
           );
         },
@@ -322,6 +423,15 @@ const index = (props) => {
       setNav(null);
     } else {
       setModalCheck(true);
+    }
+  };
+
+  const toggleAssignStrategy = () => {
+    if (modalAssignStrategy) {
+      setModalAssignStrategy(false);
+      setNav(null);
+    } else {
+      setModalAssignStrategy(true);
     }
   };
 
@@ -373,7 +483,6 @@ const index = (props) => {
           <TableContainer
             columns={columns}
             data={navs}
-            cnt={count}
             isGlobalFilter={true}
             isAddCustList={true}
             isPagination={true}
@@ -385,15 +494,14 @@ const index = (props) => {
 
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
-              {!!isEdit ? "Add Client" : "Edit Client"}
+              {!isEdit ? "Add Client" : "Edit Client"}
             </ModalHeader>
             <ModalBody>
               <Form
                 id="createClient"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  console.log("edit");
-                  
+                 
                   validation.handleSubmit();
                   return false;
                 }}
@@ -464,6 +572,27 @@ const index = (props) => {
                       ) : null}
                     </div>
                     <div className="mb-3">
+                      <Label className="form-label">Entry Balance<small className="asterisk">*</small></Label>
+                      <Input
+                        name="entryBalance"
+                        type="number"
+                        placeholder="Enter Entry Balance"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values?.entryBalance || ""}
+                        invalid={
+                          validation.touched?.entryBalance && validation.errors?.entryBalance
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched?.entryBalance && validation.errors?.entryBalance ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors?.entryBalance}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                    <div className="mb-3">
                       <Label className="form-label">Status<small className="asterisk">*</small></Label>
                       <Input
                         type="select"
@@ -521,10 +650,10 @@ const index = (props) => {
                 <Row>
                   <Col className="col-12">
                     <div className="mb-3">
-                      <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
+                      <Label className="form-label">User ID<small className="asterisk">*</small></Label>
                       
                       <Input
-                        name="portal_id"
+                        name="userId"
                         type="text"
                         placeholder="Select User ID"
                         
@@ -536,11 +665,11 @@ const index = (props) => {
                       ) : null} */}
                     </div>
                     <div className="mb-3">
-                      <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
+                      <Label className="form-label">Pin<small className="asterisk">*</small></Label>
                       <Input
-                        name="portal_password"
+                        name="pin"
                         type="text"
-                        placeholder="Select Password"
+                        placeholder="Select Pin"
                         
                       />
                       {/* {validation.touched.Email && validation.errors.Email ? (
@@ -552,7 +681,7 @@ const index = (props) => {
                     <div className="mb-3">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
                       <Input
-                        name="portal_password"
+                        name="userKey"
                         type="text"
                         placeholder="Select User Key"
                         
@@ -564,10 +693,10 @@ const index = (props) => {
                       ) : null} */}
                     </div>
                     <div className="mb-3">
-                      <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
+                      <Label className="form-label">App key<small className="asterisk">*</small></Label>
                      
                       <Input
-                        name="portal_appkey"
+                        name="appKey"
                         type="text"
                         placeholder="Select Appkey"
                         
@@ -596,6 +725,66 @@ const index = (props) => {
             </ModalBody>
           </Modal>
 
+           {/* start assign strategy popup */}
+          <Modal isOpen={modalAssignStrategy} toggle={toggleAssignStrategy}>
+            <ModalHeader toggle={toggleAssignStrategy} tag="h4">
+              Assign Stratagy
+            </ModalHeader>
+            <ModalBody>
+              <Form
+                id="assignStrategy"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validationAssignStratagy.handleSubmit();
+                  return false;
+                }}
+              >
+                <Row>
+                  <Col className="col-12">
+                    <div className="mb-3">
+                      <Label className="form-label">Assign Strategy<small className="asterisk">*</small></Label>
+                      <Input
+                        type="select"
+                        name="assignedstrategy"
+                        onChange={validationAssignStratagy.handleChange}
+                        onBlur={validationAssignStratagy.handleBlur}
+                        value={validationAssignStratagy.values.assignedstrategy || ""}
+                        invalid={
+                          validationAssignStratagy.touched.assignedstrategy && 
+                          validationAssignStratagy.errors.assignedstrategy
+                        }
+                      >
+                        <option value="">Select Strategy</option>
+                        {strategy.map((strtgy) => (
+                          <option key={strtgy._id} value={strtgy._id} name={strtgy.name}>
+                            {strtgy.name}
+                          </option>
+                        ))}
+                      </Input>
+                      {validationAssignStratagy.touched.assignedstrategy && validationAssignStratagy.errors.assignedstrategy ? (
+                        <FormFeedback type="invalid">
+                          {validationAssignStratagy.errors.assignedstrategy}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <div className="text-end">
+                      <button
+                        type="submit"
+                        className="btn btn-success save-customer"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </Col>
+                </Row>
+              </Form>
+            </ModalBody>
+          </Modal>
+            {/* end assign strategy popup */}
         </CardBody>
       </Card>
     </React.Fragment>
