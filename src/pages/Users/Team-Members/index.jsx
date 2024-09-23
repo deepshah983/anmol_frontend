@@ -104,7 +104,6 @@ const index = (props) => {
       //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
-      console.log(values);
       
       let form = themeConfig.functions.read_form("createClient");
       let formData = new FormData();
