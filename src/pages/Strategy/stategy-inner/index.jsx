@@ -99,7 +99,6 @@ const StrategyManagement = () => {
         return success(response?.data?.message);
       })
       .catch((err) => {
-        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
@@ -116,7 +115,6 @@ const StrategyManagement = () => {
         return success(response?.data?.message);
       })
       .catch((err) => {
-        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
