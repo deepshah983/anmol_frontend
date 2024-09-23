@@ -33,7 +33,7 @@ const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
   // Client
-  { path: "/client", component: <Users /> },
+  { path: "/users", component: <Users /> },
   //profile
   { path: "/profile", component: <UserProfile /> },
 

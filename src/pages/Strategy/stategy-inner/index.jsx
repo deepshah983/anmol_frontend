@@ -30,7 +30,7 @@ import DeleteModal from "../../../components/Common/DeleteModal";
 import TableContainer from "../../../components/Common/TableContainer";
 import { success, error } from "../../../components/toast";
 import HideShowSection from "../../../components/Common/HideShowSection";
-import { Strategy } from "../../NavigationCol"; // Ensure this is correctly imported
+import { Strategy } from "../../NavigationCol";
 import themeConfig from "../../../configs/themeConfig";
 
 const StrategyManagement = () => {
@@ -48,8 +48,6 @@ const StrategyManagement = () => {
   const getStrategies = async () => {
     try {
       const response = await getData("/strategies");
-      console.log(response.data.data);
-      
       setStrategies(response.data.data);
       setCount(response.data.data.length);
     } catch (err) {
@@ -60,65 +58,78 @@ const StrategyManagement = () => {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
-
       id: (strategy && strategy.id) || "",
       name: (strategy && strategy.name) || "",
-
-      maxOpenPos: strategy?.maxOpenPos || "",
-      maxLongPos: strategy?.maxLongPos || "",
-      maxShortPos: strategy?.maxShortPos || "",
-      tradesPerDay: strategy?.tradesPerDay || "",
-      ordersPerDay: strategy?.ordersPerDay || "",
-      tradesPerScrip: strategy?.tradesPerScrip || "",
-      quantityMultiplier: strategy?.quantityMultiplier || "",
+      entryTime: (strategy && strategy.entryTime) || "",
+      exitTime: (strategy && strategy.exitTime) || "",
+      squareOffTime: (strategy && strategy.squareOffTime) || "",
+      quantityMultiplier: (strategy?.quantityMultiplier) || "",
     },
-
-    
     validationSchema: Yup.object({
       name: Yup.string().required("Please Enter Strategy Name"),
-      maxOpenPos: Yup.number().required("Please Enter Max Open Positions"),
-      maxLongPos: Yup.number().required("Please Enter Max Long Positions"),
-      maxShortPos: Yup.number().required("Please Enter Max Short Positions"),
-      tradesPerDay: Yup.number().required("Please Enter Trades Per Day"),
-      ordersPerDay: Yup.number().required("Please Enter Orders Per Day"),
-      tradesPerScrip: Yup.number().required("Please Enter Trades Per Scrip"),
+      entryTime: Yup.string().required("Please Enter Entry Time"),
+      exitTime: Yup.string().required("Please Enter Exit Time"),
+      squareOffTime: Yup.string().required("Please Enter Square-off Time"),
       quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
     }),
-    onSubmit: async (values) => {
-      const formData = new FormData();
-      Object.keys(values).forEach((key) => formData.append(key, values[key]));
+    onSubmit: (values) => {
+      let form = themeConfig.functions.read_form("createStrategy");
+      let formData = new FormData();
+      Object.keys(form).map((key) => {
+        formData.append(key, form[key]);
+      });
+    
+      if (isEdit) {
+        updateStrategy(values.id, formData);
+      } else {
+        addNewStrategy(formData);
+      }
+    }
+  });
 
-      try {
-        if (isEdit) {
-          await updateData(`/strategy/${values.id}`, formData);
-        } else {
-          await postData("/strategy", formData);
+  const addNewStrategy = (form_data) => {
+    postData("/strategy", form_data)
+      .then((response) => {
+        if (response?.data?.error) {
+          return error(response?.data?.message);
         }
         getStrategies();
-        success(isEdit ? "Strategy Updated Successfully" : "Strategy Added Successfully");
+        validation.resetForm();
         toggle();
-      } catch (err) {
-        error("Failed to save strategy");
-      }
+        return success(response?.data?.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
 
-      validation.resetForm();
-    },
-  });
+  const updateStrategy = (id, form_data) => {
+    updateData(`/strategy/${id}`, form_data)
+      .then((response) => {
+        if (response?.data?.error) {
+          return error(response?.data?.message);
+        }
+        getStrategies();
+        validation.resetForm();
+        toggle();
+        return success(response?.data?.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
 
   const handleStrategyClick = (strategyData) => {
     setStrategy({
       id: strategyData._id,
       name: strategyData.name,
-      maxOpenPos: strategyData.maxOpenPos,
-      maxLongPos: strategyData.maxLongPos,
-      maxShortPos: strategyData.maxShortPos,
-      tradesPerDay: strategyData.tradesPerDay,
-      ordersPerDay: strategyData.ordersPerDay,
-      tradesPerScrip: strategyData.tradesPerScrip,
+      entryTime: strategyData.entryTime,
+      exitTime: strategyData.exitTime,
+      squareOffTime: strategyData.squareOffTime,
       quantityMultiplier: strategyData.quantityMultiplier,
     });
-    console.log(strategyData);
-    
     setIsEdit(true);
     toggle();
   };
@@ -131,33 +142,18 @@ const StrategyManagement = () => {
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
-        Header: "Max Open Positions",
-        accessor: "maxOpenPos",
+        Header: "Entry Time",
+        accessor: "entryTime",
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
-        Header: "Max Long Positions",
-        accessor: "maxLongPos",
+        Header: "Exit Time",
+        accessor: "exitTime",
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
-        Header: "Max Short Positions",
-        accessor: "maxShortPos",
-        Cell: ({ value }) => <Strategy value={value} />,
-      },
-      {
-        Header: "Trades Per Day",
-        accessor: "tradesPerDay",
-        Cell: ({ value }) => <Strategy value={value} />,
-      },
-      {
-        Header: "Orders Per Day",
-        accessor: "ordersPerDay",
-        Cell: ({ value }) => <Strategy value={value} />,
-      },
-      {
-        Header: "Trades Per Scrip",
-        accessor: "tradesPerScrip",
+        Header: "Square-off Time",
+        accessor: "squareOffTime",
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
@@ -223,7 +219,6 @@ const StrategyManagement = () => {
   };
 
   const handleCustomerClicks = () => {
-   
     setIsEdit(false);
     toggle();
   };
@@ -256,7 +251,6 @@ const StrategyManagement = () => {
               <Card>
                 <CardBody>
                   <TableContainer
-
                     columns={columns}
                     data={strategies}
                     isGlobalFilter={true}
@@ -302,95 +296,45 @@ const StrategyManagement = () => {
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="maxOpenPos">Max Open Positions</Label>
+                <Label htmlFor="entryTime">Entry Time</Label>
                 <Input
-                  name="maxOpenPos"
-                  id="maxOpenPos"
-                  placeholder="Max Open Positions"
-                  type="number"
-                  value={isEdit && validation.values.maxOpenPos == 0 ? 0 : validation.values.maxOpenPos || ""}
+                  name="entryTime"
+                  id="entryTime"
+                  type="time"
+                  value={validation.values.entryTime}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={
-                    validation.touched.maxOpenPos && validation.errors.maxOpenPos
-                  }
+                  invalid={validation.touched.entryTime && validation.errors.entryTime}
                 />
-                <FormFeedback>{validation.errors.maxOpenPos}</FormFeedback>
+                <FormFeedback>{validation.errors.entryTime}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="maxLongPos">Max Long Positions</Label>
+                <Label htmlFor="exitTime">Exit Time</Label>
                 <Input
-                  name="maxLongPos"
-                  id="maxLongPos"
-                  placeholder="Max Long Positions"
-                  type="number"
-                  value={isEdit && validation.values.maxLongPos == 0 ? 0 : validation.values.maxLongPos || ""}
+                  name="exitTime"
+                  id="exitTime"
+                  type="time"
+                  value={validation.values.exitTime}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.maxLongPos && validation.errors.maxLongPos}
+                  invalid={validation.touched.exitTime && validation.errors.exitTime}
                 />
-                <FormFeedback>{validation.errors.maxLongPos}</FormFeedback>
+                <FormFeedback>{validation.errors.exitTime}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
-                <Label htmlFor="maxShortPos">Max Short Positions</Label>
+                <Label htmlFor="squareOffTime">Square-off Time</Label>
                 <Input
-                  name="maxShortPos"
-                  id="maxShortPos"
-                  placeholder="Max Short Positions"
-                  type="number"
-                  value={isEdit && validation.values.maxShortPos == 0 ? 0 : validation.values.maxShortPos || ""}
+                  name="squareOffTime"
+                  id="squareOffTime"
+                  type="time"
+                  value={validation.values.squareOffTime}
                   onBlur={validation.handleBlur}
                   onChange={validation.handleChange}
-                  invalid={validation.touched.maxShortPos && validation.errors.maxShortPos}
+                  invalid={validation.touched.squareOffTime && validation.errors.squareOffTime}
                 />
-                <FormFeedback>{validation.errors.maxShortPos}</FormFeedback>
-              </Col>
-
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="tradesPerDay">Trades Per Day</Label>
-                <Input
-                  name="tradesPerDay"
-                  id="tradesPerDay"
-                  placeholder="Trades Per Day"
-                  type="number"
-                  value={isEdit && validation.values.tradesPerDay == 0 ? 0 : validation.values.tradesPerDay || ""}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.tradesPerDay && validation.errors.tradesPerDay}
-                />
-                <FormFeedback>{validation.errors.tradesPerDay}</FormFeedback>
-              </Col>
-
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="ordersPerDay">Orders Per Day</Label>
-                <Input
-                  name="ordersPerDay"
-                  id="ordersPerDay"
-                  placeholder="Orders Per Day"
-                  type="number"
-                  value={isEdit && validation.values.ordersPerDay == 0 ? 0 : validation.values.ordersPerDay || ""}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.ordersPerDay && validation.errors.ordersPerDay}
-                />
-                <FormFeedback>{validation.errors.ordersPerDay}</FormFeedback>
-              </Col>
-
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="tradesPerScrip">Trades Per Scrip</Label>
-                <Input
-                  name="tradesPerScrip"
-                  id="tradesPerScrip"
-                  placeholder="Trades Per Scrip"
-                  type="number"
-                  value={isEdit && validation.values.tradesPerScrip == 0 ? 0 : validation.values.tradesPerScrip || ""}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.tradesPerScrip && validation.errors.tradesPerScrip}
-                />
-                <FormFeedback>{validation.errors.tradesPerScrip}</FormFeedback>
+                <FormFeedback>{validation.errors.squareOffTime}</FormFeedback>
               </Col>
 
               <Col className="mb-3" md={12}>
