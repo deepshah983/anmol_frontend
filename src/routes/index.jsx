@@ -17,7 +17,7 @@ import Dashboard from "../pages/Dashboard/index";
 import UserProfile from "../pages/Authentication/user-profile";
 
 
-// About
+// Client
 import Users from "../pages/Users/index";
 
 // Tradingform
@@ -32,9 +32,9 @@ import OrderLog from "../pages/OrderLog/index";
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
 
-  // About
-  { path: "/users", component: <Users /> },
-  //   // //profile
+  // Client
+  { path: "/client", component: <Users /> },
+  //profile
   { path: "/profile", component: <UserProfile /> },
 
    // Tradingform
