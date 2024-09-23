@@ -63,19 +63,26 @@ const index = (props) => {
   const [navigation, setNav] = useState(null);
 
   const [showFields, setShowFields] = useState(false);
+  const [showRadioButtons, setShowRadioButtons] = useState(false);
+  const [selectedRadio, setSelectedRadio] = useState('');
   const [limitShowFields, setLimitShowFields] = useState(false);
 
   const handleSelectionChange = (event) => {
-    if (event.target.value === 'sLL') {
+    const selectedValue = event.target.value;
+    if (selectedValue === 'sLL') {
       setShowFields(true);
+      setShowRadioButtons(false);
+    } else if (selectedValue === 'market') {
+      setShowFields(false);
+      setShowRadioButtons(true);
     } else {
       setShowFields(false);
+      setShowRadioButtons(false);
     }
-    if (event.target.value === 'market') {
-      setLimitShowFields(true);
-    } else {
-      setLimitShowFields(false);
-    }
+  };
+
+  const handleRadioChange = (event) => {
+    setSelectedRadio(event.target.value); // Update the selected radio value
   };
 
   // validation
@@ -539,21 +546,47 @@ const index = (props) => {
                     </div>
                     <div className="add-tread-beside">
                       <div className="add-tread  col-md-12">
-                        {limitShowFields && (
-                            <div>
-                              <div className="for-sll">
-                                <div className="add-tread col-md-6">
-                                  <label htmlFor="field1">Price Buffer Type</label>
-                                  <input className="select-script" type="number" id="field1" placeholder="Price" name="field1" />
-                                </div>
+                      {showRadioButtons && (
+        <div className="for-sll">
+          <div className="add-tread col-md-6">
+            <label htmlFor="field5">Price Buffer Type</label>
+            <div className="add-tread price-buffer col-md-12">
+              <label className="price-buffer">
+                <input
+                  type="radio"
+                  name="radioOption"
+                  value="fixed"
+                  onChange={handleRadioChange}
+                />
+                Fixed
+              </label>
+              <label className="price-buffer">
+                <input
+                  type="radio"
+                  name="radioOption"
+                  value="percent"
+                  onChange={handleRadioChange}
+                />
+                Percent
+              </label>
+            </div>
+          </div>
 
-                                <div className="add-tread col-md-6">
-                                  <label htmlFor="field2">Price Buffer</label>
-                                  <input className="select-script" type="number" id="field2" placeholder="Price Buffer" name="field2" />
-                                </div>
-                              </div>
-                            </div>
-                          )}
+          {/* Conditionally render Price Buffer input field when "Fixed" is selected */}
+          {selectedRadio === 'fixed' && (
+            <div className="add-tread col-md-6">
+              <label htmlFor="priceBuffer">Price Buffer</label>
+              <input
+                className="select-script"
+                type="number"
+                id="priceBuffer"
+                placeholder="Enter Price Buffer"
+                name="priceBuffer"
+              />
+            </div>
+          )}
+        </div>
+      )}
                       </div>
                     </div>
                   </div>
@@ -608,7 +641,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched.name && validation.errors.name ? (
                         <FormFeedback type="invalid">
@@ -626,7 +659,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched.Email && validation.errors.Email ? (
                         <FormFeedback type="invalid">
@@ -644,7 +677,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
@@ -662,7 +695,7 @@ const index = (props) => {
                         <option value="name">name 4</option>
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
-                        <option value="name">name 6</option>
+                        <option value="name">name 7</option>
                       </select>
                       {validation.touched?.Number && validation.errors?.Number ? (
                         <FormFeedback type="invalid">
