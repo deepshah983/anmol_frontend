@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import Select from 'react-select';
 import {
   Card,
   CardBody,
@@ -16,7 +17,7 @@ import {
   FormFeedback,
   Label,
   Form,
-  Button,
+  Button
 } from "reactstrap";
 
 //Import Breadcrumb
@@ -25,18 +26,17 @@ import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
 
 //redux
-import { useDispatch } from "react-redux";
 import TableContainer from "../../../components/Common/TableContainer";
 
 import { success, error } from "../../../components/toast";
 
 // Column
 import { Name, Status, Designation, Email } from "../../NavigationCol";
-import { map } from 'lodash';
 
 const index = (props) => {
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
+  const [tags, setTags] = useState([])
 
   useEffect(() => {
     getNavigation();
@@ -47,19 +47,42 @@ const index = (props) => {
       .then((response) => {
         let clients = response?.data?.data?.clients;
         let strategies = response?.data?.data?.strategies;
+        let userStrategy = response?.data?.data?.userStrategy;
+        let treadSetting = response?.data?.data?.treadSetting;
         
         clients = clients.map(client => {
           // Find the strategy that matches the client's assigned strategy
-          const assignedStrategy = strategies.find(strategy => client?.assignedstrategy === strategy?._id);
           
-          if (assignedStrategy) {
+          let assignedStrategy = '';
+          userStrategy.map(strategy => {
             // Replace the assigned strategy ID with the strategy name
-            client.assignedstrategy = assignedStrategy?.name;
-          }
-          
+            if(client._id == strategy.parent_id){
+            client.selectedStrategy = strategy.assigned_stratagies;
+            strategy.assigned_stratagies.map(row => {
+              if(assignedStrategy == '')
+              assignedStrategy = row?.label;
+            else
+            assignedStrategy = assignedStrategy+', '+row?.label;
+          })
+        }
+          })
+          treadSetting.map(tread => {
+            if(client._id == tread.parent_id){
+              client.treadSetting = tread;
+            }
+          })
+          client.assignedstrategy = assignedStrategy;
           return client;
-        });
         
+        });
+         console.log(clients);
+         
+        strategies = strategies.map(row => {
+          row.label = row.name;
+          row.value = row._id;
+
+          return row;
+        });
         // After processing, update state with the modified clients and strategies
         
         setNavs(clients);
@@ -72,6 +95,7 @@ const index = (props) => {
   const [modalAssignStrategy, setModalAssignStrategy] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
+  const [navigationTreadSetting, setNavTreadSetting] = useState(null);
 
   // validation user form
   const validation = useFormik({
@@ -85,8 +109,6 @@ const index = (props) => {
       phone: (navigation && navigation.phone) || "",
       entryBalance: (navigation && navigation.entryBalance) || "",
       status: (navigation && navigation.status) || "",
-      // position: (navigation && navigation.position) || "",
-      // altText: (navigation && navigation.altText) || "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Please Enter User Name"),
@@ -164,6 +186,59 @@ const index = (props) => {
       });
   };
 
+  //validation Tread Setting
+  const validationTreadSetting = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
+    enableReinitialize: true,
+
+    initialValues: {
+      id: (navigation && navigation.id) || "",
+      userId: (navigation && navigation.userId) || "",
+      pin: (navigation && navigation.pin) || "",
+      userKey: (navigation && navigation.userKey) || "",
+      appKey: (navigation && navigation.appKey) || "",
+    },
+    validationSchema: Yup.object({
+      userId: Yup.string().required("Please Enter User Id"),
+      pin: Yup.string().required("Please Enter Pin"),
+      userKey: Yup.string().required("Please Enter userKey"),
+      appKey: Yup.string().required("Please Enter appKey"),
+    }),
+    onSubmit: (values) => {
+      
+      let form = themeConfig.functions.read_form("treadSetting");
+      let formData = new FormData();
+      Object.keys(form).map((key) => {
+        formData.append(key, form[key]);
+      });
+      
+        formData.append("parent_id", values.id);
+        TreadSetting(values.id, formData);
+    },
+  });
+  //end validation Tread Setting
+
+  //function of tread setting
+  const TreadSetting = (id, form_data) => {
+
+    postData(`/clients/tread-setting/${id}`, form_data)
+      .then((response) => {
+        if (response.data.error) {
+          return error(response.data.message);
+        }
+        
+        getNavigation();
+        validationTreadSetting.resetForm();
+        toggleCheck();
+        return success(response.data.message);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.error);
+        return error(err?.response?.data?.error);
+      });
+  };
+  //end
+
    // validation
    const validationAssignStratagy = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -174,30 +249,34 @@ const index = (props) => {
       assignedstrategy: (navigation && navigation.assignedstrategy) || "",
 
     },
-    validationAssignStratagySchema: Yup.object({
-      assignedstrategy: Yup.string().required("Please Select Strategy"),
-    }),
+    // validationSchema: Yup.object({
+    //   userId: Yup.string().required("Please Enter User Id"),
+    // }),
     onSubmit: (values) => {
       console.log(values);
-      
-      let form = themeConfig.functions.read_form("assignStrategy");
-      console.log(form);
-      let formData = new FormData();
-      Object.keys(form).map((key) => {
-        
-        
-        formData.append(key, form[key]);
-      });
+      console.log(tags);
 
-        formData.append("id", values.id);
-        updateAssignStrategy(values.id, formData);
+      const transformedArray = tags.map((item) => ({
+        strategy_id: item._id, // If item.blog_id exists, use it; otherwise, use item.id
+        label: item.label,
+        value: item.value,
+        parent_id: values.id, // Add the desired parent_id value here
+      }));
+  
+      let tagsData = {
+        tags: transformedArray,
+        parent_id: values.id
+      }
+
+      console.log(tagsData);
+      updateAssignStrategy(tagsData);
      
     },
   });
 
-  const updateAssignStrategy = (id, form_data) => {
+  const updateAssignStrategy = (form_data) => {
 
-    updateData(`/client/assignStrategy/${id}`, form_data)
+    postData(`/client/assignStrategy`, form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
@@ -233,36 +312,41 @@ const index = (props) => {
     toggle();
   };
 
-  const assignStrategyClick = (arg) => {
-    const nav = arg;
+
+    const assignStrategyClick = (arg) => {
+      const nav = arg;
+    
+      console.log("nav", nav);
+      
+      let assignStrategyNav = '';
   
-    const status = nav.status ? nav.status : 0;
-   
-    setNav({
-      id: nav._id,
-      name: nav.name,
-      email: nav.email,
-      phone: nav.phone,
-      position: nav.position,
-      entryBalance: nav.entryBalance,
-      status: status
-    });
-   
-    setIsEdit(true);
-    toggleAssignStrategy();
-  };
+      strategy.map((row) => {
+       if(row.name == nav.assignedstrategy){
+          assignStrategyNav = row._id;
+       }
+      })
+  
+      setNav({
+        id: nav._id,
+        assignedstrategy: assignStrategyNav,
+      });
+     setTags(nav.selectedStrategy)
+      setIsEdit(true);
+      toggleAssignStrategy();
+    };
+
 
   const handleCheckingClick = (arg) => {
     const nav = arg;
 
+    console.log("handleCheckingClick", nav);
+    
     setNav({
       id: nav._id,
-      name: nav.name,
-      status: nav.status,
-      email: nav.email,
-      phone: nav.phone,
-      position: nav.position,
-      entryBalance: nav.entryBalance
+      userId: nav?.treadSetting?.userId,
+      pin: nav?.treadSetting?.pin,
+      userKey: nav?.treadSetting?.userKey,
+      appKey: nav?.treadSetting?.appKey,
     });
     setIsEdit(true);
     toggleCheck();
@@ -383,8 +467,8 @@ const index = (props) => {
                   <div    onClick={() => {
                   const customerData = cellProps.row.original;
                   assignStrategyClick(customerData);
-                }}>Assign Strategy</div>
-                  <div>unassign Strategy</div>
+                }}>Assign/Unassign Strategy</div>
+                  {/* <div>unassign Strategy</div> */}
                 </div>
               </Link>
               {/* <Link
@@ -469,6 +553,43 @@ const index = (props) => {
   const handleCheckingClicks = () => {
     setIsEdit(false);
     toggleCheck();
+  };
+
+  const customStyles = {
+    control: (base, state) => ({
+      ...base,
+      background: "#023950",
+      // match with the menu
+      borderRadius: state.isFocused ? "3px 3px 0 0" : 3,
+      // Overwrittes the different states of border
+      borderColor: state.isFocused ? "yellow" : "green",
+      // Removes weird border around container
+      boxShadow: state.isFocused ? null : null,
+      "&:hover": {
+        // Overwrittes the different states of border
+        borderColor: state.isFocused ? "red" : "blue"
+      }
+    }),
+    menu: base => ({
+      ...base,
+      // override border radius to match the box
+      borderRadius: 0,
+      // kill the gap
+      marginTop: 0
+    }),
+    menuList: base => ({
+      ...base,
+      // kill the white space on first and last option
+      padding: 0
+    }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+   
+      return {
+        ...styles,
+        backgroundColor: isFocused ? "#999999" : "white",
+        color: "#333333"
+      };
+    }
   };
 
   return (
@@ -640,11 +761,11 @@ const index = (props) => {
             </ModalHeader>
             <ModalBody>
               <Form
-                id="createTeamMembers"
+                id="treadSetting"
                 onSubmit={(e) => {
                   e.preventDefault();
-                 // validation.handleSubmit();
-                  //return false;
+                 validationTreadSetting.handleSubmit();
+                  return false;
                 }}
               >
                 <Row>
@@ -656,13 +777,20 @@ const index = (props) => {
                         name="userId"
                         type="text"
                         placeholder="Select User ID"
-                        
+                        onChange={validationTreadSetting.handleChange}
+                        onBlur={validationTreadSetting.handleBlur}
+                        value={validationTreadSetting.values?.userId || ""}
+                        invalid={
+                          validationTreadSetting.touched?.userId && validationTreadSetting.errors?.userId
+                            ? true
+                            : false
+                        }
                       />
-                      {/* {validation.touched.name && validation.errors.name ? (
+                      {validationTreadSetting.touched.userId && validationTreadSetting.errors.userId ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.name}
+                          {validationTreadSetting.errors.userId}
                         </FormFeedback>
-                      ) : null} */}
+                      ) : null}
                     </div>
                     <div className="mb-3">
                       <Label className="form-label">Pin<small className="asterisk">*</small></Label>
@@ -670,13 +798,20 @@ const index = (props) => {
                         name="pin"
                         type="text"
                         placeholder="Select Pin"
-                        
+                        onChange={validationTreadSetting.handleChange}
+                        onBlur={validationTreadSetting.handleBlur}
+                        value={validationTreadSetting.values?.pin || ""}
+                        invalid={
+                          validationTreadSetting.touched?.pin && validationTreadSetting.errors?.pin
+                            ? true
+                            : false
+                        }
                       />
-                      {/* {validation.touched.Email && validation.errors.Email ? (
+                      {validationTreadSetting.touched.pin && validationTreadSetting.errors.pin ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.Email}
+                          {validationTreadSetting.errors.pin}
                         </FormFeedback>
-                      ) : null} */}
+                      ) : null}
                     </div>
                     <div className="mb-3">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
@@ -684,13 +819,20 @@ const index = (props) => {
                         name="userKey"
                         type="text"
                         placeholder="Select User Key"
-                        
+                        onChange={validationTreadSetting.handleChange}
+                        onBlur={validationTreadSetting.handleBlur}
+                        value={validationTreadSetting.values?.userKey || ""}
+                        invalid={
+                          validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey
+                            ? true
+                            : false
+                        }
                       />
-                      {/* {validation.touched?.Number && validation.errors?.Number ? (
+                      {validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey ? (
                         <FormFeedback type="invalid">
-                          {validation.errors?.Number}
+                          {validationTreadSetting.errors?.userKey}
                         </FormFeedback>
-                      ) : null} */}
+                      ) : null}
                     </div>
                     <div className="mb-3">
                       <Label className="form-label">App key<small className="asterisk">*</small></Label>
@@ -699,13 +841,20 @@ const index = (props) => {
                         name="appKey"
                         type="text"
                         placeholder="Select Appkey"
-                        
+                        onChange={validationTreadSetting.handleChange}
+                        onBlur={validationTreadSetting.handleBlur}
+                        value={validationTreadSetting.values?.appKey || ""}
+                        invalid={
+                          validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey
+                            ? true
+                            : false
+                        }
                       />
-                      {/* {validation.touched?.Number && validation.errors?.Number ? (
+                      {validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey ? (
                         <FormFeedback type="invalid">
-                          {validation.errors?.Number}
+                          {validationTreadSetting.errors?.appKey}
                         </FormFeedback>
-                      ) : null} */}
+                      ) : null}
                     </div>
                   </Col>
                 </Row>
@@ -739,50 +888,45 @@ const index = (props) => {
                   return false;
                 }}
               >
-                <Row>
-                  <Col className="col-12">
-                    <div className="mb-3">
-                      <Label className="form-label">Assign Strategy<small className="asterisk">*</small></Label>
-                      <Input
-                        type="select"
-                        name="assignedstrategy"
-                        onChange={validationAssignStratagy.handleChange}
-                        onBlur={validationAssignStratagy.handleBlur}
-                        value={validationAssignStratagy.values.assignedstrategy || ""}
-                        invalid={
-                          validationAssignStratagy.touched.assignedstrategy && 
-                          validationAssignStratagy.errors.assignedstrategy
-                        }
-                      >
-                        <option value="">Select Strategy</option>
-                        {strategy.map((strtgy) => (
-                          <option key={strtgy._id} value={strtgy._id} name={strtgy.name}>
-                            {strtgy.name}
-                          </option>
-                        ))}
-                      </Input>
-                      {validationAssignStratagy.touched.assignedstrategy && validationAssignStratagy.errors.assignedstrategy ? (
-                        <FormFeedback type="invalid">
-                          {validationAssignStratagy.errors.assignedstrategy}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                  </Col>
-                </Row>
+            <Row>
+              <Col className="col-12">
+                <div className="mb-3">
+                <div className="col-xl-12 mt-1">
+                  <div className="form-group">
+                    {(strategy !== null) ? (
+                      <Select
+                      styles={customStyles}
+                        isClearable={false}
+                        isMulti
+                        options={strategy}
+                        value={tags}
+                        name="strategy"
+                        className='react-select'
+                        classNamePrefix='select'
+                        isDisabled={false}
+                        onChange={e => {
+                          setTags(e)
+                        }}
+                      />
+                    ) : <></>}
+                    
+                  </div>
+                </div>
+              </div>
+              </Col>
+              </Row>
                 <Row>
                   <Col>
-                    <div className="text-end">
-                      <button
-                        type="submit"
-                        className="btn btn-success save-customer"
-                      >
-                        Save
-                      </button>
-                    </div>
+                  <div className="d-flex justify-content-end">
+                  <Button color="success" type="submit">
+                    Save
+                  </Button>
+                </div>
                   </Col>
                 </Row>
               </Form>
             </ModalBody>
+           
           </Modal>
             {/* end assign strategy popup */}
         </CardBody>
