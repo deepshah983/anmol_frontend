@@ -92,16 +92,51 @@ const index = (props) => {
 
     initialValues: {
       id: (navigation && navigation.id) || "",
-      name: (navigation && navigation.name) || "",
-      position: (navigation && navigation.position) || "",
-      altText: (navigation && navigation.altText) || "",
+      terminalSymbol: (navigation && navigation.terminalSymbol) || "",
+      chartSymbol: (navigation && navigation.chartSymbol) || "",
+      optionType: (navigation && navigation.optionType) || "",
+      dynamicExpiry: (navigation && navigation.dynamicExpiry) || "",
+      dynamicStrike: (navigation && navigation.dynamicStrike) || "",
+      qtyType: (navigation && navigation.qtyType) || "",
+      prodType: (navigation && navigation.prodType) || "",
+      entryOrder: (navigation && navigation.entryOrder) || "",
+      exitOrder: (navigation && navigation.exitOrder) || "",
+      strategy: (navigation && navigation.strategy) || "",
+      portalUserId: (navigation && navigation.portalUserId) || "",
+      portalPassword: (navigation && navigation.portalPassword) || "",
+      userKey: (navigation && navigation.userKey) || "",
+      appKey: (navigation && navigation.appKey) || "",
+      priceBuffer: (navigation && navigation.priceBuffer) || "",
+      radioOption: (navigation && navigation.radioOption) || "",
+      price: (navigation && navigation.price) || "",
+      triggerPrice: (navigation && navigation.triggerPrice) || "",
+      target: (navigation && navigation.target) || "",
+      stopLoss: (navigation && navigation.stopLoss) || "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter Name"),
-      position: Yup.string().required("Please Enter Designation"),
+      terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
+      chartSymbol: Yup.string().required("Please Select Chart Symbol"),
+      optionType: Yup.string().required("Please Select Option Type"),
+      dynamicExpiry: Yup.string().required("Please Select Dynamic Expiry"),
+      dynamicStrike: Yup.string().required("Please Select Dynamic Strike"),
+      qtyType: Yup.string().required("Please Select Qty Type"),
+      prodType: Yup.string().required("Please Select Prod Type"),
+      entryOrder: Yup.string().required("Please Select Entry Order"),
+      exitOrder: Yup.string().required("Please Select Exit Order"),
+      strategy: Yup.string().required("Please Select Strategy"),
+      portalUserId: Yup.string().required("Please Select Portal UserId"),
+      portalPassword: Yup.string().required("Please Select Portal Password"),
+      userKey: Yup.string().required("Please Select User Key"),
+      appKey: Yup.string().required("Please Select App Key"),
+      priceBuffer: Yup.string().required("Please Select Price Buffer"),
+      radioOption: Yup.string().required("Please Select Radio Option"),
+      price: Yup.string().required("Please Enter Price"),
+      triggerPrice: Yup.string().required("Please Enter Trigger Price"),
+      target: Yup.string().required("Please Enter Target"),
+      stopLoss: Yup.string().required("Please Enter Stop Loss"),
     }),
     onSubmit: (values) => {
-      let form = themeConfig.functions.read_form("createTeamMembers");
+      let form = themeConfig.functions.read_form("traingForm");
       let formData = new FormData();
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
@@ -123,7 +158,7 @@ const index = (props) => {
   const addNewNavigation = (form_data) => {
 
 
-    postData("aboutus/createTeamMembers", form_data)
+    postData("aboutus/traingForm", form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
@@ -386,7 +421,7 @@ const index = (props) => {
             </ModalHeader>
             <ModalBody>
               <Form
-                id="createTeamMembers"
+                id="traingForm"
                 onSubmit={(e) => {
                   e.preventDefault();
                   validation.handleSubmit();
@@ -399,7 +434,19 @@ const index = (props) => {
                     <div className="add-tread-beside">
                         <div className="add-tread col-md-5">
                           <Label className="form-label ">Terminal Symbol</Label>
-                          <select className="select-script" id="cars" name="cars">
+                          <Input
+                              type="select"
+                              name="terminalSymbol"
+                              className="select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.terminalSymbol == 0 ? 0 : validation.values.terminalSymbol || ""}
+                              invalid={
+                                validation.touched.terminalSymbol && validation.errors.terminalSymbol
+                                  ? true
+                                  : false
+                              }
+                            >
                             <option value="" disabled selected>Select Symbol</option>
                             <option value="TATA POWER">NIFTY</option>
                             <option value="BCG">BANK NIFTY</option>
@@ -408,83 +455,256 @@ const index = (props) => {
                             <option value="HINDCOPPER">HINDCOPPER</option>
                             <option value="M & M">M & M</option>
                             <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                          </select>
+                            </Input>
+                      {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.terminalSymbol}
+                        </FormFeedback>
+                      ) : null}
+                        </div>
+                        <div className="add-tread col-md-5">
+                          <Label className="form-label">Chart Symbol</Label>
+                          <Input
+                              type="select"
+                              name="chartSymbol"
+                              className="select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.chartSymbol == 0 ? 0 : validation.values.chartSymbol || ""}
+                              invalid={
+                                validation.touched.chartSymbol && validation.errors.chartSymbol
+                                  ? true
+                                  : false
+                              }
+                            >
+                            <option value="" disabled selected>Select Chart Symbol</option>
+                            <option value="TATA POWER">NIFTY</option>
+                            <option value="BCG">BANK NIFTY</option>
+                            <option value="SIEMENS">SIEMENS</option>
+                            <option value="LALPATHLAB">LALPATHLAB</option>
+                            <option value="HINDCOPPER">HINDCOPPER</option>
+                            <option value="M & M">M & M</option>
+                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
+                            </Input>
+                      {validation.touched.chartSymbol && validation.errors.chartSymbol ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.chartSymbol}
+                        </FormFeedback>
+                      ) : null}
                         </div>
                         <div className="add-tread col-md-2">
                           <Label className="form-label">Option Type</Label>
-                          <select className="select-script" id="cars" name="cars">
+                          <Input
+                              type="select"
+                              name="optionType"
+                              className="select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.optionType == 0 ? 0 : validation.values.optionType || ""}
+                              invalid={
+                                validation.touched.optionType && validation.errors.optionType
+                                  ? true
+                                  : false
+                              }
+                            >
                             <option value="" disabled selected>Select Option</option>
-                            <option value="">CE</option>
-                            <option value="">PE</option>
-                          </select>
+                            <option value="CE">CE</option>
+                            <option value="PE">PE</option>
+                            </Input>
+                      {validation.touched.optionType && validation.errors.optionType ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.optionType}
+                        </FormFeedback>
+                      ) : null}
                         </div>
                       </div>
                       <div className="add-tread-beside">
                         <div className="add-tread col-md-3">
                           <Label className="form-label md-1">Dynamic Expiry</Label>
-                          <select className="select-script" id="cars" name="cars">
+                          <Input
+                              type="select"
+                              name="dynamicExpiry"
+                              className="select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.dynamicExpiry == 0 ? 0 : validation.values.dynamicExpiry || ""}
+                              invalid={
+                                validation.touched.dynamicExpiry && validation.errors.dynamicExpiry
+                                  ? true
+                                  : false
+                              }
+                            >
                             <option value="" disabled selected>Select Expiry Date</option>
-                            <option value="">5th September</option>
-                            <option value="">12th September</option>
-                            <option value="">19th September</option>
-                            <option value="">26th September</option>
-                            <option value="">3rd October</option>
-                            <option value="">10th October</option>
-                            <option value="">17th October</option>
-                            <option value="">24th October</option>
-                            <option value="">31st October</option>
-                          </select>
+                            <option value="5th September">5th September</option>
+                            <option value="12th September">12th September</option>
+                            <option value="19th September">19th September</option>
+                            <option value="26th September">26th September</option>
+                            <option value="3rd October">3rd October</option>
+                            <option value="10th October">10th October</option>
+                            <option value="17th October">17th October</option>
+                            <option value="24th October">24th October</option>
+                            <option value="31st October">31st October</option>
+                            </Input>
+                      {validation.touched.dynamicExpiry && validation.errors.dynamicExpiry ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.dynamicExpiry}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                       <div className="add-tread col-md-3">
                         <Label className="form-label">Dynamic Strike</Label>
-                        <select className="col-md-6 select-script" id="cars" name="cars">
+                        
+                        <Input
+                              type="select"
+                              name="dynamicStrike"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.dynamicStrike == 0 ? 0 : validation.values.dynamicStrike || ""}
+                              invalid={
+                                validation.touched.dynamicStrike && validation.errors.dynamicStrike
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select Strike</option>
                           <option value="Intraday">25100</option>
                           <option value="Delivery">25200</option>
-                        </select>
+                          </Input>
+                      {validation.touched.dynamicStrike && validation.errors.dynamicStrike ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.dynamicStrike}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                       <div className="add-tread col-md-3">
                         <Label className="form-label">Qty Type</Label>
-                        <select className="col-md-6 select-script" id="cars" name="cars">
+                        <Input
+                              type="select"
+                              name="qtyType"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.qtyType == 0 ? 0 : validation.values.qtyType || ""}
+                              invalid={
+                                validation.touched.qtyType && validation.errors.qtyType
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select Qty</option>
                           <option value="Intraday">FIXED</option>
                           <option value="Delivery">Delivery</option>
-                        </select>
+                          </Input>
+                      {validation.touched.qtyType && validation.errors.qtyType ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.qtyType}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                       <div className="add-tread col-md-3">
                         <Label className="form-label">ProdType</Label>
-                        <select className="col-md-6 select-script" id="cars" name="cars">
+                        <Input
+                              type="select"
+                              name="prodType"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.prodType == 0 ? 0 : validation.values.prodType || ""}
+                              invalid={
+                                validation.touched.prodType && validation.errors.prodType
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select  Prod Type</option>
                           <option value="Intraday">MIS</option>
                           <option value="Delivery">Delivery</option>
-                        </select>
+                          </Input>
+                      {validation.touched.prodType && validation.errors.prodType ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.prodType}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                     </div>
                     <div className="add-tread-beside">
                       <div className="add-tread col-md-4">
                         <Label className="form-label">Entry Order</Label>
-                        <select className="col-md-6 select-script" id="options" name="options" onChange={handleSelectionChange}>
+                        <Input
+                              type="select"
+                              name="entryOrder"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onChange={handleSelectionChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.entryOrder == 0 ? 0 : validation.values.entryOrder || ""}
+                              invalid={
+                                validation.touched.entryOrder && validation.errors.entryOrder
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select  Prod Type</option>
                           <option value="sLL">SLL</option>
                           <option value="market">MARKET</option>
                           <option value="option2">Option 2</option>
-                        </select>
+                          </Input>
+                      {validation.touched.entryOrder && validation.errors.entryOrder ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.entryOrder}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                       <div className="add-tread col-md-4">
                         <Label className="form-label">Exit Order</Label>
-                        <select className="col-md-6 select-script" id="cars" name="cars">
+                        <Input
+                              type="select"
+                              name="exitOrder"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.exitOrder == 0 ? 0 : validation.values.exitOrder || ""}
+                              invalid={
+                                validation.touched.exitOrder && validation.errors.exitOrder
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select Exit Order</option>
                           <option value="Intraday">MARKET</option>
                           <option value="Delivery">Delivery</option>
-                        </select>
+                          </Input>
+                      {validation.touched.exitOrder && validation.errors.exitOrder ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.exitOrder}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                       <div className="add-tread col-md-4">
                         <Label className="form-label">Strategy</Label>
-                        <select className="col-md-6 select-script" id="cars" name="cars">
+                        <Input
+                              type="select"
+                              name="strategy"
+                              className="col-md-6 select-script"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.strategy == 0 ? 0 : validation.values.strategy || ""}
+                              invalid={
+                                validation.touched.strategy && validation.errors.strategy
+                                  ? true
+                                  : false
+                              }
+                            >
                           <option value="" disabled selected>Select</option>
                           <option value="Intraday">MIS</option>
                           <option value="Delivery">Delivery</option>
-                        </select>
+                        </Input>
+                      {validation.touched.strategy && validation.errors.strategy ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.strategy}
+                        </FormFeedback>
+                      ) : null}
                       </div>
                     </div>
                     <div className="add-tread-beside">
@@ -494,28 +714,100 @@ const index = (props) => {
                               <div className="for-sll">
                                 <div className="add-tread col-md-6">
                                   <label htmlFor="field1">Price</label>
-                                  <input className="select-script" type="number" id="field1" placeholder="Price" name="field1" />
+                                  <Input
+                                      name="price"
+                                      type="number"
+                                      className="select-script"
+                                      id="field1"
+                                      placeholder="Enter Price"
+                                      onChange={validation.handleChange}
+                                      onBlur={validation.handleBlur}
+                                      value={validation.values?.price || ""}
+                                      invalid={
+                                        validation.touched?.price && validation.errors?.price
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    {validation.touched?.price && validation.errors?.price ? (
+                                      <FormFeedback type="invalid">
+                                        {validation.errors?.price}
+                                      </FormFeedback>
+                                    ) : null}
                                 </div>
 
                                 <div className="add-tread col-md-6">
                                   <label htmlFor="field2">Trigger Price</label>
-                                  <input className="select-script" type="number" id="field2" placeholder="Trigger Price" name="field2" />
+                                  
+                                  <Input
+                                      name="triggerPrice"
+                                      type="number"
+                                      className="select-script"
+                                      id="field2"
+                                      placeholder="Enter Trigger Price"
+                                      onChange={validation.handleChange}
+                                      onBlur={validation.handleBlur}
+                                      value={validation.values?.triggerPrice || ""}
+                                      invalid={
+                                        validation.touched?.triggerPrice && validation.errors?.triggerPrice
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    {validation.touched?.triggerPrice && validation.errors?.triggerPrice ? (
+                                      <FormFeedback type="invalid">
+                                        {validation.errors?.triggerPrice}
+                                      </FormFeedback>
+                                    ) : null}
                                 </div>
                               </div>
 
                               <div className="for-sll">
                               <div className="add-tread col-md-4">
                                   <label htmlFor="field3">Target</label>
-                                  <input type="number" id="field3" name="field3" />
+                                  <Input
+                                      name="target"
+                                      type="number"
+                                      className="select-script"
+                                      id="field3"
+                                      placeholder="Enter Target"
+                                      onChange={validation.handleChange}
+                                      onBlur={validation.handleBlur}
+                                      value={validation.values?.target || ""}
+                                      invalid={
+                                        validation.touched?.target && validation.errors?.target
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    {validation.touched?.target && validation.errors?.target ? (
+                                      <FormFeedback type="invalid">
+                                        {validation.errors?.target}
+                                      </FormFeedback>
+                                    ) : null}
                                 </div>
                                 <div className="add-tread col-md-4">
                                   <label htmlFor="field4">StopLoss</label>
-                                  <input type="number" id="field4" name="field4" />
-                                </div>
-
-                                <div className="add-tread col-md-4">
-                                  <label htmlFor="field5">TSL(Pts)</label>
-                                  <input type="number" id="field5" name="field5" />
+                                  <Input
+                                      name="stopLoss"
+                                      type="number"
+                                      className="select-script"
+                                      id="field3"
+                                      placeholder="Enter Stop Loss"
+                                      onChange={validation.handleChange}
+                                      onBlur={validation.handleBlur}
+                                      value={validation.values?.stopLoss || ""}
+                                      invalid={
+                                        validation.touched?.stopLoss && validation.errors?.stopLoss
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    {validation.touched?.stopLoss && validation.errors?.stopLoss ? (
+                                      <FormFeedback type="invalid">
+                                        {validation.errors?.stopLoss}
+                                      </FormFeedback>
+                                    ) : null}
                                 </div>
 
                               </div>
@@ -555,13 +847,26 @@ const index = (props) => {
           {selectedRadio === 'fixed' && (
             <div className="add-tread col-md-6">
               <label htmlFor="priceBuffer">Price Buffer</label>
-              <input
-                className="select-script"
-                type="number"
-                id="priceBuffer"
-                placeholder="Enter Price Buffer"
-                name="priceBuffer"
-              />
+              <Input
+                        name="priceBuffer"
+                        type="number"
+                        className="select-script"
+                        id="priceBuffer"
+                        placeholder="Enter Price Buffer"
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values?.priceBuffer || ""}
+                        invalid={
+                          validation.touched?.priceBuffer && validation.errors?.priceBuffer
+                            ? true
+                            : false
+                        }
+                      />
+                      {validation.touched?.priceBuffer && validation.errors?.priceBuffer ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors?.priceBuffer}
+                        </FormFeedback>
+                      ) : null}
             </div>
           )}
         </div>
@@ -601,7 +906,7 @@ const index = (props) => {
             </ModalHeader>
             <ModalBody>
               <Form
-                id="createTeamMembers"
+                id="traingForm"
                 onSubmit={(e) => {
                   e.preventDefault();
                   validation.handleSubmit();
@@ -612,7 +917,20 @@ const index = (props) => {
                   <Col className="col-12">
                     <div className="mb-3 form-controls">
                       <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
+                      
+                      <Input
+                              type="select"
+                              name="portalUserId"
+                              className="form-control"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.portalUserId == 0 ? 0 : validation.values.portalUserId || ""}
+                              invalid={
+                                validation.touched.portalUserId && validation.errors.portalUserId
+                                  ? true
+                                  : false
+                              }
+                            >
                         <option option value="" disabled selected>Select User ID</option>
                         <option value="name">name 1</option>
                         <option value="name">name 2</option>
@@ -621,16 +939,28 @@ const index = (props) => {
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
                         <option value="name">name 7</option>
-                      </select>
-                      {validation.touched.name && validation.errors.name ? (
+                      </Input>
+                      {validation.touched.portalUserId && validation.errors.portalUserId ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.name}
+                          {validation.errors.portalUserId}
                         </FormFeedback>
                       ) : null}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
+                      <Input
+                              type="select"
+                              name="portalPassword"
+                              className="form-control"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.portalPassword == 0 ? 0 : validation.values.portalPassword || ""}
+                              invalid={
+                                validation.touched.portalPassword && validation.errors.portalPassword
+                                  ? true
+                                  : false
+                              }
+                            >
                       <option option value="" disabled selected>Select Password</option>
                         <option value="name">name 1</option>
                         <option value="name">name 2</option>
@@ -639,16 +969,28 @@ const index = (props) => {
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
                         <option value="name">name 7</option>
-                      </select>
-                      {validation.touched.Email && validation.errors.Email ? (
+                      </Input>
+                      {validation.touched.portalPassword && validation.errors.portalPassword ? (
                         <FormFeedback type="invalid">
-                          {validation.errors.Email}
+                          {validation.errors.portalPassword}
                         </FormFeedback>
                       ) : null}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control">
+                      <Input
+                              type="select"
+                              name="userKey"
+                              className="form-control"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.userKey == 0 ? 0 : validation.values.userKey || ""}
+                              invalid={
+                                validation.touched.userKey && validation.errors.userKey
+                                  ? true
+                                  : false
+                              }
+                            >
                         <option option value="" disabled selected>Select User Key</option>
                         <option value="name">name 1</option>
                         <option value="name">name 2</option>
@@ -657,16 +999,28 @@ const index = (props) => {
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
                         <option value="name">name 7</option>
-                      </select>
-                      {validation.touched?.Number && validation.errors?.Number ? (
+                      </Input>
+                      {validation.touched?.userKey && validation.errors?.userKey ? (
                         <FormFeedback type="invalid">
-                          {validation.errors?.Number}
+                          {validation.errors?.userKey}
                         </FormFeedback>
                       ) : null}
                     </div>
                     <div className="mb-3 form-controls">
                       <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
-                      <select name="name" id="" className="form-control"> 
+                      <Input
+                              type="select"
+                              name="appKey"
+                              className="form-control"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={isEdit && validation.values.appKey == 0 ? 0 : validation.values.appKey || ""}
+                              invalid={
+                                validation.touched.appKey && validation.errors.appKey
+                                  ? true
+                                  : false
+                              }
+                            > 
                         <option option value="" disabled selected>Select Appkey</option>
                         <option value="name">name 1</option>
                         <option value="name">name 2</option>
@@ -675,10 +1029,10 @@ const index = (props) => {
                         <option value="name">name 5</option>
                         <option value="name">name 6</option>
                         <option value="name">name 7</option>
-                      </select>
-                      {validation.touched?.Number && validation.errors?.Number ? (
+                      </Input>
+                      {validation.touched?.appKey && validation.errors?.appKey ? (
                         <FormFeedback type="invalid">
-                          {validation.errors?.Number}
+                          {validation.errors?.appKey}
                         </FormFeedback>
                       ) : null}
                     </div>
