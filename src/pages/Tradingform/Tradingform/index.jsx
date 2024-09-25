@@ -234,14 +234,6 @@ const index = (props) => {
         },
       },
       {
-        Header: "TSL",
-        accessor: "tsl",
-        filterable: true,
-        Cell: (cellProps) => {
-          return <Designation {...cellProps} />;
-        },
-      },
-      {
         Header: "Strategy",
         accessor: "strategy",
         filterable: true,
@@ -409,19 +401,6 @@ const index = (props) => {
                           <Label className="form-label ">Terminal Symbol</Label>
                           <select className="select-script" id="cars" name="cars">
                             <option value="" disabled selected>Select Symbol</option>
-                            <option value="TATA POWER">NIFTY</option>
-                            <option value="BCG">BANK NIFTY</option>
-                            <option value="SIEMENS">SIEMENS</option>
-                            <option value="LALPATHLAB">LALPATHLAB</option>
-                            <option value="HINDCOPPER">HINDCOPPER</option>
-                            <option value="M & M">M & M</option>
-                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                          </select>
-                        </div>
-                        <div className="add-tread col-md-5">
-                          <Label className="form-label">Chart Symbol</Label>
-                          <select className="select-script" id="cars" name="cars">
-                            <option value="" disabled selected>Select Chart Symbol</option>
                             <option value="TATA POWER">NIFTY</option>
                             <option value="BCG">BANK NIFTY</option>
                             <option value="SIEMENS">SIEMENS</option>

@@ -678,35 +678,7 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null} */}
                     </div>
-                    <div className="mb-3">
-                      <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <Input
-                        name="userKey"
-                        type="text"
-                        placeholder="Select User Key"
-                        
-                      />
-                      {/* {validation.touched?.Number && validation.errors?.Number ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors?.Number}
-                        </FormFeedback>
-                      ) : null} */}
-                    </div>
-                    <div className="mb-3">
-                      <Label className="form-label">App key<small className="asterisk">*</small></Label>
-                     
-                      <Input
-                        name="appKey"
-                        type="text"
-                        placeholder="Select Appkey"
-                        
-                      />
-                      {/* {validation.touched?.Number && validation.errors?.Number ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors?.Number}
-                        </FormFeedback>
-                      ) : null} */}
-                    </div>
+                    
                   </Col>
                 </Row>
                 <Row>

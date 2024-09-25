@@ -28,7 +28,6 @@ import { postData } from '../../components/api';
 import { ToastElement, success, error } from "../../components/toast";
 
 // import images
-import profile from "../../assets/images/profile-img.png";
 //import logo from "../../assets/images/logo.svg";
 import logo from "../../assets/images/vishal-4-wealth.png";
 
@@ -174,20 +173,19 @@ const changePassword = (values) => {
           <Row className="justify-content-center">
             <Col md={8} lg={6} xl={5}>
               <Card className="overflow-hidden">
-                <div className="bg-primary bg-softbg-soft-primary">
+                <div className="bg-primary bg-soft">
                   <Row>
                     <Col xs={7}>
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary mb-0">Welcome Back !</h5>
                       
                       </div>
                     </Col>
-                    <Col className="col-5 align-self-end">
-                      <img src={profile} alt="" className="img-fluid" />
+                    <Col className=" align-self-end">
                     </Col>
                   </Row>
                 </div>
-                <CardBody className="pt-0">
+                <CardBody className="pt-2">
                 {(isAuthEmail === null) ? ( 
                   <div className="p-2">
                     {forgetError && forgetError ? (
@@ -234,8 +232,9 @@ const changePassword = (values) => {
                       <Row className="mb-3">
                         <Col className="text-end">
                           <button
-                            className="btn btn-primary w-md "
+                            className="btn btn-primary btn-block"
                             type="submit"
+                            style={{ width: "100%" }}
                           >
                             Verify
                           </button>
@@ -292,8 +291,9 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary w-md "
+                          className="btn btn-primary btn-block"
                           type="submit"
+                          style={{ width: "100%" }}
                         >
                           Verify
                         </button>
@@ -370,8 +370,9 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary w-md "
+                          className="btn btn-primary btn-block"
                           type="submit"
+                          style={{ width: "100%" }}
                         >
                           Verify
                         </button>

@@ -91,7 +91,7 @@ const Login = (props) => {
                     </Col>
                   </Row>
                 </div>
-                <CardBody className="pt-1">
+                <CardBody className="pt-2">
                   <div className="p-2">
                     <Form
                       className="form-horizontal"

@@ -176,7 +176,7 @@ const SidebarContent = (props) => {
             <li>
               <Link to="/trading-form">
                 <i className="bx bx-bitcoin"></i>
-                <span>{props.t("Trading")}</span>
+                <span>{props.t("Watch List")}</span>
               </Link>
             </li>
             <li>

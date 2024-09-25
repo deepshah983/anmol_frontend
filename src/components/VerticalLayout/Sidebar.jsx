@@ -10,7 +10,7 @@ import SidebarContent from "./SidebarContent";
 import { Link } from "react-router-dom";
 
 import logo from "../../assets/images/ishan_group_logo.png";
-import logoLightPng from "../../assets/images/vishal-4-wealth-whithout-background-white.png";
+import logoLightPng from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 import logoLightSvg from "../../assets/images/anmol-bull.png";
 import logoDark from "../../assets/images/logo-dark.png";
 

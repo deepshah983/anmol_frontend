@@ -194,9 +194,12 @@ box-shadow: $box-shadow;
   }
   .active {
       color: $sidebar-menu-item-active-color !important;
-
+      background-color: #a7844c;
       i {
           color: $sidebar-menu-item-active-color !important;
+      }
+      span{
+        font-weight: 400;
       }
       
   }
@@ -414,6 +417,7 @@ body[data-sidebar="dark"] {
 
                   i {
                       color: $sidebar-dark-menu-item-icon-color;
+                      padding-bottom: 0px;
                   }
   
                   &:hover {
@@ -1084,4 +1088,22 @@ background-image: linear-gradient(to right, #f46a6a, #f1b44c);
 }
 .gradient-strong-great-whale {
 background-image: linear-gradient(to right, darken($primary, 10%), #50a5f1);
+}
+
+
+
+.simplebar-content-wrapper {
+  overflow-x: scroll;
+  overflow-y: hidden; /* or you can use 'overflow: scroll;' if you want both scrolling */
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu > ul > li:hover > a {
+  position: relative;
+  width: 70px;
+  background-color: whitesmoke;
+  transition: none;
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu > ul > li:hover span {
+  display: none;
 }
