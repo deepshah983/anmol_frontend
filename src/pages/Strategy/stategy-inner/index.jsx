@@ -228,7 +228,7 @@ const StrategyManagement = () => {
         onDeleteClick={handleDeleteStrategy}
         onCloseClick={() => setDeleteModal(false)}
       />
-      <div className="page-content">
+      <div className="">
         <Container fluid>
           <HideShowSection
             title="Total Strategies"
