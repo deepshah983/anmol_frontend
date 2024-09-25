@@ -302,13 +302,25 @@ const TradingTableContainer = ({
           </thead>
 
           <tbody {...getTableBodyProps()} className="myTbody">
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Fragment key={row.getRowProps().key}>
-                  <tr>
-                    {row.cells.map((cell) => {
-                      return (
+            {page.length === 0 ? (
+              <tr>
+              <td colSpan={columns.length} className="text-center">
+                <span className="d-inline-flex align-items-center justify-content-center">
+                  <i
+                    className="mdi mdi-alert-circle-outline"
+                    style={{ fontSize: "16px", marginRight: "0.5rem", color: "#b18d57" }}
+                  ></i>
+                  <span style={{ fontSize: "16px" }}>No records found</span>
+                </span>
+              </td>
+            </tr>
+            ) : (
+              page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Fragment key={row.getRowProps().key}>
+                    <tr>
+                      {row.cells.map((cell) => (
                         <td
                           key={cell.id}
                           style={{ minWidth: "8rem" }}
@@ -316,12 +328,12 @@ const TradingTableContainer = ({
                         >
                           {cell.render("Cell")}
                         </td>
-                      );
-                    })}
-                  </tr>
-                </Fragment>
-              );
-            })}
+                      ))}
+                    </tr>
+                  </Fragment>
+                );
+              })
+            )}
           </tbody>
         </Table>
       </div>
