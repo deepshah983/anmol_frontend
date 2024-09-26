@@ -14,7 +14,7 @@ import { Table, Row, Col, Button, Input, Label } from "reactstrap";
 import { Filter, DefaultColumnFilter } from "./filters";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { height } from "dom7";
+
 // Define a default UI for filtering
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -129,17 +129,6 @@ const TableContainer = ({
     <Fragment>
       <Row className="mb-3">
         <Col md={customPageSizeOptions ? 2 : 1}>
-          {/* <select
-            className="form-select"
-            value={pageSize}
-            onChange={onChangeInSelect}
-          >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select> */}
           {isSubNav && (
             <div className="input-group">
               <Label htmlFor="formFileLg" className="form-label">
@@ -163,13 +152,6 @@ const TableContainer = ({
             </div>
           )}
         </Col>
-        {/* {isGlobalFilter && (
-          <GlobalFilter
-            preGlobalFilteredRows={preGlobalFilteredRows}
-            globalFilter={state.globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
-        )} */}
         {isAddOptions && (
           <Col sm="11">
             <div className="text-sm-end">
@@ -217,15 +199,25 @@ const TableContainer = ({
         )}
         {isAddCustList && (
           <Col sm="12">
-            <div className="text-sm-start" >
+            <div className="text-sm-start">
               <Button
                 type="button"
                 color="success"
                 className="btn-rounded mb-2 me-2"
                 onClick={handleCustomerClick}
               >
-                <i className="mdi mdi-plus me-1" />
-                Add
+                <i className="mdi mdis-plus " />
+              </Button>
+              <Button
+                type="button"
+                color="danger"
+                className="btn-rounded mb-2 me-2"
+                onClick={() => {
+                  const customerData = cellProps.row.original;
+                  onClickDelete(customerData);
+                }}
+              >
+                <i className="mdi mdis-delete " />
               </Button>
             </div>
           </Col>
@@ -243,7 +235,6 @@ const TableContainer = ({
                       {column.render("Header")}
                       {generateSortingIndicator(column)}
                     </div>
-                    {/* <Filter column={column} /> */}
                   </th>
                 ))}
               </tr>
@@ -251,13 +242,26 @@ const TableContainer = ({
           </thead>
 
           <tbody {...getTableBodyProps()} className="myTbody">
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Fragment key={row.getRowProps().key}>
-                  <tr>
-                    {row.cells.map((cell) => {
-                      return (
+            {page.length === 0 ? (
+              <tr>
+              <td colSpan={columns.length} className="text-center">
+                <span className="d-inline-flex align-items-center justify-content-center">
+                  <i
+                    className="mdi mdi-alert-circle-outline"
+                    style={{ fontSize: "16px", marginRight: "0.5rem", color: "#b18d57" }}
+                  ></i>
+                  <span style={{ fontSize: "16px" }}>No records found</span>
+                </span>
+              </td>
+            </tr>
+            
+            ) : (
+              page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Fragment key={row.getRowProps().key}>
+                    <tr>
+                      {row.cells.map((cell) => (
                         <td
                           key={cell.id}
                           style={{ minWidth: "8rem" }}
@@ -265,12 +269,12 @@ const TableContainer = ({
                         >
                           {cell.render("Cell")}
                         </td>
-                      );
-                    })}
-                  </tr>
-                </Fragment>
-              );
-            })}
+                      ))}
+                    </tr>
+                  </Fragment>
+                );
+              })
+            )}
           </tbody>
         </Table>
       </div>
