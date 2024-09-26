@@ -14,7 +14,7 @@ import { Table, Row, Col, Button, Input, Label } from "reactstrap";
 import { Filter, DefaultColumnFilter } from "./filters";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { height } from "dom7";
+
 // Define a default UI for filtering
 function GlobalFilter({
   preGlobalFilteredRows,
@@ -130,21 +130,11 @@ const TradingTableContainer = ({
     const page = event.target.value ? Number(event.target.value) - 1 : 0;
     gotoPage(page);
   };
+
   return (
     <Fragment>
       <Row className="mb-3">
         <Col md={customPageSizeOptions ? 2 : 1}>
-          {/* <select
-            className="form-select"
-            value={pageSize}
-            onChange={onChangeInSelect}
-          >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select> */}
           {isSubNav && (
             <div className="input-group">
               <Label htmlFor="formFileLg" className="form-label">
@@ -168,13 +158,6 @@ const TradingTableContainer = ({
             </div>
           )}
         </Col>
-        {/* {isGlobalFilter && (
-          <GlobalFilter
-            preGlobalFilteredRows={preGlobalFilteredRows}
-            globalFilter={state.globalFilter}
-            setGlobalFilter={setGlobalFilter}
-          />
-        )} */}
         {isAddOptions && (
           <Col sm="11">
             <div className="text-sm-end">
@@ -222,7 +205,7 @@ const TradingTableContainer = ({
         )}
         {isAddCustList && (
           <Col sm="12">
-            <div className="text-sm-start" >
+            <div className="text-sm-start">
               <Button
                 type="button"
                 color="success"
@@ -258,7 +241,6 @@ const TradingTableContainer = ({
                       {column.render("Header")}
                       {generateSortingIndicator(column)}
                     </div>
-                    {/* <Filter column={column} /> */}
                   </th>
                 ))}
               </tr>
@@ -266,13 +248,25 @@ const TradingTableContainer = ({
           </thead>
 
           <tbody {...getTableBodyProps()} className="myTbody">
-            {page.map((row) => {
-              prepareRow(row);
-              return (
-                <Fragment key={row.getRowProps().key}>
-                  <tr>
-                    {row.cells.map((cell) => {
-                      return (
+            {page.length === 0 ? (
+              <tr>
+              <td colSpan={columns.length} className="text-center">
+                <span className="d-inline-flex align-items-center justify-content-center">
+                  <i
+                    className="mdi mdi-alert-circle-outline"
+                    style={{ fontSize: "16px", marginRight: "0.5rem", color: "#b18d57" }}
+                  ></i>
+                  <span style={{ fontSize: "16px" }}>No records found</span>
+                </span>
+              </td>
+            </tr>
+            ) : (
+              page.map((row) => {
+                prepareRow(row);
+                return (
+                  <Fragment key={row.getRowProps().key}>
+                    <tr>
+                      {row.cells.map((cell) => (
                         <td
                           key={cell.id}
                           style={{ minWidth: "8rem" }}
@@ -280,15 +274,16 @@ const TradingTableContainer = ({
                         >
                           {cell.render("Cell")}
                         </td>
-                      );
-                    })}
-                  </tr>
-                </Fragment>
-              );
-            })}
+                      ))}
+                    </tr>
+                  </Fragment>
+                );
+              })
+            )}
           </tbody>
         </Table>
       </div>
+
       {isPagination && (
         <Row className="justify-content-md-end justify-content-center align-items-center">
           <Col className="col-md-auto">
