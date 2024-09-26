@@ -2,9 +2,13 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import DashboardCounts from "./DashboardCounts";
-import coinOne from "../../assets/images/coin 1.svg";
+
 import totalCapital from "../../assets/images/money 1.svg";
 import totalUsers from "../../assets/images/friends.svg";
+import token from "../../assets/images/token.svg";
+import activeUsers from "../../assets/images/ActiveUsers.svg";
+import inactiveUsers from "../../assets/images/InactiveUsers.svg";
+
 //i18n
 import { withTranslation } from "react-i18next";
 import { getData } from "../../components/api";
@@ -47,6 +51,12 @@ const Dashboard = (props) => {
             <Row>
               <Col xl="4">
                 <DashboardCounts
+                  title="Generate Token"  
+                  icon={token}
+                />
+              </Col>
+              <Col xl="4">
+                <DashboardCounts
                   title="Total Users"
                   number={dashboardData.clientCount || 0}  
                   icon={totalUsers}
@@ -56,14 +66,14 @@ const Dashboard = (props) => {
                 <DashboardCounts
                   title="Active Users"
                   number={dashboardData.activeClientCount || 0}  
-                  icon={coinOne}
+                  icon={activeUsers}
                 />
               </Col>
               <Col xl="4">
                 <DashboardCounts
                   title="Inactive Users"
                   number={dashboardData.inActiveClientCount || 0}  
-                  icon={coinOne}
+                  icon={inactiveUsers}
                 />
               </Col>
               <Col xl="4">
