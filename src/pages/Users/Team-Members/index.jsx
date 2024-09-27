@@ -813,49 +813,6 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
                     </div>
-                    <div className="mb-3">
-                      <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <Input
-                        name="userKey"
-                        type="text"
-                        placeholder="Select User Key"
-                        onChange={validationTreadSetting.handleChange}
-                        onBlur={validationTreadSetting.handleBlur}
-                        value={validationTreadSetting.values?.userKey || ""}
-                        invalid={
-                          validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey
-                            ? true
-                            : false
-                        }
-                      />
-                      {validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey ? (
-                        <FormFeedback type="invalid">
-                          {validationTreadSetting.errors?.userKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                    <div className="mb-3">
-                      <Label className="form-label">App key<small className="asterisk">*</small></Label>
-                     
-                      <Input
-                        name="appKey"
-                        type="text"
-                        placeholder="Select Appkey"
-                        onChange={validationTreadSetting.handleChange}
-                        onBlur={validationTreadSetting.handleBlur}
-                        value={validationTreadSetting.values?.appKey || ""}
-                        invalid={
-                          validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey
-                            ? true
-                            : false
-                        }
-                      />
-                      {validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey ? (
-                        <FormFeedback type="invalid">
-                          {validationTreadSetting.errors?.appKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
                   </Col>
                 </Row>
                 <Row>

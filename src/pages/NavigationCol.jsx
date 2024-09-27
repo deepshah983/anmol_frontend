@@ -16,8 +16,8 @@ const Status = (cell) => {
     <span
       style={{
         display: 'inline-block',
-        width: '10px',
-        height: '10px',
+        width: '12px',
+        height: '12px',
         borderRadius: '50%',
         backgroundColor: hasValue ? 'green' : 'red'
       }}

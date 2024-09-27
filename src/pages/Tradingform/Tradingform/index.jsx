@@ -213,14 +213,6 @@ const index = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "ChartSymbol",
-        accessor: "chartSymbol",
-        filterable: true,
-        Cell: (cellProps) => {
-          return <Name {...cellProps} />;
-        },
-      },
-      {
         Header: "TerminalSymbol",
         accessor: "terminalSymbol",
         filterable: true,
@@ -432,7 +424,7 @@ const index = (props) => {
                   <Col className="col-12">
                   <div className="add-treads">
                     <div className="add-tread-beside">
-                        <div className="add-tread col-md-5">
+                        <div className="add-tread col-md-8">
                           <Label className="form-label ">Terminal Symbol</Label>
                           <Input
                               type="select"
@@ -462,37 +454,8 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
                         </div>
-                        <div className="add-tread col-md-5">
-                          <Label className="form-label">Chart Symbol</Label>
-                          <Input
-                              type="select"
-                              name="chartSymbol"
-                              className="select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.chartSymbol == 0 ? 0 : validation.values.chartSymbol || ""}
-                              invalid={
-                                validation.touched.chartSymbol && validation.errors.chartSymbol
-                                  ? true
-                                  : false
-                              }
-                            >
-                            <option value="" disabled selected>Select Chart Symbol</option>
-                            <option value="TATA POWER">NIFTY</option>
-                            <option value="BCG">BANK NIFTY</option>
-                            <option value="SIEMENS">SIEMENS</option>
-                            <option value="LALPATHLAB">LALPATHLAB</option>
-                            <option value="HINDCOPPER">HINDCOPPER</option>
-                            <option value="M & M">M & M</option>
-                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                            </Input>
-                      {validation.touched.chartSymbol && validation.errors.chartSymbol ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.chartSymbol}
-                        </FormFeedback>
-                      ) : null}
-                        </div>
-                        <div className="add-tread col-md-2">
+                      
+                        <div className="add-tread col-md-4">
                           <Label className="form-label">Option Type</Label>
                           <Input
                               type="select"
@@ -594,7 +557,7 @@ const index = (props) => {
                             >
                           <option value="" disabled selected>Select Qty</option>
                           <option value="Intraday">FIXED</option>
-                          <option value="Delivery">Delivery</option>
+                          <option value="Delivery">EXPLORER</option>
                           </Input>
                       {validation.touched.qtyType && validation.errors.qtyType ? (
                         <FormFeedback type="invalid">

@@ -135,6 +135,25 @@ const StrategyManagement = () => {
   const columns = useMemo(
     () => [
       {
+        Header: "Select",
+        Cell: ({ row }) => (
+          <div className="d-flex gap-3">
+            <Input
+                  name="select"
+                  id="select"
+                  placeholder="select Box"
+                  type="checkbox"
+                  height="17px"
+                  width="17px"
+                  value={validation.values.name}
+                  onBlur={validation.handleBlur}
+                  onChange={validation.handleChange}
+                  invalid={validation.touched.name && validation.errors.name}
+                />
+          </div>
+        ),
+      },
+      {
         Header: "Strategy Name",
         accessor: "name",
         Cell: ({ value }) => <Strategy value={value} />,
