@@ -1,14 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { isEmpty } from "lodash";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
   Card,
   CardBody,
   Col,
-  Container,
   Row,
   Modal,
   ModalHeader,
@@ -18,58 +15,41 @@ import {
   FormFeedback,
   Label,
   Form,
-  Button,
 } from "reactstrap";
 
 //Import Breadcrumb
-import { postData } from "../../../components/api";
+import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
-import thumb from "../../../assets/images/friends.svg";
-
-//redux
-import { useSelector, useDispatch } from "react-redux";
+import DeleteAllModal from "../../../components/Common/DeleteAllData";
 import TradingTableContainer from "../../../components/Common/TradingTableContainer";
 
 import { success, error } from "../../../components/toast";
-
 // Column
-import { Image, Name, Designation, Email } from "../../NavigationCol";
-import HideShowSection from "../../../components/Common/HideShowSection";
+import { Designation, Email } from "../../NavigationCol";
 
 const index = (props) => {
-  const dispatch = useDispatch();
   const [navs, setNavs] = useState([]);
-  const [count, setCount] = useState(0);
-  const [addImagePrimary, setAddImagePrimary] = useState(thumb);
+
   useEffect(() => {
     getNavigation();
   }, []);
 
   const getNavigation = () => {
-    postData("aboutus/getTeamMembers")
+    getData("tradingForm")
       .then((response) => {
-
-        const myArray = response.data.data;
-        const count = myArray.length;
         setNavs(response.data.data);
-        setCount(count);
       });
   };
   const [modal, setModal] = useState(false);
-  const [modalCheck, setModalCheck] = useState(false);
-  const [navList, setNavList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
-
   const [showFields, setShowFields] = useState(false);
   const [showRadioButtons, setShowRadioButtons] = useState(false);
-  const [selectedRadio, setSelectedRadio] = useState('');
-  const [limitShowFields, setLimitShowFields] = useState(false);
 
-  const handleSelectionChange = (event) => {
+  const handleChange = (event) => {
     const selectedValue = event.target.value;
-    if (selectedValue === 'sLL') {
+    if (selectedValue === 'SLL') {
       setShowFields(true);
       setShowRadioButtons(false);
     } else if (selectedValue === 'market') {
@@ -79,10 +59,9 @@ const index = (props) => {
       setShowFields(false);
       setShowRadioButtons(false);
     }
-  };
-
-  const handleRadioChange = (event) => {
-    setSelectedRadio(event.target.value); // Update the selected radio value
+    
+    // Call the original handleChange from validation
+    validation.handleChange(event);
   };
 
   // validation
@@ -93,7 +72,6 @@ const index = (props) => {
     initialValues: {
       id: (navigation && navigation.id) || "",
       terminalSymbol: (navigation && navigation.terminalSymbol) || "",
-      chartSymbol: (navigation && navigation.chartSymbol) || "",
       optionType: (navigation && navigation.optionType) || "",
       dynamicExpiry: (navigation && navigation.dynamicExpiry) || "",
       dynamicStrike: (navigation && navigation.dynamicStrike) || "",
@@ -107,15 +85,15 @@ const index = (props) => {
       userKey: (navigation && navigation.userKey) || "",
       appKey: (navigation && navigation.appKey) || "",
       priceBuffer: (navigation && navigation.priceBuffer) || "",
-      radioOption: (navigation && navigation.radioOption) || "",
+      priceBufferType: (navigation && navigation.priceBufferType) || "",
       price: (navigation && navigation.price) || "",
       triggerPrice: (navigation && navigation.triggerPrice) || "",
       target: (navigation && navigation.target) || "",
       stopLoss: (navigation && navigation.stopLoss) || "",
     },
-    validationSchema: Yup.object({
-      terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
-      chartSymbol: Yup.string().required("Please Select Chart Symbol"),
+    
+    validationSchema: Yup.object().shape({
+       terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
       optionType: Yup.string().required("Please Select Option Type"),
       dynamicExpiry: Yup.string().required("Please Select Dynamic Expiry"),
       dynamicStrike: Yup.string().required("Please Select Dynamic Strike"),
@@ -124,16 +102,41 @@ const index = (props) => {
       entryOrder: Yup.string().required("Please Select Entry Order"),
       exitOrder: Yup.string().required("Please Select Exit Order"),
       strategy: Yup.string().required("Please Select Strategy"),
-      portalUserId: Yup.string().required("Please Select Portal UserId"),
-      portalPassword: Yup.string().required("Please Select Portal Password"),
-      userKey: Yup.string().required("Please Select User Key"),
-      appKey: Yup.string().required("Please Select App Key"),
-      priceBuffer: Yup.string().required("Please Select Price Buffer"),
-      radioOption: Yup.string().required("Please Select Radio Option"),
-      price: Yup.string().required("Please Enter Price"),
-      triggerPrice: Yup.string().required("Please Enter Trigger Price"),
-      target: Yup.string().required("Please Enter Target"),
-      stopLoss: Yup.string().required("Please Enter Stop Loss"),
+    
+      price: Yup.string().when('entryOrder', {
+        is: 'SLL',
+        then: Yup.string().required("Please Enter Price"),
+        otherwise: Yup.string(),
+      }),
+      triggerPrice: Yup.string().when('entryOrder', {
+        is: 'SLL',
+        then: Yup.string().required("Please Enter Trigger Price"),
+        otherwise: Yup.string(),
+      }),
+      target: Yup.string().when('entryOrder', {
+        is: 'SLL',
+        then: Yup.string().required("Please Enter Target"),
+        otherwise: Yup.string(),
+      }),
+      stopLoss: Yup.string().when('entryOrder', {
+        is: 'SLL',
+        then: Yup.string().required("Please Enter Stop Loss"),
+        otherwise: Yup.string(),
+      }),
+      priceBufferType: Yup.string().when('entryOrder', {
+        is: 'market',
+        then: Yup.string()
+          .required("Please Select Price Buffer Type")
+          .oneOf(['fixed', 'percent'], "Invalid Price Buffer Type"),
+        otherwise: Yup.string(),
+      }),
+    
+      priceBuffer: Yup.string().when(['entryOrder', 'priceBufferType'], {
+        is: (entryOrder, priceBufferType) => entryOrder === 'market' && priceBufferType === 'fixed',
+        then: Yup.string().required("Please Enter Price Buffer"),
+        otherwise: Yup.string(),
+      }),
+    
     }),
     onSubmit: (values) => {
       let form = themeConfig.functions.read_form("traingForm");
@@ -141,72 +144,96 @@ const index = (props) => {
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
+      
       if (isEdit) {
-        formData.append("id", values.id);
-        updateNavigation(formData);
+        formData.append("id", values._id);
+        updateNavigation(values.id, formData);
       } else {
 
         addNewNavigation(formData);
 
       }
+      setShowFields(false);
+      setShowRadioButtons(false);
       validation.resetForm();
-      setAddImagePrimary(thumb);
+      
       toggle();
     },
   });
 
+  const handleReset = () => {
+    validation.resetForm();
+    setShowFields(false);
+    setShowRadioButtons(false);
+  };
   const addNewNavigation = (form_data) => {
 
 
-    postData("aboutus/traingForm", form_data)
+    postData("tradingForm", form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        setNavs(response.data.data);
+        getNavigation();
         return success(response.data.message);
       });
   };
 
-  const updateNavigation = (form_data) => {
-
-    postData("aboutus/editTeamMembers", form_data)
+  const updateNavigation = (id, form_data) => {
+    
+    updateData(`tradingForm/${id}`, form_data)
       .then((response) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        setNavs(response.data.data);
+        getNavigation();
         return success(response.data.message);
       });
   };
   const handleCustomerClick = (arg) => {
     const nav = arg;
-
+    
     setNav({
-      id: nav.id,
-      name: nav.name,
-      position: nav.position,
-      image: nav.image,
-      altText: nav.altText
+      id: nav._id,
+      terminalSymbol: nav.terminalSymbol,
+      optionType: nav.optionType,
+      dynamicExpiry: nav.dynamicExpiry,
+      dynamicStrike: nav.dynamicStrike,
+      qtyType: nav.qtyType,
+      prodType: nav.prodType,
+      entryOrder: nav.entryOrder,
+      exitOrder: nav.exitOrder,
+      strategy: nav.strategy,
+      portalUserId: nav.portalUserId,
+      portalPassword: nav.portalPassword,
+      userKey: nav.userKey,
+      appKey: nav.appKey,
+      priceBuffer: nav.priceBuffer,
+      priceBufferType: nav.priceBufferType,
+      price: nav.price,
+      triggerPrice: nav.triggerPrice,
+      target: nav.target,
+      stopLoss: nav.stopLoss
     });
-    setAddImagePrimary(nav.image);
+
+    // Update validation values
+    validation.setValues({
+      ...validation.values,
+      ...nav
+    });
+
     setIsEdit(true);
+    if (nav.entryOrder === 'SLL') {
+      setShowFields(true);
+      setShowRadioButtons(false);
+    } else if (nav.entryOrder === 'market') {
+      setShowFields(false);
+      setShowRadioButtons(true);
+    } else {
+      setShowFields(false);
+      setShowRadioButtons(false);
+    }
     toggle();
-  };
-
-  const handleCheckingClick = (arg) => {
-    const nav = arg;
-
-    setNav({
-      id: nav.id,
-      name: nav.name,
-      position: nav.position,
-      image: nav.image,
-      altText: nav.altText
-    });
-    setAddImagePrimary(nav.image);
-    setIsEdit(true);
-    toggleCheck();
   };
 
   // Customber Column
@@ -221,40 +248,56 @@ const index = (props) => {
         },
       },
       {
-        Header: "Instrument",
-        accessor: "instrument",
+        Header: "Option Type",
+        accessor: "optionType",
         filterable: true,
         Cell: (cellProps) => {
           return <Email {...cellProps} />;
         },
       },
       {
-        Header: "Entry",
-        accessor: "entry",
+        Header: "Dynamic Expiry",
+        accessor: "dynamicExpiry",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
         },
       },
       {
-        Header: "Exit",
-        accessor: "exit",
+        Header: "Dynamic Strike",
+        accessor: "dynamicStrike",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
         },
       },
       {
-        Header: "Qty",
-        accessor: "qty",
+        Header: "Qty Type",
+        accessor: "qtyType",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
         },
       },
       {
-        Header: "ProdType",
+        Header: "Prod Type",
         accessor: "prodType",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Designation {...cellProps} />;
+        },
+      },
+      {
+        Header: "Entry Order",
+        accessor: "entryOrder",
+        filterable: true,
+        Cell: (cellProps) => {
+          return <Designation {...cellProps} />;
+        },
+      },
+      {
+        Header: "Exit Order",
+        accessor: "exitOrder",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
@@ -316,75 +359,68 @@ const index = (props) => {
     }
   };
 
-  const toggleCheck = () => {
-    if (modalCheck) {
-      setModalCheck(false);
-      setNav(null);
-    } else {
-      setModalCheck(true);
-    }
-  };
-
   //delete customer
   const [deleteModal, setDeleteModal] = useState(false);
-
+  const [deleteAllModal, setDeleteAllModal] = useState(false);
   const onClickDelete = (navigation) => {
+    
     setNav(navigation);
     setDeleteModal(true);
   };
 
   const handleDeleteCustomer = () => {
-    if (navigation && navigation.id) {
+    
+    if (navigation && navigation._id) {
 
-      let data = {
-        id: navigation.id,
-      };
-
-      postData("aboutus/deleteTeamMembers", data)
+      deleteData(`tradingForm/${navigation._id}`)
         .then((response) => {
           if (response.data.error) {
             return error(response.data.message);
           }
 
           setDeleteModal(false);
-          setNav("");
-          setNavs(response.data.data);
+          getNavigation();
           return success(response.data.message);
         });
     }
   };
 
+  const handleDeleteAllData = () => {
+  
+    const idArray = navs.map(item => item._id);
+     
+    
+      let obj = {
+        idArray: idArray
+      }
+
+      deleteData(`tradingForm/allDataErase/${idArray}`)
+        .then((response) => {
+          if (response.data.error) {
+            return error(response.data.message);
+          }
+
+          setDeleteAllModal(false);
+          getNavigation();
+          return success(response.data.message);
+        });
+  };
+
+  
+
   const handleCustomerClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
+
     setIsEdit(false);
+    setShowFields(false);
+      setShowRadioButtons(false);
+      validation.resetForm();
     toggle();
   };
-  const handleCheckingClicks = () => {
-    setNavList("");
-    setAddImagePrimary(thumb);
-    setIsEdit(false);
-    toggleCheck();
-  };
-  const [form, setForm] = useState(null);
-  const onChangeAddPrimary = (e) => {
-    const reader = new FileReader(),
-      files = e.target.files;
-    reader.onload = () => {
-      setAddImagePrimary(reader.result);
-    };
-    reader.readAsDataURL(files[0]);
-    setForm({ ...form, icon: e.target.files });
-  };
 
-  const handleDelPri = (e) => {
-    e.preventDefault();
-    document.getElementById("editCatImagePrimary").value = "";
-    setAddImagePrimary(thumb);
-  };
-
-
-
+  //delete all data
+  const allDataDelete = () => {
+    setDeleteAllModal(true);
+  }
   return (
     <React.Fragment>
       <DeleteModal
@@ -392,17 +428,21 @@ const index = (props) => {
         onDeleteClick={handleDeleteCustomer}
         onCloseClick={() => setDeleteModal(false)}
       />
+      <DeleteAllModal
+      show={deleteAllModal}
+      onDeleteClick={handleDeleteAllData}
+      onCloseClick={() => setDeleteAllModal(false)}
+    />
       <Card>
         <CardBody>
           <TradingTableContainer
             columns={columns}
             data={navs}
-            cnt={count}
             isGlobalFilter={true}
             isAddCustList={true}
             isPagination={true}
             handleCustomerClick={handleCustomerClicks}
-            handleCheckingClick={handleCheckingClicks}
+            allDataDelete={allDataDelete}
             customPageSize={20}
             className="custom-header-css"
           />
@@ -432,7 +472,7 @@ const index = (props) => {
                               className="select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.terminalSymbol == 0 ? 0 : validation.values.terminalSymbol || ""}
+                              value={validation.values.terminalSymbol || ""}
                               invalid={
                                 validation.touched.terminalSymbol && validation.errors.terminalSymbol
                                   ? true
@@ -454,8 +494,7 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
                         </div>
-                      
-                        <div className="add-tread col-md-4">
+                        <div className="add-tread col-md-3">
                           <Label className="form-label">Option Type</Label>
                           <Input
                               type="select"
@@ -463,7 +502,7 @@ const index = (props) => {
                               className="select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.optionType == 0 ? 0 : validation.values.optionType || ""}
+                              value={validation.values.optionType || ""}
                               invalid={
                                 validation.touched.optionType && validation.errors.optionType
                                   ? true
@@ -490,7 +529,7 @@ const index = (props) => {
                               className="select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.dynamicExpiry == 0 ? 0 : validation.values.dynamicExpiry || ""}
+                              value={validation.values.dynamicExpiry || ""}
                               invalid={
                                 validation.touched.dynamicExpiry && validation.errors.dynamicExpiry
                                   ? true
@@ -523,7 +562,7 @@ const index = (props) => {
                               className="col-md-6 select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.dynamicStrike == 0 ? 0 : validation.values.dynamicStrike || ""}
+                              value={validation.values.dynamicStrike || ""}
                               invalid={
                                 validation.touched.dynamicStrike && validation.errors.dynamicStrike
                                   ? true
@@ -548,7 +587,7 @@ const index = (props) => {
                               className="col-md-6 select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.qtyType == 0 ? 0 : validation.values.qtyType || ""}
+                              value={validation.values.qtyType || ""}
                               invalid={
                                 validation.touched.qtyType && validation.errors.qtyType
                                   ? true
@@ -573,7 +612,7 @@ const index = (props) => {
                               className="col-md-6 select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.prodType == 0 ? 0 : validation.values.prodType || ""}
+                              value={validation.values.prodType || ""}
                               invalid={
                                 validation.touched.prodType && validation.errors.prodType
                                   ? true
@@ -595,29 +634,24 @@ const index = (props) => {
                       <div className="add-tread col-md-4">
                         <Label className="form-label">Entry Order</Label>
                         <Input
-                              type="select"
-                              name="entryOrder"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onChange={handleSelectionChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.entryOrder == 0 ? 0 : validation.values.entryOrder || ""}
-                              invalid={
-                                validation.touched.entryOrder && validation.errors.entryOrder
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select  Prod Type</option>
-                          <option value="sLL">SLL</option>
-                          <option value="market">MARKET</option>
-                          <option value="option2">Option 2</option>
+                            type="select"
+                            name="entryOrder"
+                            className="col-md-6 select-script"
+                            onChange={handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.entryOrder || ""}
+                            invalid={validation.touched.entryOrder && validation.errors.entryOrder ? true : false}
+                          >
+                            <option value="" disabled>Select Prod Type</option>
+                            <option value="SLL">SLL</option>
+                            <option value="market">MARKET</option>
+                            <option value="option2">Option 2</option>
                           </Input>
-                      {validation.touched.entryOrder && validation.errors.entryOrder ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.entryOrder}
-                        </FormFeedback>
-                      ) : null}
+                          {validation.touched.entryOrder && validation.errors.entryOrder ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.entryOrder}
+                            </FormFeedback>
+                          ) : null}
                       </div>
                       <div className="add-tread col-md-4">
                         <Label className="form-label">Exit Order</Label>
@@ -627,7 +661,7 @@ const index = (props) => {
                               className="col-md-6 select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.exitOrder == 0 ? 0 : validation.values.exitOrder || ""}
+                              value={validation.values.exitOrder || ""}
                               invalid={
                                 validation.touched.exitOrder && validation.errors.exitOrder
                                   ? true
@@ -652,7 +686,7 @@ const index = (props) => {
                               className="col-md-6 select-script"
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.strategy == 0 ? 0 : validation.values.strategy || ""}
+                              value={validation.values.strategy || ""}
                               invalid={
                                 validation.touched.strategy && validation.errors.strategy
                                   ? true
@@ -781,33 +815,50 @@ const index = (props) => {
                     <div className="add-tread-beside">
                       <div className="add-tread  col-md-12">
                       {showRadioButtons && (
-        <div className="for-sll">
-          <div className="add-tread col-md-6">
-            <label htmlFor="field5">Price Buffer Type</label>
-            <div className="add-tread price-buffer col-md-12">
-              <label className="price-buffer">
-                <input
-                  type="radio"
-                  name="radioOption"
-                  value="fixed"
-                  onChange={handleRadioChange}
-                />
-                Fixed
-              </label>
-              <label className="price-buffer">
-                <input
-                  type="radio"
-                  name="radioOption"
-                  value="percent"
-                  onChange={handleRadioChange}
-                />
-                Percent
-              </label>
-            </div>
-          </div>
+                  <div className="for-sll">
+                    <div className="add-tread col-md-6">
+                      <label htmlFor="field5">Price Buffer Type</label>
+                      <div className="add-tread price-buffer col-md-12">
+                        <label className="price-buffer">
+                          <input
+                            type="radio"
+                            name="priceBufferType"
+                            value="fixed"
+                            checked={validation.values.priceBufferType === "fixed"}
+                            onBlur={validation.handleBlur}
+                            onChange={validation.handleChange}
+                            invalid={
+                              validation.touched?.priceBufferType && validation.errors?.priceBufferType
+                                ? true
+                                : false
+                            }
+                          />
+                          Fixed
+                        </label>
+                        <label className="price-buffer">
+                          <input
+                            type="radio"
+                            name="priceBufferType"
+                            value="percent"
+                            checked={validation.values.priceBufferType === "percent"}
+                            onBlur={validation.handleBlur}
+                            onChange={validation.handleChange}
+                            invalid={
+                              validation.touched?.priceBufferType && validation.errors?.priceBufferType
+                                ? true
+                                : false
+                            }
+                          />
+                          Percent
+                        </label>
+                        {validation.touched.priceBufferType && validation.errors.priceBufferType ? (
+                          <div>{validation.errors.priceBufferType}</div>
+                        ) : null}
+                      </div>
+                    </div>
 
           {/* Conditionally render Price Buffer input field when "Fixed" is selected */}
-          {selectedRadio === 'fixed' && (
+          {validation.values.priceBufferType === 'fixed' && (
             <div className="add-tread col-md-6">
               <label htmlFor="priceBuffer">Price Buffer</label>
               <Input
@@ -843,12 +894,15 @@ const index = (props) => {
                 <Row>
                   <Col>
                     <div className="text-end">
+                      {!isEdit && 
                       <button
-                        type="submit"
+                        type="button"
                         className="btn btn-danger save-customer mx-2"
+                        onClick={handleReset}
                       >
                         Reset
                       </button>
+                      }
                       <button
                         type="submit"
                         className="btn btn-success save-customer"
@@ -862,161 +916,6 @@ const index = (props) => {
               </Form>
             </ModalBody>
           </Modal>
-
-          <Modal isOpen={modalCheck} toggle={toggleCheck}>
-            <ModalHeader toggle={toggleCheck} tag="h4">
-              {!!isEdit ? "My Tread Setting" : "My Tread Setting"}
-            </ModalHeader>
-            <ModalBody>
-              <Form
-                id="traingForm"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  validation.handleSubmit();
-                  return false;
-                }}
-              >
-                <Row>
-                  <Col className="col-12">
-                    <div className="mb-3 form-controls">
-                      <Label className="form-label">Portel User ID<small className="asterisk">*</small></Label>
-                      
-                      <Input
-                              type="select"
-                              name="portalUserId"
-                              className="form-control"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.portalUserId == 0 ? 0 : validation.values.portalUserId || ""}
-                              invalid={
-                                validation.touched.portalUserId && validation.errors.portalUserId
-                                  ? true
-                                  : false
-                              }
-                            >
-                        <option option value="" disabled selected>Select User ID</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </Input>
-                      {validation.touched.portalUserId && validation.errors.portalUserId ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.portalUserId}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                    <div className="mb-3 form-controls">
-                      <Label className="form-label">Portel Password<small className="asterisk">*</small></Label>
-                      <Input
-                              type="select"
-                              name="portalPassword"
-                              className="form-control"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.portalPassword == 0 ? 0 : validation.values.portalPassword || ""}
-                              invalid={
-                                validation.touched.portalPassword && validation.errors.portalPassword
-                                  ? true
-                                  : false
-                              }
-                            >
-                      <option option value="" disabled selected>Select Password</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </Input>
-                      {validation.touched.portalPassword && validation.errors.portalPassword ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.portalPassword}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                    <div className="mb-3 form-controls">
-                      <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <Input
-                              type="select"
-                              name="userKey"
-                              className="form-control"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.userKey == 0 ? 0 : validation.values.userKey || ""}
-                              invalid={
-                                validation.touched.userKey && validation.errors.userKey
-                                  ? true
-                                  : false
-                              }
-                            >
-                        <option option value="" disabled selected>Select User Key</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </Input>
-                      {validation.touched?.userKey && validation.errors?.userKey ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors?.userKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                    <div className="mb-3 form-controls">
-                      <Label className="form-label">Appkey<small className="asterisk">*</small></Label>
-                      <Input
-                              type="select"
-                              name="appKey"
-                              className="form-control"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={isEdit && validation.values.appKey == 0 ? 0 : validation.values.appKey || ""}
-                              invalid={
-                                validation.touched.appKey && validation.errors.appKey
-                                  ? true
-                                  : false
-                              }
-                            > 
-                        <option option value="" disabled selected>Select Appkey</option>
-                        <option value="name">name 1</option>
-                        <option value="name">name 2</option>
-                        <option value="name">name 3</option>
-                        <option value="name">name 4</option>
-                        <option value="name">name 5</option>
-                        <option value="name">name 6</option>
-                        <option value="name">name 7</option>
-                      </Input>
-                      {validation.touched?.appKey && validation.errors?.appKey ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors?.appKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <div className="text-end">
-                      <button
-                        type="submit"
-                        className="btn btn-success save-customer"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </Col>
-                </Row>
-              </Form>
-            </ModalBody>
-          </Modal>
-
         </CardBody>
       </Card>
     </React.Fragment>

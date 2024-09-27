@@ -22,8 +22,8 @@ import { height } from "dom7";
         const endDateInput = document.getElementById('end-date');
         const dateDifferenceOutput = document.getElementById('date-difference');
 
-        startDateInput.addEventListener('change', calculateDateDifference);
-        endDateInput.addEventListener('change', calculateDateDifference);
+        startDateInput?.addEventListener('change', calculateDateDifference);
+        endDateInput?.addEventListener('change', calculateDateDifference);
 
         function calculateDateDifference() {
             const startDateValue = startDateInput.value;
@@ -245,7 +245,7 @@ const TradingTableContainer = ({
           <Col sm="12">
             <div className="text-sm-start" >
                 <div className="add-orderlog col-md-12">
-                  <div class="col-5">
+                  <div className="col-5">
                     <select className="select-script col-5" id="cars" name="cars">
                         <option value="" disabled selected>All Script</option>
                         <option value="TATA POWER">NIFTY</option>
@@ -267,13 +267,13 @@ const TradingTableContainer = ({
                         <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
                     </select>
                     </div>
-                    <div class="date-range-container col-5">
+                    <div className="date-range-container col-5">
                         <input type="date" id="start-date" />
                         <span><b>To</b></span>
                         <input type="date" id="end-date" />
-                        <span class="date-difference" id="date-difference"></span>
+                        <span className="date-difference" id="date-difference"></span>
                     </div>
-                    <div class="total-records col-2">
+                    <div className="total-records col-2">
                         <h5>Total Records: 8</h5>
                     </div>
    

@@ -13,15 +13,17 @@ const Name = (cell) => {
 const Status = (cell) => {
   const hasValue = cell.value ? true : false;
   return (
-    <span
+    <button
       style={{
-        display: 'inline-block',
-        width: '12px',
-        height: '12px',
-        borderRadius: '50%',
-        backgroundColor: hasValue ? 'green' : 'red'
+        color: hasValue ? 'green' : 'red',
+        padding: '5px 10px',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer'
       }}
-    />
+    >
+      {hasValue ? 'Active' : 'Inactive'}
+    </button>
   );
 };
 
