@@ -68,6 +68,7 @@ const TradingTableContainer = ({
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
+  allDataDelete,
   isAddCustList,
   customPageSize,
   className,
@@ -218,10 +219,7 @@ const TradingTableContainer = ({
                 type="button"
                 color="danger"
                 className="btn-rounded mb-2 me-2"
-                onClick={() => {
-                  const customerData = cellProps.row.original;
-                  onClickDelete(customerData);
-                }}
+                onClick={() => {allDataDelete()}}
               >
                 <i className="mdi mdis-delete " />
               </Button>

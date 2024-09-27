@@ -1,24 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 //Import Breadcrumb
 import Breadcrumbs from "../../../src/components/Common/Breadcrumb";
 import {
   Container,
 } from "reactstrap";
 
-import Users from "./Team-Members/index";
-
-
+import Users from "./User/index";
 import { ToastElement } from "../../components/toast";
 
-
 const index = () => {
-  // Tabs
-  const [customActiveTab, setcustomActiveTab] = useState("1");
-  const toggleCustom = (tab) => {
-    if (customActiveTab !== tab) {
-      setcustomActiveTab(tab);
-    }
-  };
 
   return (
     <>

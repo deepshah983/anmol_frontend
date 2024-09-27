@@ -18,7 +18,7 @@ const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
             </div>
           </div>
           <p className="text-muted font-size-16 mb-4">
-            Are you sure you want to permanently erase the data.
+            Are you sure you want to permanently erase the data?
           </p>
 
           <div className="hstack gap-2 justify-content-center mb-0">
