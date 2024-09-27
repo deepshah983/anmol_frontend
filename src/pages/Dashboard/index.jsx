@@ -27,7 +27,6 @@ const Dashboard = (props) => {
     getData("/dashboard/counts")
       .then((response) => {
         const countsData = response.data.data;
-        console.log(countsData);
         setDashboardData(countsData); // Set the dashboard data
         setLoading(false); // Set loading to false after data is fetched
       })
