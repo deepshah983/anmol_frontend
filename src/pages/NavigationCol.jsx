@@ -214,6 +214,15 @@ const UpdateType = (cell) => {
 const Number = (cell) => {
   return cell.value ? cell.value : "";
 };
+const CheckboxCellRenderer = ({ value }) => {
+  return (
+    <input
+      type="checkbox"
+      checked={Boolean(value)}
+      readOnly
+    />
+  );
+};
 export {
     Id,
     Name,
@@ -258,5 +267,6 @@ export {
     Source,
     Mode,
     Message,
-    ReceivedAt
+    ReceivedAt,
+    CheckboxCellRenderer
 };
