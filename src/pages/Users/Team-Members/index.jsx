@@ -7,6 +7,7 @@ import {
   Card,
   CardBody,
   Col,
+  Container,
   Row,
   Modal,
   ModalHeader,
@@ -73,6 +74,7 @@ const index = (props) => {
           return client;
         
         });
+         console.log(clients);
          
         strategies = strategies.map(row => {
           row.label = row.name;
@@ -146,6 +148,7 @@ const index = (props) => {
 
     postData("/clients", form_data)
       .then((response) => {
+        console.log(response);
         
         if (response.data.error) {
           return error(response.data.error);
@@ -158,6 +161,7 @@ const index = (props) => {
       
       })
       .catch((err) => {
+        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
@@ -176,6 +180,7 @@ const index = (props) => {
         return success(response.data.message);
       })
       .catch((err) => {
+        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
@@ -227,6 +232,7 @@ const index = (props) => {
         return success(response.data.message);
       })
       .catch((err) => {
+        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
@@ -242,8 +248,13 @@ const index = (props) => {
       assignedstrategy: (navigation && navigation.assignedstrategy) || "",
 
     },
+    // validationSchema: Yup.object({
+    //   userId: Yup.string().required("Please Enter User Id"),
+    // }),
     onSubmit: (values) => {
-    
+      console.log(values);
+      console.log(tags);
+
       const transformedArray = tags.map((item) => ({
         strategy_id: item._id, // If item.blog_id exists, use it; otherwise, use item.id
         label: item.label,
@@ -256,6 +267,7 @@ const index = (props) => {
         parent_id: values.id
       }
 
+      console.log(tagsData);
       updateAssignStrategy(tagsData);
      
     },
@@ -275,6 +287,7 @@ const index = (props) => {
         return success(response.data.message);
       })
       .catch((err) => {
+        console.log(err?.response?.data?.error);
         return error(err?.response?.data?.error);
       });
   };
@@ -301,6 +314,8 @@ const index = (props) => {
 
     const assignStrategyClick = (arg) => {
       const nav = arg;
+    
+      console.log("nav", nav);
       
       let assignStrategyNav = '';
   
@@ -322,6 +337,8 @@ const index = (props) => {
 
   const handleCheckingClick = (arg) => {
     const nav = arg;
+
+    console.log("handleCheckingClick", nav);
     
     setNav({
       id: nav._id,
@@ -427,6 +444,7 @@ const index = (props) => {
                 }}
               >
                 <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
+                
               </Link>
               <Link
                 to="#"
@@ -436,14 +454,25 @@ const index = (props) => {
                 }}
               >
                 <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
+                
                 <div className="text-success-script">
                   <div    onClick={() => {
                   const customerData = cellProps.row.original;
                   assignStrategyClick(customerData);
-                }}>Manage Strategy</div>
+                }}>Assign/Unassign Strategy</div>
+                  {/* <div>unassign Strategy</div> */}
                 </div>
               </Link>
-              
+              {/* <Link
+                to="#"
+                className="text-danger"
+                onClick={() => {
+                  const customerData = cellProps.row.original;
+                  onClickDelete(customerData);
+                }}
+              >
+                <i className="mdi mdi-delete font-size-18" id="deletetooltip" />
+              </Link> */}
             </div>
           );
         },
@@ -482,9 +511,13 @@ const index = (props) => {
   //delete customer
   const [deleteModal, setDeleteModal] = useState(false);
 
-
+  const onClickDelete = (navigation) => {
+    setNav(navigation);
+    setDeleteModal(true);
+  };
 
   const handleDeleteCustomer = () => {
+    console.log(navigation);
     
     if (navigation && navigation._id) {
 
@@ -769,49 +802,6 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
                     </div>
-                    <div className="mb-3">
-                      <Label className="form-label">User Key<small className="asterisk">*</small></Label>
-                      <Input
-                        name="userKey"
-                        type="text"
-                        placeholder="Select User Key"
-                        onChange={validationTreadSetting.handleChange}
-                        onBlur={validationTreadSetting.handleBlur}
-                        value={validationTreadSetting.values?.userKey || ""}
-                        invalid={
-                          validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey
-                            ? true
-                            : false
-                        }
-                      />
-                      {validationTreadSetting.touched?.userKey && validationTreadSetting.errors?.userKey ? (
-                        <FormFeedback type="invalid">
-                          {validationTreadSetting.errors?.userKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
-                    <div className="mb-3">
-                      <Label className="form-label">App key<small className="asterisk">*</small></Label>
-                     
-                      <Input
-                        name="appKey"
-                        type="text"
-                        placeholder="Select Appkey"
-                        onChange={validationTreadSetting.handleChange}
-                        onBlur={validationTreadSetting.handleBlur}
-                        value={validationTreadSetting.values?.appKey || ""}
-                        invalid={
-                          validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey
-                            ? true
-                            : false
-                        }
-                      />
-                      {validationTreadSetting.touched?.appKey && validationTreadSetting.errors?.appKey ? (
-                        <FormFeedback type="invalid">
-                          {validationTreadSetting.errors?.appKey}
-                        </FormFeedback>
-                      ) : null}
-                    </div>
                   </Col>
                 </Row>
                 <Row>
@@ -833,7 +823,7 @@ const index = (props) => {
            {/* start assign strategy popup */}
           <Modal isOpen={modalAssignStrategy} toggle={toggleAssignStrategy}>
             <ModalHeader toggle={toggleAssignStrategy} tag="h4">
-              Stratagy
+              Assign Stratagy
             </ModalHeader>
             <ModalBody>
               <Form
