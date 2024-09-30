@@ -283,7 +283,7 @@ const TradingTableContainer = ({
         </Table>
       </div>
 
-      {isPagination && (
+      {isPagination && page.length > 10 && (
         <Row className="justify-content-md-end justify-content-center align-items-center">
           <Col className="col-md-auto">
             <div className="d-flex gap-1">
