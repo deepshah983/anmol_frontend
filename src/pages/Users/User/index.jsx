@@ -561,7 +561,7 @@ const index = (props) => {
             columns={columns}
             data={navs}
             isGlobalFilter={true}
-            isAddCustList={true}
+            isAddUserList={true}
             isPagination={true}
             handleCustomerClick={handleCustomerClicks}
             handleCheckingClick={handleCheckingClicks}

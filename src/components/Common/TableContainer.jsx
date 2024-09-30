@@ -183,19 +183,18 @@ const TableContainer = ({
           </Col>
         )}
         {isAddUserList && (
-          <Col sm="11">
-            <div className="text-sm-end">
-              <Button
-                type="button"
-                color="primary"
-                className="btn mb-2 me-2"
-                onClick={handleUserClick}
-              >
-                <i className="mdi mdi-plus-circle-outline me-1" />
-                Create New User
-              </Button>
-            </div>
-          </Col>
+          <Col sm="12">
+          <div className="text-sm-start">
+            <Button
+              type="button"
+              color="success"
+              className="btn-rounded mb-2 me-2"
+              onClick={handleCustomerClick}
+            >
+              <i className="mdi mdis-plus " />
+            </Button>
+          </div>
+        </Col>
         )}
         {isAddCustList && (
           <Col sm="12">

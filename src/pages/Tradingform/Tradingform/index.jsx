@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -38,14 +38,17 @@ const index = (props) => {
   const getNavigation = () => {
     getData("tradingForm")
       .then((response) => {
+        setStrategies(response.data.data);
         setNavs(response.data.data);
       });
   };
+  const [strategies, setStrategies] = useState([]);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
   const [showFields, setShowFields] = useState(false);
   const [showRadioButtons, setShowRadioButtons] = useState(false);
+  const [selectedStrategies, setSelectedStrategies] = useState([]);
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
@@ -88,8 +91,6 @@ const index = (props) => {
       priceBufferType: (navigation && navigation.priceBufferType) || "",
       price: (navigation && navigation.price) || "",
       triggerPrice: (navigation && navigation.triggerPrice) || "",
-      target: (navigation && navigation.target) || "",
-      stopLoss: (navigation && navigation.stopLoss) || "",
     },
     
     validationSchema: Yup.object().shape({
@@ -113,16 +114,6 @@ const index = (props) => {
         then: Yup.string().required("Please Enter Trigger Price"),
         otherwise: Yup.string(),
       }),
-      target: Yup.string().when('entryOrder', {
-        is: 'SLL',
-        then: Yup.string().required("Please Enter Target"),
-        otherwise: Yup.string(),
-      }),
-      stopLoss: Yup.string().when('entryOrder', {
-        is: 'SLL',
-        then: Yup.string().required("Please Enter Stop Loss"),
-        otherwise: Yup.string(),
-      }),
       priceBufferType: Yup.string().when('entryOrder', {
         is: 'market',
         then: Yup.string()
@@ -132,7 +123,7 @@ const index = (props) => {
       }),
     
       priceBuffer: Yup.string().when(['entryOrder', 'priceBufferType'], {
-        is: (entryOrder, priceBufferType) => entryOrder === 'market' && priceBufferType === 'fixed',
+        is: (entryOrder, priceBufferType) => entryOrder === 'market',
         then: Yup.string().required("Please Enter Price Buffer"),
         otherwise: Yup.string(),
       }),
@@ -211,9 +202,7 @@ const index = (props) => {
       priceBuffer: nav.priceBuffer,
       priceBufferType: nav.priceBufferType,
       price: nav.price,
-      triggerPrice: nav.triggerPrice,
-      target: nav.target,
-      stopLoss: nav.stopLoss
+      triggerPrice: nav.triggerPrice
     });
 
     // Update validation values
@@ -236,9 +225,63 @@ const index = (props) => {
     toggle();
   };
 
+  const handleSelectAllChange = (e) => {
+    if (e.target.checked) {
+      setSelectedStrategies(strategies.map(strategy => strategy._id));
+    } else {
+      setSelectedStrategies([]);
+    }
+  };
+
+  const handleSelectStrategy = (strategyId) => {
+    setSelectedStrategies(prevSelected => 
+      prevSelected.includes(strategyId)
+        ? prevSelected.filter(id => id !== strategyId)
+        : [...prevSelected, strategyId]
+    );
+  };
+
+  const getSelectedStrategies = useCallback(() => {
+    return strategies.filter(strategy => selectedStrategies.includes(strategy._id));
+  }, [strategies, selectedStrategies]);
+
+  const handleActionOnSelected = () => {
+    const selectedStrategyData = getSelectedStrategies();
+    console.log("Selected Strategies:", selectedStrategyData);
+    // Perform actions with selectedStrategyData
+  };
+
   // Customber Column
   const columns = useMemo(
     () => [
+      {
+        Header: (
+          <div className="form-check">
+            <Input
+              type="checkbox"
+              className="form-check-input"
+              id="selectAll"
+              onChange={handleSelectAllChange}
+              checked={selectedStrategies.length === strategies.length && strategies.length !== 0}
+            />
+            <Label className="form-check-label" htmlFor="selectAll">
+              Select All
+            </Label>
+          </div>
+        ),
+        accessor: 'selection',
+        Cell: ({ row }) => (
+          <div className="form-check">
+            <Input
+              type="checkbox"
+              className="form-check-input"
+              id={`check-${row.original._id}`}
+              onChange={() => handleSelectStrategy(row.original._id)}
+              checked={selectedStrategies.includes(row.original._id)}
+            />
+          </div>
+        ),
+      },
       {
         Header: "TerminalSymbol",
         accessor: "terminalSymbol",
@@ -347,7 +390,7 @@ const index = (props) => {
         },
       },
     ],
-    []
+    [strategies, selectedStrategies]
   );
 
   const toggle = () => {
@@ -386,15 +429,9 @@ const index = (props) => {
   };
 
   const handleDeleteAllData = () => {
-  
-    const idArray = navs.map(item => item._id);
-     
-    
-      let obj = {
-        idArray: idArray
-      }
-
-      deleteData(`tradingForm/allDataErase/${idArray}`)
+ 
+    if(selectedStrategies.length > 0){
+      deleteData(`tradingForm/selectedDataErase/${selectedStrategies}`)
         .then((response) => {
           if (response.data.error) {
             return error(response.data.message);
@@ -404,6 +441,7 @@ const index = (props) => {
           getNavigation();
           return success(response.data.message);
         });
+      }
   };
 
   
@@ -418,7 +456,7 @@ const index = (props) => {
   };
 
   //delete all data
-  const allDataDelete = () => {
+  const selectedDataDelete = () => {
     setDeleteAllModal(true);
   }
   return (
@@ -442,7 +480,7 @@ const index = (props) => {
             isAddCustList={true}
             isPagination={true}
             handleCustomerClick={handleCustomerClicks}
-            allDataDelete={allDataDelete}
+            selectedDataDelete={selectedDataDelete}
             customPageSize={20}
             className="custom-header-css"
           />
@@ -759,55 +797,6 @@ const index = (props) => {
                                 </div>
                               </div>
 
-                              <div className="for-sll">
-                              <div className="add-tread col-md-4">
-                                  <label htmlFor="field3">Target</label>
-                                  <Input
-                                      name="target"
-                                      type="number"
-                                      className="select-script"
-                                      id="field3"
-                                      placeholder="Enter Target"
-                                      onChange={validation.handleChange}
-                                      onBlur={validation.handleBlur}
-                                      value={validation.values?.target || ""}
-                                      invalid={
-                                        validation.touched?.target && validation.errors?.target
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    {validation.touched?.target && validation.errors?.target ? (
-                                      <FormFeedback type="invalid">
-                                        {validation.errors?.target}
-                                      </FormFeedback>
-                                    ) : null}
-                                </div>
-                                <div className="add-tread col-md-4">
-                                  <label htmlFor="field4">StopLoss</label>
-                                  <Input
-                                      name="stopLoss"
-                                      type="number"
-                                      className="select-script"
-                                      id="field3"
-                                      placeholder="Enter Stop Loss"
-                                      onChange={validation.handleChange}
-                                      onBlur={validation.handleBlur}
-                                      value={validation.values?.stopLoss || ""}
-                                      invalid={
-                                        validation.touched?.stopLoss && validation.errors?.stopLoss
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    {validation.touched?.stopLoss && validation.errors?.stopLoss ? (
-                                      <FormFeedback type="invalid">
-                                        {validation.errors?.stopLoss}
-                                      </FormFeedback>
-                                    ) : null}
-                                </div>
-
-                              </div>
                             </div>
                           )}
                       </div>
@@ -856,9 +845,6 @@ const index = (props) => {
                         ) : null}
                       </div>
                     </div>
-
-          {/* Conditionally render Price Buffer input field when "Fixed" is selected */}
-          {validation.values.priceBufferType === 'fixed' && (
             <div className="add-tread col-md-6">
               <label htmlFor="priceBuffer">Price Buffer</label>
               <Input
@@ -882,7 +868,6 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
             </div>
-          )}
         </div>
       )}
                       </div>
