@@ -123,7 +123,7 @@ const index = (props) => {
       }),
     
       priceBuffer: Yup.string().when(['entryOrder', 'priceBufferType'], {
-        is: (entryOrder, priceBufferType) => entryOrder === 'market' && priceBufferType === 'fixed',
+        is: (entryOrder, priceBufferType) => entryOrder === 'market',
         then: Yup.string().required("Please Enter Price Buffer"),
         otherwise: Yup.string(),
       }),
@@ -262,7 +262,7 @@ const index = (props) => {
               className="form-check-input"
               id="selectAll"
               onChange={handleSelectAllChange}
-              checked={selectedStrategies.length === strategies.length}
+              checked={selectedStrategies.length === strategies.length && strategies.length !== 0}
             />
             <Label className="form-check-label" htmlFor="selectAll">
               Select All
@@ -845,9 +845,6 @@ const index = (props) => {
                         ) : null}
                       </div>
                     </div>
-
-          {/* Conditionally render Price Buffer input field when "Fixed" is selected */}
-          {validation.values.priceBufferType === 'fixed' && (
             <div className="add-tread col-md-6">
               <label htmlFor="priceBuffer">Price Buffer</label>
               <Input
@@ -871,7 +868,6 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
             </div>
-          )}
         </div>
       )}
                       </div>

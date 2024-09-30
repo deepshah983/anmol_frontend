@@ -171,7 +171,7 @@ const StrategyManagement = () => {
               className="form-check-input"
               id="selectAll"
               onChange={handleSelectAllChange}
-              checked={selectedStrategies.length === strategies.length}
+              checked={selectedStrategies.length === strategies.length && strategies.length !== 0}
             />
             <Label className="form-check-label" htmlFor="selectAll">
               Select All
