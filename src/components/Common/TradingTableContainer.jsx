@@ -68,7 +68,7 @@ const TradingTableContainer = ({
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
-  allDataDelete,
+  selectedDataDelete,
   isAddCustList,
   customPageSize,
   className,
@@ -115,6 +115,7 @@ const TradingTableContainer = ({
   );
 
   const generateSortingIndicator = (column) => {
+   
     return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
   };
 
@@ -219,7 +220,7 @@ const TradingTableContainer = ({
                 type="button"
                 color="danger"
                 className="btn-rounded mb-2 me-2"
-                onClick={() => {allDataDelete()}}
+                onClick={() => {selectedDataDelete()}}
               >
                 <i className="mdi mdis-delete " />
               </Button>
@@ -235,9 +236,9 @@ const TradingTableContainer = ({
               <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th key={column.id}>
-                    <div {...column.getSortByToggleProps()}>
+                    <div>
                       {column.render("Header")}
-                      {generateSortingIndicator(column)}
+                      {/* {generateSortingIndicator(column)} */}
                     </div>
                   </th>
                 ))}

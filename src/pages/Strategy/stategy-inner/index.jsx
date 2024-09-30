@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
@@ -27,7 +27,8 @@ import {
   deleteData,
 } from "../../../components/api";
 import DeleteModal from "../../../components/Common/DeleteModal";
-import TableContainer from "../../../components/Common/TableContainer";
+import DeleteAllModal from "../../../components/Common/DeleteAllData";
+import TradingTableContainer from "../../../components/Common/TradingTableContainer";
 import { success, error } from "../../../components/toast";
 import HideShowSection from "../../../components/Common/HideShowSection";
 import { Strategy } from "../../NavigationCol";
@@ -40,6 +41,8 @@ const StrategyManagement = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [strategy, setStrategy] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteAllModal, setDeleteAllModal] = useState(false);
+  const [selectedStrategies, setSelectedStrategies] = useState([]);
 
   useEffect(() => {
     getStrategies();
@@ -132,8 +135,62 @@ const StrategyManagement = () => {
     toggle();
   };
 
+  const handleSelectAllChange = (e) => {
+    if (e.target.checked) {
+      setSelectedStrategies(strategies.map(strategy => strategy._id));
+    } else {
+      setSelectedStrategies([]);
+    }
+  };
+
+  const handleSelectStrategy = (strategyId) => {
+    setSelectedStrategies(prevSelected => 
+      prevSelected.includes(strategyId)
+        ? prevSelected.filter(id => id !== strategyId)
+        : [...prevSelected, strategyId]
+    );
+  };
+
+  const getSelectedStrategies = useCallback(() => {
+    return strategies.filter(strategy => selectedStrategies.includes(strategy._id));
+  }, [strategies, selectedStrategies]);
+
+  const handleActionOnSelected = () => {
+    const selectedStrategyData = getSelectedStrategies();
+    console.log("Selected Strategies:", selectedStrategyData);
+    // Perform actions with selectedStrategyData
+  };
+
   const columns = useMemo(
     () => [
+      {
+        Header: (
+          <div className="form-check">
+            <Input
+              type="checkbox"
+              className="form-check-input"
+              id="selectAll"
+              onChange={handleSelectAllChange}
+              checked={selectedStrategies.length === strategies.length}
+            />
+            <Label className="form-check-label" htmlFor="selectAll">
+              Select All
+            </Label>
+          </div>
+        ),
+        accessor: 'selection',
+        Cell: ({ row }) => (
+          <div className="form-check">
+            <Input
+              type="checkbox"
+              className="form-check-input"
+              id={`check-${row.original._id}`}
+              onChange={() => handleSelectStrategy(row.original._id)}
+              checked={selectedStrategies.includes(row.original._id)}
+            />
+          </div>
+        ),
+      },
       {
         Header: "Strategy Name",
         accessor: "name",
@@ -188,7 +245,7 @@ const StrategyManagement = () => {
         ),
       },
     ],
-    []
+    [strategies, selectedStrategies]
   );
 
   const toggle = () => {
@@ -216,10 +273,33 @@ const StrategyManagement = () => {
     setDeleteModal(false);
   };
 
+  //erse selected data
+  const handleDeleteAllData = () => {
+ 
+    if(selectedStrategies.length > 0){
+      deleteData(`strategies/selectedDataErase/${selectedStrategies}`)
+        .then((response) => {
+          if (response.data.error) {
+            return error(response.data.message);
+          }
+
+          setDeleteAllModal(false);
+          getStrategies();
+          return success(response.data.message);
+        });
+      }
+  };
+//end erse selected data
+
   const handleCustomerClicks = () => {
     setIsEdit(false);
     toggle();
   };
+
+   //delete all data
+   const selectedDataDelete = () => {
+    setDeleteAllModal(true);
+  }
 
   return (
     <>
@@ -228,6 +308,11 @@ const StrategyManagement = () => {
         onDeleteClick={handleDeleteStrategy}
         onCloseClick={() => setDeleteModal(false)}
       />
+       <DeleteAllModal
+      show={deleteAllModal}
+      onDeleteClick={handleDeleteAllData}
+      onCloseClick={() => setDeleteAllModal(false)}
+    />
       <div className="">
         <Container fluid>
           <HideShowSection
@@ -235,6 +320,14 @@ const StrategyManagement = () => {
             toggle={false}
             count={count}
           >
+            <Button
+              color="secondary"
+              className="btn btn-secondary me-1 float-end"
+              onClick={handleActionOnSelected}
+              disabled={selectedStrategies.length === 0}
+            >
+              Action on Selected ({selectedStrategies.length})
+            </Button>
             <Button
               color="primary"
               className="btn btn-primary me-1 float-end"
@@ -248,13 +341,14 @@ const StrategyManagement = () => {
             <Col lg="12">
               <Card>
                 <CardBody>
-                  <TableContainer
+                  <TradingTableContainer
                     columns={columns}
                     data={strategies}
                     isGlobalFilter={true}
                     isAddCustList={true}
                     isPagination={true}
                     handleCustomerClick={handleCustomerClicks}
+                    selectedDataDelete={selectedDataDelete}
                     customPageSize={20}
                     className="custom-header-css"
                   />
