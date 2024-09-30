@@ -18,6 +18,8 @@ const Status = (cell) => {
         color: hasValue ? 'green' : 'red',
         padding: '5px 10px',
         border: 'none',
+        fontSize: '14px',
+        fontWeight: '500',
         borderRadius: '5px',
         cursor: 'pointer'
       }}

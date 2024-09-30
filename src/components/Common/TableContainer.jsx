@@ -207,17 +207,7 @@ const TableContainer = ({
               >
                 <i className="mdi mdis-plus " />
               </Button>
-              <Button
-                type="button"
-                color="danger"
-                className="btn-rounded mb-2 me-2"
-                onClick={() => {
-                  const customerData = cellProps.row.original;
-                  onClickDelete(customerData);
-                }}
-              >
-                <i className="mdi mdis-delete " />
-              </Button>
+              
             </div>
           </Col>
         )}
@@ -263,7 +253,7 @@ const TableContainer = ({
                       {row.cells.map((cell) => (
                         <td
                           key={cell.id}
-                          style={{ minWidth: "8rem" }}
+                          style={{ minWidth: "3rem" }}
                           {...cell.getCellProps()}
                         >
                           {cell.render("Cell")}

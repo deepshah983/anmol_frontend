@@ -502,7 +502,7 @@ const index = (props) => {
                   <Col className="col-12">
                   <div className="add-treads">
                     <div className="add-tread-beside">
-                        <div className="add-tread col-md-5">
+                        <div className="add-tread col-md-8">
                           <Label className="form-label ">Terminal Symbol</Label>
                           <Input
                               type="select"
@@ -634,7 +634,7 @@ const index = (props) => {
                             >
                           <option value="" disabled selected>Select Qty</option>
                           <option value="Intraday">FIXED</option>
-                          <option value="Delivery">Delivery</option>
+                          <option value="Delivery">EXPLORER</option>
                           </Input>
                       {validation.touched.qtyType && validation.errors.qtyType ? (
                         <FormFeedback type="invalid">
