@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import Select from 'react-select';
+import ReactPaginate from "react-paginate";
 import {
   Card,
   CardBody,
@@ -35,19 +36,32 @@ const index = (props) => {
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
   const [tags, setTags] = useState([])
+  const [count, setCount] = useState(null);
+  const [total, setTotal] = useState(null);
+  const [query, setQuery] = useState({
+    offset: 0,
+    limit: 20,
+    page: 0,
+    search: "",
+    order: "desc",
+    sort: "id",
+    status: "",
+  });
 
-  useEffect(() => {
-    getNavigation();
-  }, []);
+    const request = (reset_offset = true) => {
+     
+    // if (reset_offset) {
+    //   query.offset = 0;
+    //   setQuery(query);
+    // }
 
-  const getNavigation = () => {
-    getData("/clients")
-      .then((response) => {
-        let clients = response?.data?.data?.clients;
+    let url = `/clients?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
+    getData(url).then((response) => {
+      let clients = response?.data?.data?.clients;
         let strategies = response?.data?.data?.strategies;
         let userStrategy = response?.data?.data?.userStrategy;
         let treadSetting = response?.data?.data?.treadSetting;
-        
+      
         clients = clients.map(client => {
           // Find the strategy that matches the client's assigned strategy
           
@@ -81,12 +95,23 @@ const index = (props) => {
           return row;
         });
         // After processing, update state with the modified clients and strategies
-        
-        setNavs(clients);
-        setStrategy(strategies);
-        
-      });
+      setNavs(clients);
+      setStrategy(strategies);
+     
+      setCount(clients?.length);
+      setTotal(response?.data?.totalClients);
+
+      
+      
+    });
+
+
   };
+  useEffect(() => {
+    request();
+  }, []);
+
+
   const [modal, setModal] = useState(false);
   const [modalCheck, setModalCheck] = useState(false);
   const [modalAssignStrategy, setModalAssignStrategy] = useState(false);
@@ -150,7 +175,9 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.error);
         }
-        getNavigation();
+        query.page = 0;
+        setQuery({ ...query });
+        request();
         validation.resetForm();
         toggle();
         return success(response.data.message);
@@ -170,7 +197,9 @@ const index = (props) => {
           return error(response.data.message);
         }
         
-        getNavigation();
+        // query.page = 0;
+        // setQuery({ ...query });
+        request();
         validation.resetForm();
         toggle();
         return success(response.data.message);
@@ -221,7 +250,9 @@ const index = (props) => {
           return error(response.data.message);
         }
         
-        getNavigation();
+        // query.page = 0;
+        // setQuery({ ...query });
+        request();
         validationTreadSetting.resetForm();
         toggleCheck();
         return success(response.data.message);
@@ -269,7 +300,9 @@ const index = (props) => {
           return error(response.data.message);
         }
         
-        getNavigation();
+        // query.page = 0;
+        // setQuery({ ...query });
+        request();
         validationAssignStratagy.resetForm();
         toggleAssignStrategy();
         return success(response.data.message);
@@ -496,7 +529,9 @@ const index = (props) => {
 
           setDeleteModal(false);
           setNav("");
-          getNavigation();
+          // query.page = 0;
+          // setQuery({ ...query });
+          request();
           return success(response.data.message);
         });
     }
@@ -548,6 +583,67 @@ const index = (props) => {
     }
   };
 
+  const handlePagination = (page) => {
+    
+    query.offset = page.selected * query.limit;
+    query.page = page.selected ;
+    setQuery(query);
+    request(false);
+  };
+  const CustomPagination = () => {
+    const limit = [10, 25, 50, 100];
+    const updateLimit = (e) => {
+      query.limit = parseInt(e.target.value);
+      query.page = 0;
+      setQuery({ ...query });
+      request();
+    };
+
+ 
+    return (
+      <div className="mt-2">
+        <div className="container position-absolute">
+          <div className="row">
+            {/* <div className="col-sm-1">
+              <select
+                className="form-select form-select-sm"
+                onChange={updateLimit}
+                value={query.limit}
+              >
+                {limit.map((value) => (
+                  <option value={value} key={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div> */}
+            <div className="col-sm-1">Total: {total}</div>
+          </div>
+        </div>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          forcePage={Math.floor(query.offset / query.limit)}
+          onPageChange={(page) => handlePagination(page)}
+          pageCount={Math.ceil(total / query.limit)}
+          breakLabel={"..."}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={2}
+          activeClassName="active"
+          pageClassName="page-item"
+          breakClassName="page-item"
+          nextLinkClassName="page-link"
+          pageLinkClassName="page-link"
+          breakLinkClassName="page-link"
+          previousLinkClassName="page-link"
+          nextClassName="page-item next-item"
+          previousClassName="page-item prev-item"
+          containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1"
+        />
+      </div>
+    );
+  };
+
   return (
     <React.Fragment>
       <DeleteModal
@@ -557,18 +653,20 @@ const index = (props) => {
       />
       <Card>
         <CardBody>
+        {count != null &&
           <TableContainer
             columns={columns}
             data={navs}
             isGlobalFilter={true}
             isAddUserList={true}
-            isPagination={true}
+            isPagination={false}
             handleCustomerClick={handleCustomerClicks}
             handleCheckingClick={handleCheckingClicks}
-            customPageSize={20}
+            customPageSize={count}
             className="custom-header-css"
           />
-
+        }
+          <CustomPagination />
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
               {!isEdit ? "Add User" : "Edit User"}

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import ReactPaginate from "react-paginate";
 import {
   Card,
   CardBody,
@@ -35,13 +36,7 @@ const index = (props) => {
     getNavigation();
   }, []);
 
-  const getNavigation = () => {
-    getData("tradingForm")
-      .then((response) => {
-        setStrategies(response.data.data);
-        setNavs(response.data.data);
-      });
-  };
+
   const [strategies, setStrategies] = useState([]);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -49,6 +44,36 @@ const index = (props) => {
   const [showFields, setShowFields] = useState(false);
   const [showRadioButtons, setShowRadioButtons] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
+  const [count, setCount] = useState(null);
+  const [total, setTotal] = useState(null);
+  const [query, setQuery] = useState({
+    offset: 0,
+    limit: 20,
+    page: 0,
+    search: "",
+    order: "desc",
+    sort: "id",
+    status: "",
+  });
+
+    const request = (reset_offset = true) => {
+
+    let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
+    getData(url).then((response) => {
+      let resData = response.data.data;
+      
+      setCount(response?.data?.data?.length)
+      setStrategies(response?.data?.data);
+      setNavs(response?.data?.data);
+      setTotal(response?.data?.totalCount);
+    });
+
+
+  };
+
+  const getNavigation = () => {
+    request();
+  };
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
@@ -165,7 +190,9 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        getNavigation();
+         query.page = 0;
+        setQuery({ ...query });
+        request();
         return success(response.data.message);
       });
   };
@@ -177,7 +204,7 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        getNavigation();
+        request();
         return success(response.data.message);
       });
   };
@@ -245,11 +272,6 @@ const index = (props) => {
     return strategies.filter(strategy => selectedStrategies.includes(strategy._id));
   }, [strategies, selectedStrategies]);
 
-  const handleActionOnSelected = () => {
-    const selectedStrategyData = getSelectedStrategies();
-    console.log("Selected Strategies:", selectedStrategyData);
-    // Perform actions with selectedStrategyData
-  };
 
   // Customber Column
   const columns = useMemo(
@@ -422,7 +444,8 @@ const index = (props) => {
           }
 
           setDeleteModal(false);
-          getNavigation();
+         
+          request();
           return success(response.data.message);
         });
     }
@@ -438,7 +461,8 @@ const index = (props) => {
           }
 
           setDeleteAllModal(false);
-          getNavigation();
+          
+          request();
           return success(response.data.message);
         });
       }
@@ -459,7 +483,69 @@ const index = (props) => {
   const selectedDataDelete = () => {
     setDeleteAllModal(true);
   }
+
+  const handlePagination = (page) => {
+    
+    query.offset = page.selected * query.limit;
+    query.page = page.selected ;
+    setQuery(query);
+    request(false);
+  };
+  const CustomPagination = () => {
+    const limit = [10, 25, 50, 100];
+    const updateLimit = (e) => {
+      query.limit = parseInt(e.target.value);
+      query.page = 0;
+      setQuery({ ...query });
+      request();
+    };
+
+ 
+    return (
+      <div className="mt-2">
+        <div className="container position-absolute">
+          <div className="row">
+            {/* <div className="col-sm-1">
+              <select
+                className="form-select form-select-sm"
+                onChange={updateLimit}
+                value={query.limit}
+              >
+                {limit.map((value) => (
+                  <option value={value} key={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div> */}
+            <div className="col-sm-1">Total: {total}</div>
+          </div>
+        </div>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          forcePage={Math.floor(query.offset / query.limit)}
+          onPageChange={(page) => handlePagination(page)}
+          pageCount={Math.ceil(total / query.limit)}
+          breakLabel={"..."}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={2}
+          activeClassName="active"
+          pageClassName="page-item"
+          breakClassName="page-item"
+          nextLinkClassName="page-link"
+          pageLinkClassName="page-link"
+          breakLinkClassName="page-link"
+          previousLinkClassName="page-link"
+          nextClassName="page-item next-item"
+          previousClassName="page-item prev-item"
+          containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1"
+        />
+      </div>
+    );
+  };
   return (
+   
     <React.Fragment>
       <DeleteModal
         show={deleteModal}
@@ -473,18 +559,21 @@ const index = (props) => {
     />
       <Card>
         <CardBody>
+        {count != null &&
+       
           <TradingTableContainer
             columns={columns}
             data={navs}
             isGlobalFilter={true}
             isAddCustList={true}
-            isPagination={true}
+            isPagination={false}
             handleCustomerClick={handleCustomerClicks}
             selectedDataDelete={selectedDataDelete}
-            customPageSize={20}
+            customPageSize={parseInt(count)}
             className="custom-header-css"
           />
-
+        }
+           <CustomPagination />
           <Modal className="TreadModal" isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
               {!!isEdit ? "Add/Edit Tread" : "Add/Edit Tread"}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
+import ReactPaginate from "react-paginate";
 import {
   Card,
   CardBody,
@@ -36,23 +37,45 @@ import themeConfig from "../../../configs/themeConfig";
 
 const StrategyManagement = () => {
   const [strategies, setStrategies] = useState([]);
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(null);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [strategy, setStrategy] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteAllModal, setDeleteAllModal] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
+  const [total, setTotal] = useState(null);
+  const [query, setQuery] = useState({
+    offset: 0,
+    limit: 20,
+    page: 0,
+    search: "",
+    order: "desc",
+    sort: "id",
+    status: "",
+  });
 
   useEffect(() => {
     getStrategies();
   }, []);
 
+  const request = (reset_offset = true) => {
+
+
+    let url = `/strategies?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
+    getData(url).then((response) => {
+      
+      setStrategies(response?.data?.data);
+      setCount(response?.data?.data?.length);
+      setTotal(response?.data?.totalCount);
+    });
+
+
+  };
+
   const getStrategies = async () => {
     try {
-      const response = await getData("/strategies");
-      setStrategies(response.data.data);
-      setCount(response.data.data.length);
+      request();
     } catch (err) {
       error("Failed to load strategies");
     }
@@ -96,7 +119,9 @@ const StrategyManagement = () => {
         if (response?.data?.error) {
           return error(response?.data?.message);
         }
-        getStrategies();
+        query.page = 0;
+        setQuery({ ...query });
+        request();
         validation.resetForm();
         toggle();
         return success(response?.data?.message);
@@ -112,7 +137,8 @@ const StrategyManagement = () => {
         if (response?.data?.error) {
           return error(response?.data?.message);
         }
-        getStrategies();
+       
+        request();
         validation.resetForm();
         toggle();
         return success(response?.data?.message);
@@ -266,7 +292,8 @@ const StrategyManagement = () => {
     try {
       await deleteData(`/strategy/${strategy._id}`);
       success("Strategy Deleted Successfully");
-      getStrategies();
+     
+      request();
     } catch (err) {
       error("Failed to delete strategy");
     }
@@ -284,7 +311,8 @@ const StrategyManagement = () => {
           }
 
           setDeleteAllModal(false);
-          getStrategies();
+         
+          request();
           return success(response.data.message);
         });
       }
@@ -300,6 +328,68 @@ const StrategyManagement = () => {
    const selectedDataDelete = () => {
     setDeleteAllModal(true);
   }
+
+  const handlePagination = (page) => {
+    
+    query.offset = page.selected * query.limit;
+    query.page = page.selected ;
+    setQuery(query);
+    request(false);
+  };
+  const CustomPagination = () => {
+    const limit = [10, 25, 50, 100];
+    const updateLimit = (e) => {
+      query.limit = parseInt(e.target.value);
+      query.page = 0;
+      setQuery({ ...query });
+      request();
+    };
+
+ 
+    return (
+      <div className="mt-2">
+        <div className="container position-absolute">
+          <div className="row">
+            {/* <div className="col-sm-1">
+              <select
+                className="form-select form-select-sm"
+                onChange={updateLimit}
+                value={query.limit}
+              >
+                {limit.map((value) => (
+                  <option value={value} key={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div> */}
+            <div className="col-sm-1">Total: {total}</div>
+          </div>
+        </div>
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          forcePage={Math.floor(query.offset / query.limit)}
+          onPageChange={(page) => handlePagination(page)}
+          pageCount={Math.ceil(total / query.limit)}
+          breakLabel={"..."}
+          pageRangeDisplayed={2}
+          marginPagesDisplayed={2}
+          activeClassName="active"
+          pageClassName="page-item"
+          breakClassName="page-item"
+          nextLinkClassName="page-link"
+          pageLinkClassName="page-link"
+          breakLinkClassName="page-link"
+          previousLinkClassName="page-link"
+          nextClassName="page-item next-item"
+          previousClassName="page-item prev-item"
+          containerClassName="pagination react-paginate separated-pagination pagination-sm justify-content-end pe-1"
+        />
+      </div>
+    );
+  };
+
 
   return (
     <>
@@ -318,7 +408,6 @@ const StrategyManagement = () => {
           <HideShowSection
             title="Total Strategies"
             toggle={false}
-            count={count}
           >
             <Button
               color="secondary"
@@ -341,17 +430,22 @@ const StrategyManagement = () => {
             <Col lg="12">
               <Card>
                 <CardBody>
+                {count != null &&
+                 
                   <TradingTableContainer
                     columns={columns}
                     data={strategies}
                     isGlobalFilter={true}
                     isAddCustList={true}
-                    isPagination={true}
+                    isPagination={false}
                     handleCustomerClick={handleCustomerClicks}
                     selectedDataDelete={selectedDataDelete}
-                    customPageSize={20}
+                    customPageSize={parseInt(count)}
                     className="custom-header-css"
-                  />
+                    />
+                  
+                  }
+                  <CustomPagination />
                 </CardBody>
               </Card>
             </Col>
