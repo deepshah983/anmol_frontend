@@ -133,19 +133,27 @@ const index = (props) => {
       status: (navigation && navigation.status) || "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter User Name"),
-      email: Yup.string().required("Please Enter Email"),
-      phone: Yup.string().required("Please Enter Mobile Number"),
-      entryBalance: Yup.string().required("Please Enter Entry Balance"),
+      name: Yup.string()
+        .required("Please Enter User Name")
+        .min(4, "Name must be at least 4 characters"),
+      email: Yup.string()
+        .required("Please Enter Email")
+        .email("Please enter a valid email address"),
+      phone: Yup.string()
+        .required("Please Enter Mobile Number")
+        .matches(/^\d+$/, "Phone number must contain only digits")
+        .min(10, "Phone number must be at least 10 digits")
+        .max(15, "Phone number must not exceed 15 digits"),
+      entryBalance: Yup.number()
+        .required("Please Enter Entry Balance")
+        .min(0, "Entry Balance must be at least 0"),
       status: Yup.string().test('conditional-required', 'Please Select Status', function(value) {
         // If the initial status is 0, don't require a value
-        if (navigation?.status == 0 || navigation?.status == '0') {
+        if (navigation?.status === 0 || navigation?.status === '0') {
           return true;
         }
-        // Otherwise, require a non-empty value
         return value !== undefined && value !== null && value !== '';
       }),
-      //position: Yup.string().required("Please Enter Designation"),
     }),
     onSubmit: (values) => {
       
