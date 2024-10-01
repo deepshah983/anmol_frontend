@@ -267,52 +267,52 @@ const TableContainer = ({
           </tbody>
         </Table>
       </div>
-      {isPagination && (
-        <Row className="justify-content-md-end justify-content-center align-items-center">
-          <Col className="col-md-auto">
-            <div className="d-flex gap-1">
-              <Button
-                color="primary"
-                onClick={() => gotoPage(0)}
-                disabled={!canPreviousPage}
-              >
-                {"<<"}
-              </Button>
-              <Button
-                color="primary"
-                onClick={previousPage}
-                disabled={!canPreviousPage}
-              >
-                {"<"}
-              </Button>
-            </div>
-          </Col>
-          <Col className="col-md-auto d-none d-md-block">
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageOptions.length}
-            </strong>
-          </Col>
+      {data.length >= 11 && isPagination && (
+      <Row className="justify-content-md-end justify-content-center align-items-center">
+        <Col className="col-md-auto">
+          <div className="d-flex gap-1">
+            <Button
+              color="primary"
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+            >
+              {"<<"}
+            </Button>
+            <Button
+              color="primary"
+              onClick={previousPage}
+              disabled={!canPreviousPage}
+            >
+              {"<"}
+            </Button>
+          </div>
+        </Col>
+        <Col className="col-md-auto d-none d-md-block">
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>
+        </Col>
 
-          <Col className="col-md-auto">
-            <div className="d-flex gap-1">
-              <Button
-                color="primary"
-                onClick={nextPage}
-                disabled={!canNextPage}
-              >
-                {">"}
-              </Button>
-              <Button
-                color="primary"
-                onClick={() => gotoPage(pageCount - 1)}
-                disabled={!canNextPage}
-              >
-                {">>"}
-              </Button>
-            </div>
-          </Col>
-        </Row>
+        <Col className="col-md-auto">
+          <div className="d-flex gap-1">
+            <Button
+              color="primary"
+              onClick={nextPage}
+              disabled={!canNextPage}
+            >
+              {">"}
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+            >
+              {">>"}
+            </Button>
+          </div>
+        </Col>
+      </Row>
       )}
     </Fragment>
   );
