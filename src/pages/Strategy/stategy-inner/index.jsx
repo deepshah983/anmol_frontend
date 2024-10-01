@@ -70,9 +70,9 @@ const StrategyManagement = () => {
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Please Enter Strategy Name"),
-      entryTime: Yup.string().required("Please Enter Entry Time"),
-      exitTime: Yup.string().required("Please Enter Exit Time"),
-      squareOffTime: Yup.string().required("Please Enter Square-off Time"),
+      // entryTime: Yup.string().required("Please Enter Entry Time"),
+      // exitTime: Yup.string().required("Please Enter Exit Time"),
+      // squareOffTime: Yup.string().required("Please Enter Square-off Time"),
       quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
     }),
     onSubmit: (values) => {
