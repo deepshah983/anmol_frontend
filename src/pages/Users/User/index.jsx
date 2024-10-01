@@ -571,7 +571,7 @@ const index = (props) => {
 
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
-              {!isEdit ? "Add Client" : "Edit Client"}
+              {!isEdit ? "Add User" : "Edit User"}
             </ModalHeader>
             <ModalBody>
               <Form

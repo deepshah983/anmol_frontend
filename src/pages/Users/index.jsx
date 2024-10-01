@@ -15,7 +15,7 @@ const index = () => {
       <ToastElement />
       <div className="page-content">
         <Container fluid>
-          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Client" />
+          <Breadcrumbs title="Dashboard" titleUrl="/dashboard" breadcrumbItem="Users" />
           <div className="card">
             <div className="card-body">
             <Users />
