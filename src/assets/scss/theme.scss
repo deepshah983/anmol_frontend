@@ -1021,3 +1021,23 @@ textarea.form-control {
     margin-bottom: 0px;
   }
 }
+
+.token-container {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.token-container button {
+  width: 100%;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+}
+
+.token-container button:hover {
+  background-color: #dc3545;
+  color: white;
+}

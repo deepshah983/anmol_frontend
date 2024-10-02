@@ -61,11 +61,9 @@ const index = (props) => {
       let clients = response?.data?.data?.clients;
         let strategies = response?.data?.data?.strategies;
         let userStrategy = response?.data?.data?.userStrategy;
-        let treadSetting = response?.data?.data?.treadSetting;
-      
+        let treadSetting = response?.data?.data?.clients?.treadSetting;
+        
         clients = clients.map(client => {
-          // Find the strategy that matches the client's assigned strategy
-          
           let assignedStrategy = '';
           userStrategy.map(strategy => {
             // Replace the assigned strategy ID with the strategy name
@@ -78,11 +76,6 @@ const index = (props) => {
             assignedStrategy = assignedStrategy+', '+row?.label;
           })
         }
-          })
-          treadSetting.map(tread => {
-            if(client._id == tread.parent_id){
-              client.treadSetting = tread;
-            }
           })
           client.assignedstrategy = assignedStrategy;
           return client;
@@ -129,6 +122,7 @@ const index = (props) => {
       email: (navigation && navigation.email) || "",
       phone: (navigation && navigation.phone) || "",
       entryBalance: (navigation && navigation.entryBalance) || "",
+      availableCash: (navigation && navigation.availableCash) || "",
       status: (navigation && navigation.status) || "",
     },
     validationSchema: Yup.object({
@@ -331,6 +325,7 @@ const index = (props) => {
       phone: nav.phone,
       position: nav.position,
       entryBalance: nav.entryBalance,
+      availableCash: nav.availableCash,
       status: status
     });
    
