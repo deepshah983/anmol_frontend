@@ -37,7 +37,6 @@ import themeConfig from "../../../configs/themeConfig";
 
 const StrategyManagement = () => {
   const [strategies, setStrategies] = useState([]);
-  const [count, setCount] = useState(null);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [strategy, setStrategy] = useState(null);
@@ -66,7 +65,6 @@ const StrategyManagement = () => {
     getData(url).then((response) => {
       
       setStrategies(response?.data?.data);
-      setCount(response?.data?.data?.length);
       setTotal(response?.data?.totalCount);
     });
 
@@ -430,7 +428,6 @@ const StrategyManagement = () => {
             <Col lg="12">
               <Card>
                 <CardBody>
-                {count != null &&
                  
                   <TradingTableContainer
                     columns={columns}
@@ -440,11 +437,10 @@ const StrategyManagement = () => {
                     isPagination={false}
                     handleCustomerClick={handleCustomerClicks}
                     selectedDataDelete={selectedDataDelete}
-                    customPageSize={parseInt(count)}
+                    customPageSize={600}
                     className="custom-header-css"
                     />
-                  
-                  }
+                
                   <CustomPagination />
                 </CardBody>
               </Card>

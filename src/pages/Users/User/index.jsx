@@ -36,7 +36,6 @@ const index = (props) => {
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
   const [tags, setTags] = useState([])
-  const [count, setCount] = useState(null);
   const [total, setTotal] = useState(null);
   const [query, setQuery] = useState({
     offset: 0,
@@ -97,8 +96,6 @@ const index = (props) => {
         // After processing, update state with the modified clients and strategies
       setNavs(clients);
       setStrategy(strategies);
-     
-      setCount(clients?.length);
       setTotal(response?.data?.totalClients);
 
       
@@ -661,7 +658,7 @@ const index = (props) => {
       />
       <Card>
         <CardBody>
-        {count != null &&
+        
           <TableContainer
             columns={columns}
             data={navs}
@@ -670,10 +667,10 @@ const index = (props) => {
             isPagination={false}
             handleCustomerClick={handleCustomerClicks}
             handleCheckingClick={handleCheckingClicks}
-            customPageSize={count}
+            customPageSize={600}
             className="custom-header-css"
           />
-        }
+        
           <CustomPagination />
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">

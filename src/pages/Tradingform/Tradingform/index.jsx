@@ -44,7 +44,6 @@ const index = (props) => {
   const [showFields, setShowFields] = useState(false);
   const [showRadioButtons, setShowRadioButtons] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
-  const [count, setCount] = useState(null);
   const [total, setTotal] = useState(null);
   const [query, setQuery] = useState({
     offset: 0,
@@ -60,9 +59,7 @@ const index = (props) => {
 
     let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
     getData(url).then((response) => {
-      let resData = response.data.data;
-      
-      setCount(response?.data?.data?.length)
+    
       setStrategies(response?.data?.data);
       setNavs(response?.data?.data);
       setTotal(response?.data?.totalCount);
@@ -559,7 +556,6 @@ const index = (props) => {
     />
       <Card>
         <CardBody>
-        {count != null &&
        
           <TradingTableContainer
             columns={columns}
@@ -569,10 +565,10 @@ const index = (props) => {
             isPagination={false}
             handleCustomerClick={handleCustomerClicks}
             selectedDataDelete={selectedDataDelete}
-            customPageSize={parseInt(count)}
+            customPageSize={600}
             className="custom-header-css"
           />
-        }
+        
            <CustomPagination />
           <Modal className="TreadModal" isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
