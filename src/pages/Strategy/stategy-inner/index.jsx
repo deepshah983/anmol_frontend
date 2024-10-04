@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 import ReactPaginate from "react-paginate";
+import GoldenTradingLoader from '../../../components/Loader';
 import {
   Card,
   CardBody,
@@ -44,6 +45,7 @@ const StrategyManagement = () => {
   const [deleteAllModal, setDeleteAllModal] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
   const [total, setTotal] = useState(null);
+  const [loading, setLoading] = React.useState(true);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -66,9 +68,8 @@ const StrategyManagement = () => {
       
       setStrategies(response?.data?.data);
       setTotal(response?.data?.totalCount);
+      setLoading(false);
     });
-
-
   };
 
   const getStrategies = async () => {
@@ -343,7 +344,9 @@ const StrategyManagement = () => {
       request();
     };
 
- 
+    if (loading) {
+      return <GoldenTradingLoader />;
+    }
     return (
       <div className="mt-2">
         <div className="container position-absolute">

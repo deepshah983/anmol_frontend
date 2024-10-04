@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import Select from 'react-select';
 import ReactPaginate from "react-paginate";
+import GoldenTradingLoader from '../../../components/Loader';
 import {
   Card,
   CardBody,
@@ -37,6 +38,7 @@ const index = (props) => {
   const [strategy, setStrategy] = useState([]);
   const [tags, setTags] = useState([])
   const [total, setTotal] = useState(null);
+  const [loading, setLoading] = React.useState(true);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -98,7 +100,7 @@ const index = (props) => {
       setStrategy(strategies);
       setTotal(response?.data?.totalClients);
 
-      
+      setLoading(false);
       
     });
 
@@ -437,7 +439,7 @@ const index = (props) => {
       },
       {
         Header: "Total Balance",
-        accessor: "total_balance",
+        accessor: "availableCash",
         filterable: true,
         Cell: (cellProps) => {
           return <Designation {...cellProps} />;
@@ -603,7 +605,10 @@ const index = (props) => {
       setQuery({ ...query });
       request();
     };
-
+    
+    if (loading) {
+      return <GoldenTradingLoader />;
+    }
  
     return (
       <div className="mt-2">
