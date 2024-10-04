@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import ReactPaginate from "react-paginate";
+import GoldenTradingLoader from '../../../components/Loader';
 import {
   Card,
   CardBody,
@@ -17,6 +18,7 @@ import {
   Label,
   Form,
 } from "reactstrap";
+
 
 //Import Breadcrumb
 import { getData, postData, updateData, deleteData } from "../../../components/api";
@@ -45,6 +47,7 @@ const index = (props) => {
   const [showRadioButtons, setShowRadioButtons] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
   const [total, setTotal] = useState(null);
+  const [loading, setLoading] = React.useState(true);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -63,6 +66,7 @@ const index = (props) => {
       setStrategies(response?.data?.data);
       setNavs(response?.data?.data);
       setTotal(response?.data?.totalCount);
+      setLoading(false);
     });
 
 
@@ -497,7 +501,9 @@ const index = (props) => {
       request();
     };
 
- 
+    if (loading) {
+      return <GoldenTradingLoader />;
+    }
     return (
       <div className="mt-2">
         <div className="container position-absolute">

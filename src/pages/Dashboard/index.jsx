@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import DashboardCounts from "./DashboardCounts";
-
+import GoldenTradingLoader from '../../components/Loader';
 import totalCapital from "../../assets/images/money 1.svg";
 import totalUsers from "../../assets/images/friends.svg";
 import token from "../../assets/images/token.svg";
@@ -16,10 +16,12 @@ import { getData } from "../../components/api";
 
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
+  const [totalFundData, setTotalFundData] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData(); // Fetch dashboard data when component mounts
+    fetchTotalFund();
   }, []);
 
   useEffect(() => {
@@ -40,6 +42,22 @@ const Dashboard = (props) => {
       });
   };
 
+  const fetchTotalFund = () => {
+    getData("/dashboard/totalFund")
+      .then((response) => {
+        const countsData = response.data.data;
+        setTotalFundData(countsData); // Set the dashboard data
+       
+      })
+      .catch((error) => {
+        console.error("Error fetching dashboard data", error);
+        setLoading(false); // Set loading to false even if there is an error
+      });
+  };
+
+  if (loading) {
+    return <GoldenTradingLoader />;
+  }
   return (
     <React.Fragment>
       <div className="page-content">
@@ -78,7 +96,7 @@ const Dashboard = (props) => {
               <Col xl="4">
                 <DashboardCounts
                   title="Total Fund"
-                  number={dashboardData.totalFund || 0}  
+                  number={totalFundData.totalAvailableCash || 0}  
                   icon={totalCapital}
                 />
               </Col>
