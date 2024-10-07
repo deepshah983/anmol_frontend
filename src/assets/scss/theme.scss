@@ -1021,3 +1021,10 @@ textarea.form-control {
     margin-bottom: 0px;
   }
 }
+
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+}

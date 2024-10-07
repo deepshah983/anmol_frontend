@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { DollarSign } from 'lucide-react';
+import { IndianRupee } from 'lucide-react';
 
 const useStyles = makeStyles((theme) => ({
   '@keyframes spin': {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     border: '4px solid transparent',
-    borderTopColor: '#FFD700',
+    borderTopColor: '#a7844c',
     borderRadius: '50%',
     animation: '$spin 1s linear infinite',
   },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    color: '#FFD700',
+    color: '#a7844c',
   },
 }));
 
@@ -53,7 +53,7 @@ const GoldenTradingLoader: React.FC<LoaderProps> = ({ size = 80 }) => {
     <div className={classes.loaderContainer}>
       <div className={classes.loader} style={{ width: size, height: size }}>
         <div className={classes.circle} />
-        <DollarSign className={classes.icon} size={size / 2} />
+        <IndianRupee className={classes.icon} size={size / 2} />
       </div>
     </div>
   );

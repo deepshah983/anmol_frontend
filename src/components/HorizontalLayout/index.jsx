@@ -133,7 +133,9 @@ const Layout = (props) => {
           openLeftMenuCallBack={openMenu}
         />
         <Navbar menuOpen={isMenuOpened} />
-        <div className="main-content">{props.children}</div>
+        <div className="main-content">{props.children}
+        {/* setLoading(false); */}
+        </div>
         <Footer />
       </div>
 
