@@ -9,10 +9,9 @@ import token from "../../assets/images/token.svg";
 import activeUsers from "../../assets/images/ActiveUsers.svg";
 import inactiveUsers from "../../assets/images/InactiveUsers.svg";
 
-//i18n
+// i18n
 import { withTranslation } from "react-i18next";
 import { getData } from "../../components/api";
-
 
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
@@ -65,42 +64,56 @@ const Dashboard = (props) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <Row>
-              <Col xl="4">
-                <DashboardCounts
-                  title="Generate Token"  
-                  icon={token}
-                />
-              </Col>
-              <Col xl="4">
-                <DashboardCounts
-                  title="Total Users"
-                  number={dashboardData.clientCount || 0}  
-                  icon={totalUsers}
-                />
-              </Col>
-              <Col xl="4">
-                <DashboardCounts
-                  title="Active Users"
-                  number={dashboardData.activeClientCount || 0}  
-                  icon={activeUsers}
-                />
-              </Col>
-              <Col xl="4">
-                <DashboardCounts
-                  title="Inactive Users"
-                  number={dashboardData.inActiveClientCount || 0}  
-                  icon={inactiveUsers}
-                />
-              </Col>
-              <Col xl="4">
-                <DashboardCounts
-                  title="Total Fund"
-                  number={totalFundData.totalAvailableCash || 0}  
-                  icon={totalCapital}
-                />
-              </Col>
-            </Row>
+            <div>
+              <Row>
+                <Col xl="4" className="generate-token-col mb-4">
+                  <div className="token-container d-flex flex-column align-items-center mt-3">
+                    <button
+                      className="btn btn-lg btn-outline-danger"
+                      type="button"
+                    >
+                      <span className="btn-label mr-2">
+                        <i className="fa fa-exclamation-circle"></i>
+                      </span>
+                      Generate Token
+                    </button>
+                    <h6 className="text-muted font-weight-normal mt-3 text-center">
+                      Please generate a token to proceed.
+                    </h6>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col xl="4">
+                  <DashboardCounts
+                    title="Total Users"
+                    number={dashboardData.clientCount || 0}
+                    icon={totalUsers}
+                  />
+                </Col>
+                <Col xl="4">
+                  <DashboardCounts
+                    title="Active Users"
+                    number={dashboardData.activeClientCount || 0}
+                    icon={activeUsers}
+                  />
+                </Col>
+                <Col xl="4">
+                  <DashboardCounts
+                    title="Inactive Users"
+                    number={dashboardData.inActiveClientCount || 0}
+                    icon={inactiveUsers}
+                  />
+                </Col>
+                <Col xl="4">
+                  <DashboardCounts
+                    title="Total Fund"
+                    number={dashboardData.totalFund || 0}
+                    icon={totalCapital}
+                  />
+                </Col>
+              </Row>
+            </div>
           )}
         </Container>
       </div>
