@@ -154,22 +154,7 @@ const index = (props) => {
   // Customber Column
   const columns = useMemo(
     () => [
-      {
-        Header: "Action",
-        accessor: "action",
-        filterable: true,
-        Cell: (cellProps) => {
-          return <Name {...cellProps} />;
-        },
-      },
-      {
-        Header: "ID",
-        accessor: "id",
-        filterable: true,
-        Cell: (cellProps) => {
-          return <ID {...cellProps} />;
-        },
-      },
+      
       {
         Header: "Type",
         accessor: "type",

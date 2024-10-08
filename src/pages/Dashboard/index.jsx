@@ -17,6 +17,7 @@ const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
   const [totalFundData, setTotalFundData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isTokenGenerated, setIsTokenGenerated] = useState(false); // Track token generation status
 
   useEffect(() => {
     fetchDashboardData(); // Fetch dashboard data when component mounts
@@ -46,7 +47,6 @@ const Dashboard = (props) => {
       .then((response) => {
         const countsData = response.data.data;
         setTotalFundData(countsData); // Set the dashboard data
-       
       })
       .catch((error) => {
         console.error("Error fetching dashboard data", error);
@@ -54,9 +54,15 @@ const Dashboard = (props) => {
       });
   };
 
+  // Function to handle token generation
+  const handleGenerateToken = () => {
+    setIsTokenGenerated(true); // Set token as generated and button color changes to green
+  };
+
   if (loading) {
     return <GoldenTradingLoader />;
   }
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -64,21 +70,22 @@ const Dashboard = (props) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <div>
+            <div className="dashboard">
               <Row>
-                <Col xl="4" className="generate-token-col mb-4">
-                  <div className="token-container d-flex flex-column align-items-center mt-3">
+                <Col xl="12" className="generate-token-col mb-4">
+                  <div xl="3" className="token-container d-flex flex-column align-items-center mt-3">
                     <button
-                      className="btn btn-lg btn-outline-danger"
+                      className={`btn btn-lg ${isTokenGenerated ? 'bg-success' : 'btn-outline-danger'}`}
                       type="button"
+                      onClick={handleGenerateToken} // Handle button click
                     >
                       <span className="btn-label mr-2">
                         <i className="fa fa-exclamation-circle"></i>
                       </span>
-                      Generate Token
+                      {isTokenGenerated ? 'Token Generated' : 'Generate Token'}
                     </button>
-                    <h6 className="text-muted font-weight-normal mt-3 text-center">
-                      Please generate a token to proceed.
+                    <h6 className="text-muted font-weight-normal mt-3 text-center" style={{ fontSize: "15px" }}>
+                      {isTokenGenerated ? 'Token has been generated.' : 'Please generate a token to proceed.'}
                     </h6>
                   </div>
                 </Col>
