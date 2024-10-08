@@ -1022,6 +1022,12 @@ textarea.form-control {
   }
 }
 
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+}
 .token-container {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
