@@ -93,7 +93,7 @@ const index = (props) => {
       setStrategy(strategies);
       setTotal(response?.data?.totalClients);
 
-      
+      setLoading(false)  
       
     });
 
