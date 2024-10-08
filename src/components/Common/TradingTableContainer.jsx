@@ -224,6 +224,20 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdis-delete " />
               </Button>
+              <Button
+                type="button"
+                color="info"
+                className="btn-rounded mb-2 me-2"
+              >
+                <i className="mdi mdi-arrow-up-bold" />
+              </Button>
+              <Button
+                type="button"
+                color="info"
+                className="btn-rounded mb-2 me-2"
+              >
+                <i className="mdi mdi-arrow-down-bold" />
+              </Button>
             </div>
           </Col>
         )}
@@ -268,7 +282,7 @@ const TradingTableContainer = ({
                       {row.cells.map((cell) => (
                         <td
                           key={cell.id}
-                          style={{ minWidth: "8rem" }}
+                          style={{ minWidth: "2rem" }}
                           {...cell.getCellProps()}
                         >
                           {cell.render("Cell")}

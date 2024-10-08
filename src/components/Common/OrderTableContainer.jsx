@@ -323,7 +323,7 @@ const TradingTableContainer = ({
                       {row.cells.map((cell) => (
                         <td
                           key={cell.id}
-                          style={{ minWidth: "8rem" }}
+                          style={{ minWidth: "3rem" }}
                           {...cell.getCellProps()}
                         >
                           {cell.render("Cell")}
