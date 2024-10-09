@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import Select from 'react-select';
@@ -34,25 +34,8 @@ import { success, error } from "../../../components/toast";
 // Column
 import { Name, Status, Designation, Email } from "../../NavigationCol";
 
-const userOptions = [
-  {
-    label: 'All Users',
-    value: 'all'
-  },
-  {
-    label: 'Active',
-    value: 1
-  },
-  {
-    label: 'Inactive',
-    value: 0
-  }
-]
-
-const Users = (props) => {
-
-  const {state} = useLocation()
-
+const index = (props) => {
+  const location = useLocation();
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
   const [tags, setTags] = useState([])
@@ -69,14 +52,33 @@ const Users = (props) => {
   });
   const [selectedUser, setSelectedUser] = useState('all')
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const statusParam = params.get('status');
+    if (statusParam) {
+      query.status = statusParam;
+      setQuery({ ...query });
+    }
+    request();
+  }, [location]);
+
     const request = (reset_offset = true) => {
      
     // if (reset_offset) {
     //   query.offset = 0;
     //   setQuery(query);
     // }
+    let result;
 
-    let url = `/clients?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
+      if (query.status === 'active') {
+          result = 1;
+      } else if (query.status === 'inactive') {
+          result = 0;
+      } else {
+          result = '';
+      }
+  
+    let url = `/clients?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}&status=${result}`;
     getData(url).then((response) => {
       let clients = response?.data?.data?.clients;
         let strategies = response?.data?.data?.strategies;
@@ -397,6 +399,41 @@ const Users = (props) => {
     toggleCheck();
   };
 
+  const handleStatusChanges = (e) => {
+    const status = e.target.value;
+
+    // Update the query status
+    query.status = status;
+    setQuery({ ...query });
+
+    // Get the current URL parameters
+    const params = new URLSearchParams(window.location.search);
+
+    // If status is 'all', remove the status parameter, otherwise set it
+    if (status === 'all') {
+        params.delete('status');  // Remove the 'status' parameter if it's 'all'
+    } else {
+        params.set('status', status);  // Set the 'status' parameter to the new value
+    }
+
+    // Construct the new URL
+    let newUrl = window.location.pathname;
+    
+    // Only append the query string if there are remaining parameters
+    const queryString = params.toString();
+    if (queryString) {
+        newUrl += `?${queryString}`;
+    }
+
+    // Update the URL without reloading the page
+    window.history.pushState({}, '', newUrl);
+
+    // Trigger the request (optional)
+    request(true);
+};
+
+
+
   // Customber Column
   const columns = useMemo(
     () => [
@@ -708,6 +745,8 @@ const Users = (props) => {
             isPagination={false}
             handleCustomerClick={handleCustomerClicks}
             handleCheckingClick={handleCheckingClicks}
+            handleStatusChange={handleStatusChanges}
+            status={query.status}
             customPageSize={600}
             className="custom-header-css"
             options={userOptions}

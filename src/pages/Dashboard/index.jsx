@@ -94,7 +94,7 @@ const Dashboard = (props) => {
                 <Col xl="4">
                   <DashboardCounts
                     title="Total Users"
-                    status="allUsers"
+                    status="all"
                     number={dashboardData.clientCount || 0}
                     icon={totalUsers}
                     link={'/users'}
@@ -121,7 +121,7 @@ const Dashboard = (props) => {
                 <Col xl="4">
                   <DashboardCounts
                     title="Total Fund"
-                    number={dashboardData.totalFund || 0}
+                    number={totalFundData.totalAvailableCash || 'Loading...'}
                     icon={totalCapital}
                   />
                 </Col>

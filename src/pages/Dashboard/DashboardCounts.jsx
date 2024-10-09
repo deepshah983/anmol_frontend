@@ -2,16 +2,8 @@
 import React from "react";
 import { Card, Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 const DashboardCounts = ({ icon, title, number, status, link }) => {
-  const navigate = useNavigate();
-
-  const handleNavigate = () => {
-    const userStatus = ["active", "inactive"].includes(status) ? status : null;
-    console.log("userStatus: ", userStatus);
-    if (link) navigate(link, { state: { userStatus } });
-  };
 
   return (
     <Card className="overflow-hidden">
@@ -28,9 +20,9 @@ const DashboardCounts = ({ icon, title, number, status, link }) => {
           <Col xs="3">
             <div className="text-primary total-numbers p-3">
               {status !== null ? (
-                <span onClick={handleNavigate}>
+                <Link to={status === 'all' ? '/users' : `/users?status=${status}`}>
                   <h2 className="numbers">{number}</h2>
-                </span>
+                </Link>
               ) : (
                 <h2 className="numbers">{number}</h2>
               )}

@@ -68,6 +68,8 @@ const TableContainer = ({
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
+  handleStatusChange,
+  status,
   isAddCustList,
   customPageSize,
   className,
@@ -201,15 +203,11 @@ const TableContainer = ({
             </Button>
             <div className="add-orderlog col-md-12">
                   <div className="col-5">
-                    <select className="select-script col-5" onChange={(e) => changeOption(e.target.value)}>
-                        {/* <option value="" selected>All Users</option> */}
-                        {options?.map(el => {
-                          return (
-                            <option selected={el?.value === selectedOption} value={el?.value}>{el?.label}</option>
-                          )
-                        })}
-                        {/* <option value="">Active</option>
-                        <option value="">Inactive</option> */}
+                        <select className="select-script col-5" value={status}
+                        onChange={handleStatusChange} id="user" name="status">
+                        <option value="all" selected>All Users</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
                     </select>
                   </div>
                 </div>
