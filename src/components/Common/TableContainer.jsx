@@ -72,6 +72,9 @@ const TableContainer = ({
   customPageSize,
   className,
   customPageSizeOptions,
+  options = [],
+  selectedOption = '',
+  changeOption
 }) => {
   const {
     getTableProps,
@@ -184,16 +187,34 @@ const TableContainer = ({
         )}
         {isAddUserList && (
           <Col sm="12">
-          <div className="text-sm-start">
+          <div 
+          className="text-sm-start"
+          style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}
+          >
             <Button
               type="button"
               color="success"
-              className="btn-rounded mb-2 me-2"
+              className="btn-rounded me-3"
               onClick={handleCustomerClick}
             >
               <i className="mdi mdis-plus " />
             </Button>
+            <div className="add-orderlog col-md-12">
+                  <div className="col-5">
+                    <select className="select-script col-5" onChange={(e) => changeOption(e.target.value)}>
+                        {/* <option value="" selected>All Users</option> */}
+                        {options?.map(el => {
+                          return (
+                            <option selected={el?.value === selectedOption} value={el?.value}>{el?.label}</option>
+                          )
+                        })}
+                        {/* <option value="">Active</option>
+                        <option value="">Inactive</option> */}
+                    </select>
+                  </div>
+                </div>
           </div>
+                
         </Col>
         )}
         {isAddCustList && (

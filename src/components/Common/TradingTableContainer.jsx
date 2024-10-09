@@ -8,6 +8,7 @@ import {
   useFilters,
   useExpanded,
   usePagination,
+  UncontrolledTooltip,
 } from "react-table";
 
 import { Table, Row, Col, Button, Input, Label } from "reactstrap";
