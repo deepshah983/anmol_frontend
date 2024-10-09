@@ -20,6 +20,7 @@ import {
   Button
 } from "reactstrap";
 
+import { useLocation } from "react-router-dom";
 //Import Breadcrumb
 import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
@@ -33,7 +34,25 @@ import { success, error } from "../../../components/toast";
 // Column
 import { Name, Status, Designation, Email } from "../../NavigationCol";
 
-const index = (props) => {
+const userOptions = [
+  {
+    label: 'All Users',
+    value: 'all'
+  },
+  {
+    label: 'Active',
+    value: 1
+  },
+  {
+    label: 'Inactive',
+    value: 0
+  }
+]
+
+const Users = (props) => {
+
+  const {state} = useLocation()
+
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
   const [tags, setTags] = useState([])
@@ -48,6 +67,7 @@ const index = (props) => {
     sort: "id",
     status: "",
   });
+  const [selectedUser, setSelectedUser] = useState('all')
 
     const request = (reset_offset = true) => {
      
@@ -102,6 +122,14 @@ const index = (props) => {
   useEffect(() => {
     request();
   }, []);
+
+  // Set the user filter
+  useEffect(() => {
+    if (state?.userStatus) {
+      const isActive = state?.userStatus === 'active' ? 1 : 0
+      setSelectedUser(isActive);
+    }
+  },[state])
 
 
   const [modal, setModal] = useState(false);
@@ -649,6 +677,19 @@ const index = (props) => {
     );
   };
 
+  const changeUserOption = (value) => {
+    setSelectedUser(value);
+  }
+
+  function filterUserByStatus(users){
+    return [...users].filter(user => selectedUser === 'all' ? user : user.status?.toString() === selectedUser?.toString());
+  }
+
+  console.log("selectedUser: ", selectedUser)
+  console.log("selectedUser type: ", typeof selectedUser)
+
+  // console.log("navs: ", navs)
+
   return (
     <React.Fragment>
       <DeleteModal
@@ -661,7 +702,7 @@ const index = (props) => {
         
           <TableContainer
             columns={columns}
-            data={navs}
+            data={filterUserByStatus(navs)}
             isGlobalFilter={true}
             isAddUserList={true}
             isPagination={false}
@@ -669,6 +710,9 @@ const index = (props) => {
             handleCheckingClick={handleCheckingClicks}
             customPageSize={600}
             className="custom-header-css"
+            options={userOptions}
+            selectedOption={selectedUser}
+            changeOption={changeUserOption}
           />
         
           <CustomPagination />
@@ -995,4 +1039,4 @@ const index = (props) => {
 };
 
 
-export default index;
+export default Users;

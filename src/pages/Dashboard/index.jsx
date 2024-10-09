@@ -94,22 +94,28 @@ const Dashboard = (props) => {
                 <Col xl="4">
                   <DashboardCounts
                     title="Total Users"
+                    status="allUsers"
                     number={dashboardData.clientCount || 0}
                     icon={totalUsers}
+                    link={'/users'}
                   />
                 </Col>
                 <Col xl="4">
                   <DashboardCounts
                     title="Active Users"
+                    status="active"
                     number={dashboardData.activeClientCount || 0}
                     icon={activeUsers}
+                    link={'/users'}
                   />
                 </Col>
                 <Col xl="4">
                   <DashboardCounts
                     title="Inactive Users"
+                    status="inactive"
                     number={dashboardData.inActiveClientCount || 0}
                     icon={inactiveUsers}
+                    link={'/users'}
                   />
                 </Col>
                 <Col xl="4">
