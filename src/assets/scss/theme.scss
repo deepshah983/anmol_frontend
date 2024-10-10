@@ -1052,4 +1052,12 @@ textarea.form-control {
   color: white;
 }
 
+.myTbody tr td:first-child {
+  min-width: 0 !important;
+}
+tbody tr td:first-child .form-check, thead tr th:first-child .form-check{
+  display: flex;
+  justify-content: center;
+}
+
 
