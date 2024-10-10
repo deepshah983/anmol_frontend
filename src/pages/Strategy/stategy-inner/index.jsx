@@ -198,9 +198,6 @@ const StrategyManagement = () => {
               onChange={handleSelectAllChange}
               checked={selectedStrategies.length === strategies.length && strategies.length !== 0}
             />
-            <Label className="form-check-label" htmlFor="selectAll">
-              Select All
-            </Label>
           </div>
         ),
         accessor: 'selection',
