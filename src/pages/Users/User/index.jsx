@@ -20,7 +20,6 @@ import {
   Button
 } from "reactstrap";
 
-import { useLocation } from "react-router-dom";
 //Import Breadcrumb
 import { getData, postData, updateData, deleteData } from "../../../components/api";
 import themeConfig from "../../../configs/themeConfig";
@@ -34,7 +33,7 @@ import { success, error } from "../../../components/toast";
 // Column
 import { Name, Status, Designation, Email } from "../../NavigationCol";
 
-const index = (props) => {
+const Users = (props) => {
   const location = useLocation();
   const [navs, setNavs] = useState([]);
   const [strategy, setStrategy] = useState([]);
@@ -124,14 +123,6 @@ const index = (props) => {
   useEffect(() => {
     request();
   }, []);
-
-  // Set the user filter
-  useEffect(() => {
-    if (state?.userStatus) {
-      const isActive = state?.userStatus === 'active' ? 1 : 0
-      setSelectedUser(isActive);
-    }
-  },[state])
 
 
   const [modal, setModal] = useState(false);
@@ -749,7 +740,6 @@ const index = (props) => {
             status={query.status}
             customPageSize={600}
             className="custom-header-css"
-            options={userOptions}
             selectedOption={selectedUser}
             changeOption={changeUserOption}
           />
