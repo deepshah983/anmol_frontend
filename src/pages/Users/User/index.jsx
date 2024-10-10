@@ -713,11 +713,6 @@ const Users = (props) => {
     return [...users].filter(user => selectedUser === 'all' ? user : user.status?.toString() === selectedUser?.toString());
   }
 
-  console.log("selectedUser: ", selectedUser)
-  console.log("selectedUser type: ", typeof selectedUser)
-
-  // console.log("navs: ", navs)
-
   return (
     <React.Fragment>
       <DeleteModal

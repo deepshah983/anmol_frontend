@@ -14,6 +14,24 @@ import { CircularProgress } from '@material-ui/core';
 import { withTranslation } from "react-i18next";
 import { getData } from "../../components/api";
 
+const TotalFundDisplay = ({ totalFundData }) => {
+  const displayValue = 
+    totalFundData.totalAvailableCash !== undefined && totalFundData.totalAvailableCash !== null
+      ? totalFundData.totalAvailableCash
+      : <CircularProgress size={30} style={{ color: '#a7844c' }} />;
+
+  return (
+    <Col xl="4">
+      <DashboardCounts
+        title="Total Fund"
+        number={displayValue}
+        icon={totalCapital}
+      />
+    </Col>
+
+  );
+};
+
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
   const [totalFundData, setTotalFundData] = useState({});
@@ -119,19 +137,7 @@ const Dashboard = (props) => {
                     link={'/users'}
                   />
                 </Col>
-                <Col xl="4">
-                  <DashboardCounts
-                    title="Total Fund"
-                    number={
-                      totalFundData.totalAvailableCash ? (
-                        totalFundData.totalAvailableCash
-                      ) : (
-                        <CircularProgress size={30} style={{ color: '#a7844c' }} />
-                      )
-                    }
-                    icon={totalCapital}
-                  />
-                </Col>
+                <TotalFundDisplay totalFundData={totalFundData} />
               </Row>
             </div>
           )}
