@@ -8,6 +8,7 @@ import totalUsers from "../../assets/images/friends.svg";
 import token from "../../assets/images/token.svg";
 import activeUsers from "../../assets/images/ActiveUsers.svg";
 import inactiveUsers from "../../assets/images/InactiveUsers.svg";
+import { CircularProgress } from '@material-ui/core';
 
 // i18n
 import { withTranslation } from "react-i18next";
@@ -121,7 +122,13 @@ const Dashboard = (props) => {
                 <Col xl="4">
                   <DashboardCounts
                     title="Total Fund"
-                    number={totalFundData.totalAvailableCash || 'Loading...'}
+                    number={
+                      totalFundData.totalAvailableCash ? (
+                        totalFundData.totalAvailableCash
+                      ) : (
+                        <CircularProgress size={30} style={{ color: '#a7844c' }} />
+                      )
+                    }
                     icon={totalCapital}
                   />
                 </Col>
