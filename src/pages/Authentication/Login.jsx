@@ -84,7 +84,7 @@ const Login = (props) => {
               <Card className="overflow-hidden">
                 <div className="bg-primary bg-soft">
                   <Row>
-                    <Col xs={7}>
+                    <Col xs={12}>
                       <div className="text-primary p-4">
                         <h5 className="text-primary m-0">Welcome Back !</h5>
                       </div>
@@ -163,6 +163,15 @@ const Login = (props) => {
                         <Link to="/forgot-password" className="text-muted">
                           <i className="mdi mdi-lock me-1" />
                           Forgot your password?
+                        </Link>
+                      </div>
+                      <div className="mt-1 text-center">
+                        <Link to="/forgot-password" className="text-muted">
+                          <i className="mdi mdi-lock me-1" />
+                          Don't have an account? {" "}
+                          <Link to="/register" className="font-weight-medium text-primary">
+                          Register
+                        </Link>{" "}
                         </Link>
                       </div>
                     </Form>

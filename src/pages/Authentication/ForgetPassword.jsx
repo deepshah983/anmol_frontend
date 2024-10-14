@@ -16,6 +16,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
+import profile from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 
 // Formik Validation
 import * as Yup from "yup";
@@ -165,7 +166,7 @@ const changePassword = (values) => {
                   <div className="row mb-4">
                   <div className="col-xl-12 text-center">
                     <a href="/">
-                      <img src={logo} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
+                    <img src={profile} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
                     </a>
                   </div>
               </div>
@@ -230,7 +231,7 @@ const changePassword = (values) => {
                         ) : null}
                       </div>
                       <Row className="mb-3">
-                        <Col className="text-end">
+                        <Col className="text-end p-0">
                           <button
                             className="btn btn-primary btn-block"
                             type="submit"
@@ -383,7 +384,7 @@ const changePassword = (values) => {
                 }
                 </CardBody>
               </Card>
-              <div className="mt-5 text-center">
+              <div className="mt-3 text-center">
                 <p>
                   Go back to{" "}
                   <Link to="/login" className="font-weight-medium text-primary">
