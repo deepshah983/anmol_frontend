@@ -213,6 +213,7 @@ const TradingTableContainer = ({
                 type="button"
                 color="success"
                 className="btn-rounded mb-2 me-2"
+                title= "add user"
                 onClick={handleCustomerClick}
               >
                 <i className="mdi mdis-plus " />
@@ -222,6 +223,7 @@ const TradingTableContainer = ({
                 color="danger"
                 className="btn-rounded mb-2 me-2"
                 onClick={() => {selectedDataDelete()}}
+                title= "Delete"
               >
                 <i className="mdi mdis-delete " />
               </Button>
@@ -229,12 +231,14 @@ const TradingTableContainer = ({
                 type="button"
                 color="info"
                 className="btn-rounded mb-2 me-2"
+                title= "Import to CSV"
               >
                 <i className="mdi mdi-arrow-up-bold" />
               </Button>
               <Button
                 type="button"
                 color="info"
+                title= "Export to CSV"
                 className="btn-rounded mb-2 me-2"
               >
                 <i className="mdi mdi-arrow-down-bold" />
@@ -262,24 +266,27 @@ const TradingTableContainer = ({
           </thead>
 
           <tbody {...getTableBodyProps()} className="myTbody">
-            {page.length === 0 ? (
-              <tr>
-              <td colSpan={columns.length} className="text-center">
-                <span className="d-inline-flex align-items-center justify-content-center">
-                  <i
-                    className="mdi mdi-alert-circle-outline"
-                    style={{ fontSize: "16px", marginRight: "0.5rem", color: "#b18d57" }}
-                  ></i>
-                  <span style={{ fontSize: "16px" }}>No records found</span>
-                </span>
-              </td>
-            </tr>
-            ) : (
+              {page.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="text-center">
+                    <span className="d-inline-flex align-items-center justify-content-center">
+                      <i
+                        className="mdi mdi-alert-circle-outline"
+                        style={{ fontSize: "16px", marginRight: "0.5rem", color: "#b18d57" }}
+                      ></i>
+                      <span style={{ fontSize: "16px" }}>No records found</span>
+                    </span>
+                  </td>
+                </tr>
+              ) : (
               page.map((row) => {
                 prepareRow(row);
                 return (
                   <Fragment key={row.getRowProps().key}>
-                    <tr>
+                    <tr
+                      className="watch-list-row"
+                      style={{ position: "relative"}}
+                    >
                       {row.cells.map((cell) => (
                         <td
                           key={cell.id}
@@ -289,12 +296,22 @@ const TradingTableContainer = ({
                           {cell.render("Cell")}
                         </td>
                       ))}
+                      <span 
+                        className="hello-span"
+                        style={{ backgroundColor: "#a7844c" }}
+                      >
+                          <button className="btn btn-buy mx-1">Buy</button>
+                          <button className="btn btn-sell mx-1">Sell</button>
+                          <button className="btn btn-sell mx-1">Short</button>
+                          <button className="btn btn-buy mx-1">Cover</button>
+                      </span>
                     </tr>
                   </Fragment>
                 );
               })
-            )}
+              )}
           </tbody>
+
         </Table>
       </div>
 

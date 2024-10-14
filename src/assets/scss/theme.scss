@@ -1053,3 +1053,74 @@ textarea.form-control {
 }
 
 
+.watch-list-row .hello-span {
+  visibility: hidden;
+  color: white !important;
+  padding: 4px 5px;
+  position: absolute;
+  left: 15%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid rgb(255, 244, 244) !important;
+  border-radius: 5px;
+}
+
+.watch-list-row:hover .hello-span {
+  visibility: visible;
+}
+
+.button-span {
+  visibility: hidden;
+  background-color: #a7844c !important; 
+  padding: 0.5rem;
+  border-radius: 5px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.watch-list-row:hover .button-span {
+  visibility: visible;
+}
+
+.button-span button {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.watch-list-row:hover .button-span button {
+  opacity: 1;
+}
+
+.btn-buy {
+  background-color: #34c38f; 
+  color: white;
+  &:hover {
+    background-color: #2ca67a; 
+  }
+}
+
+.btn-sell {
+  background-color: #f46a6a; 
+  color: white;
+  &:hover {
+    background-color: #cf5a5a; 
+  }
+}
+
+
+.account-pages{
+  .row{
+    margin: 0px;
+    .text-primary{
+      padding-left: 0px;
+    }
+    a img{
+      @media (max-width: 991.98px) {
+        width: 160px;
+      }
+    }
+  }
+}

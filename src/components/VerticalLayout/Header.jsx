@@ -83,7 +83,7 @@ const Header = props => {
         <div className="navbar-header">
           <div className="d-flex">
 
-            <div className="navbar-brand-box d-lg-none d-md-block">
+            {/* <div className="navbar-brand-box d-lg-none d-md-block">
               <Link to="/dashboard" className="logo logo-dark">
                 <span className="logo-sm">
                   <img src={logo} alt="" height="22" />
@@ -95,7 +95,7 @@ const Header = props => {
                   <img src={logoLightSvg} alt="" height="22" />
                 </span>
               </Link>
-            </div>
+            </div> */}
 
             <button
               type="button"
@@ -111,17 +111,15 @@ const Header = props => {
             
           </div>
           <div className="d-flex">
+          <Link to="/dashboard" className="logo logo-light">
+                <span className="logo-sm">
+                  <img src={logoLightSvg} alt="" height="22" />
+                </span>
+              </Link>
+          </div>
+          <div className="d-flex">
             <div className="dropdown d-inline-block d-lg-none ms-2">
-              <button
-                onClick={() => {
-                  setsearch(!search);
-                }}
-                type="button"
-                className="btn header-item noti-icon "
-                id="page-header-search-dropdown"
-              >
-                <i className="mdi mdi-magnify" />
-              </button>
+              
               <div
                 className={
                   search
