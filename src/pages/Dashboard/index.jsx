@@ -8,10 +8,29 @@ import totalUsers from "../../assets/images/friends.svg";
 import token from "../../assets/images/token.svg";
 import activeUsers from "../../assets/images/ActiveUsers.svg";
 import inactiveUsers from "../../assets/images/InactiveUsers.svg";
+import { CircularProgress } from '@material-ui/core';
 
 // i18n
 import { withTranslation } from "react-i18next";
 import { getData } from "../../components/api";
+
+const TotalFundDisplay = ({ totalFundData }) => {
+  const displayValue = 
+    totalFundData.totalAvailableCash !== undefined && totalFundData.totalAvailableCash !== null
+      ? totalFundData.totalAvailableCash
+      : <CircularProgress size={30} style={{ color: '#a7844c' }} />;
+
+  return (
+    <Col xl="4">
+      <DashboardCounts
+        title="Total Fund"
+        number={displayValue}
+        icon={totalCapital}
+      />
+    </Col>
+
+  );
+};
 
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
@@ -118,13 +137,7 @@ const Dashboard = (props) => {
                     link={'/users'}
                   />
                 </Col>
-                <Col xl="4">
-                  <DashboardCounts
-                    title="Total Fund"
-                    number={totalFundData.totalAvailableCash || 'Loading...'}
-                    icon={totalCapital}
-                  />
-                </Col>
+                <TotalFundDisplay totalFundData={totalFundData} />
               </Row>
             </div>
           )}
