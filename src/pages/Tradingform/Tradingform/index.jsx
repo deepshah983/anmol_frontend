@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import ReactPaginate from "react-paginate";
+import Papa from 'papaparse';
 import GoldenTradingLoader from '../../../components/Loader';
 import {
   Card,
@@ -17,6 +18,8 @@ import {
   FormFeedback,
   Label,
   Form,
+  FormGroup,
+  Button,
 } from "reactstrap";
 
 
@@ -48,6 +51,8 @@ const index = (props) => {
   const [selectedStrategies, setSelectedStrategies] = useState([]);
   const [total, setTotal] = useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [importModal, setImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -75,6 +80,106 @@ const index = (props) => {
   const getNavigation = () => {
     request();
   };
+
+
+  /**start export import funtions */
+  const handleExport = async () => {
+    try {
+      // Fetch all data from the server
+      const response = await getData("/tradingForm/export");
+      if (response.data.error) {
+        return error(response.data.message);
+      }
+
+      // Prepare the CSV data
+      const csvData = response.data.data.map(item => ({
+        "Terminal Symbol": item.terminalSymbol,
+        "Option Type": item.optionType,
+        "Dynamic Expiry": item.dynamicExpiry,
+        "Dynamic Strike": item.dynamicStrike,
+        "Qty Type": item.qtyType,
+        "Prod Type": item.prodType,
+        "Entry Order": item.entryOrder,
+        "Exit Order": item.exitOrder,
+        "Strategy": item.strategy,
+        "Price Buffer": item?.priceBuffer,
+        "Price Buffer Type": item?.priceBufferType,
+        "Trigger Price": item?.triggerPrice,
+        "price": item?.price
+      }));
+
+      // Generate CSV file
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + Object.keys(csvData[0]).join(",") + "\n"
+        + csvData.map(row => Object.values(row).join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "trading_data.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      success("Data exported successfully");
+    } catch (err) {
+      error("Failed to export data");
+      console.error(err);
+    }
+  };
+
+
+   const handleImportClick = () => {
+    setImportModal(true);
+  };
+
+  const handleFileChange = (event) => {
+    setImportFile(event.target.files[0]);
+  };
+
+  const handleImport = () => {
+    if (!importFile) {
+      error("Please select a file to import");
+      return;
+    }
+
+    Papa.parse(importFile, {
+      complete: async (result) => {
+        const importedData = result.data.slice(1).map(row => ({
+          terminalSymbol: row['Terminal Symbol'],
+          optionType: row['Option Type'],
+          dynamicExpiry: row['Dynamic Expiry'],
+          dynamicStrike: row['Dynamic Strike'],
+          qtyType: row['Qty Type'],
+          prodType: row['Prod Type'],
+          entryOrder: row['Entry Order'],
+          exitOrder: row['Exit Order'],
+          strategy: row['Strategy'],
+          priceBuffer: row['Price Buffer'],
+          priceBufferType: row['Price Buffer Type'],
+          triggerPrice: row['Trigger Price'],
+          price: row['price']
+        }));
+
+        try {
+          const response = await postData("tradingForm/import", importedData);
+          if (response.data.error) {
+            return error(response.data.message);
+          }
+          success("Data imported successfully");
+          setImportModal(false);
+          setImportFile(null);
+          request(); // Refresh the data after import
+        } catch (err) {
+          error("Failed to import data");
+          console.error(err);
+        }
+      },
+      header: true,
+    });
+  };
+
+  /**end export import funtions */
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
@@ -459,7 +564,8 @@ const index = (props) => {
           }
 
           setDeleteAllModal(false);
-          
+          query.page = 0;
+          setQuery(query); 
           request();
           return success(response.data.message);
         });
@@ -547,6 +653,20 @@ const index = (props) => {
   return (
    
     <React.Fragment>
+      <Modal isOpen={importModal} toggle={() => setImportModal(false)}>
+        <ModalHeader toggle={() => setImportModal(false)}>Import CSV</ModalHeader>
+        <ModalBody>
+          <Form>
+            <FormGroup>
+              <Label for="csvFile">Select CSV file</Label>
+              <Input type="file" name="csvFile" id="csvFile" onChange={handleFileChange} />
+            </FormGroup>
+            <Button color="primary" onClick={handleImport}>
+              Import
+            </Button>
+          </Form>
+        </ModalBody>
+      </Modal>
       <DeleteModal
         show={deleteModal}
         onDeleteClick={handleDeleteCustomer}
@@ -560,7 +680,7 @@ const index = (props) => {
       <Card>
         <CardBody>
        
-          <TradingTableContainer
+          {/* <TradingTableContainer
             columns={columns}
             data={navs}
             isGlobalFilter={true}
@@ -570,8 +690,22 @@ const index = (props) => {
             selectedDataDelete={selectedDataDelete}
             customPageSize={600}
             className="custom-header-css"
-          />
+          /> */}
         
+
+        <TradingTableContainer
+        columns={columns}
+        data={navs}
+        isGlobalFilter={true}
+        isAddCustList={true}
+        isPagination={false}
+        handleCustomerClick={handleCustomerClicks}
+        selectedDataDelete={selectedDataDelete}
+        customPageSize={600}
+        className="custom-header-css"
+        handleExport={handleExport}
+        handleImport={handleImportClick}
+      />
            <CustomPagination />
           <Modal className="TreadModal" isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">

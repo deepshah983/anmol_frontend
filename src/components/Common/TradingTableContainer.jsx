@@ -69,6 +69,8 @@ const TradingTableContainer = ({
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
+  handleImport,
+  handleExport,
   selectedDataDelete,
   isAddCustList,
   customPageSize,
@@ -176,7 +178,7 @@ const TradingTableContainer = ({
             </div>
           </Col>
         )}
-        {isExport && (
+        {/* {isExport && (
           <Col sm="11">
             <div className="text-sm-end">
               <Button
@@ -190,7 +192,7 @@ const TradingTableContainer = ({
               </Button>
             </div>
           </Col>
-        )}
+        )} */}
         {isAddUserList && (
           <Col sm="11">
             <div className="text-sm-end">
@@ -229,6 +231,7 @@ const TradingTableContainer = ({
                 type="button"
                 color="info"
                 className="btn-rounded mb-2 me-2"
+                onClick={handleImport}
               >
                 <i className="mdi mdi-arrow-up-bold" />
               </Button>
@@ -236,6 +239,7 @@ const TradingTableContainer = ({
                 type="button"
                 color="info"
                 className="btn-rounded mb-2 me-2"
+                onClick={handleExport}
               >
                 <i className="mdi mdi-arrow-down-bold" />
               </Button>
