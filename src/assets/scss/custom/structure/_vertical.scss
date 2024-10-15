@@ -184,6 +184,13 @@ box-shadow: $box-shadow;
   }
 }
 
+.vertical-collpsed.sidebar-enable li:hover span {
+    display: none !important;
+}
+.vertical-collpsed.sidebar-enable li:hover {
+    padding-left: 0px !important;
+}
+
 .mm-active {
   color: $sidebar-menu-item-active-color !important;
   > a{

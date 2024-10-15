@@ -7,7 +7,7 @@ const DashboardCounts = ({ icon, title, number, status, link }) => {
 
   return (
     <Card className="overflow-hidden">
-      <div className="bg-soft">
+      <div className="bg-soft dashboard">
         <Row>
           <Col xs="9">
             <div className="text-primary p-3">

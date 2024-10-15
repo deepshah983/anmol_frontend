@@ -13,14 +13,12 @@ const index = () => {
   return (
     <>
       <ToastElement />
-      <div className="page-content">
+      <div className="page-content user-page">
         <Container fluid>
           <Breadcrumbs title="Dashboard" titleUrl="/dashboard" breadcrumbItem="Users" />
-          <div className="card">
-            <div className="card-body">
+          
             <Users />
-            </div>
-          </div>
+            
         </Container>
       </div>
     </>

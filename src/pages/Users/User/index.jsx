@@ -678,7 +678,7 @@ const Users = (props) => {
                 ))}
               </select>
             </div> */}
-            <div className="col-sm-1">Total: {total}</div>
+            <div className="col-sm-4">Total: {total}</div>
           </div>
         </div>
         <ReactPaginate

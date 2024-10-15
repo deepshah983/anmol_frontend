@@ -176,7 +176,7 @@ const changePassword = (values) => {
               <Card className="overflow-hidden">
                 <div className="bg-primary bg-soft">
                   <Row>
-                    <Col xs={7}>
+                    <Col xs={12}>
                       <div className="text-primary p-4">
                         <h5 className="text-primary mb-0">Welcome Back !</h5>
                       
