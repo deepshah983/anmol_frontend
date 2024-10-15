@@ -25,11 +25,7 @@ const index = () => {
       <div className="page-content">
         <Container fluid>
           <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Watch List" />
-          <div className="card">
-            <div className="card-body">
-                <Tradingform />
-            </div>
-          </div>
+            <Tradingform />
         </Container>
       </div>
     </>

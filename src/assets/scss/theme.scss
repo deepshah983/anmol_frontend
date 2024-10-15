@@ -983,9 +983,15 @@ textarea.form-control {
   flex-wrap: nowrap;
   align-items: center;
   padding: 10px 0px;
+  
   &:first-child{
     margin-left: 0px;
   }
+   .select-script-type{
+    @media (max-width: 767.98px) {
+      width: 100% !important;
+    }
+   } 
   .select-script{
     padding: 0.47rem 0.75rem;
     font-size: 0.8125rem;
@@ -999,6 +1005,10 @@ textarea.form-control {
     border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     margin: 0px 20px;
+    width: 41.67% !important;
+    @media (max-width: 767.98px) {
+      width: 100% !important;
+    }
     &:first-child{
       margin-left: 0px;
     }
@@ -1036,6 +1046,10 @@ textarea.form-control {
   padding: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   align-items:flex-start !important;
+  @media (max-width: 576.98px) {
+    align-items:center !important;
+    padding: 15px;
+  }
 }
 
 .token-container button {

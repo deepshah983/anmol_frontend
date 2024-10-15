@@ -202,8 +202,8 @@ const TableContainer = ({
               <i className="mdi mdis-plus " />
             </Button>
             <div className="add-orderlog col-md-12">
-                  <div className="col-5">
-                        <select className="select-script col-5" value={status}
+                  <div className="select-script-type col-5">
+                        <select className="select-script form-select col-5" value={status}
                         onChange={handleStatusChange} id="user" name="status">
                         <option value="all" selected>All Users</option>
                         <option value="active">Active</option>

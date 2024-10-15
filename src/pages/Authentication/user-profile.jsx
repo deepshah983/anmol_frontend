@@ -124,15 +124,6 @@ const UserProfile = (props) => {
           >
             <Card>
               <CardBody>
-                <div className="text-end">
-                  <button type="submit" className="btn btn btn-primary">
-                    Update
-                  </button>
-                </div>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardBody>
                 <h4 className="card-title mb-4">Change User Name & Password</h4>
                 <div className="form-group mb-3">
                   <Label className="form-label">User Name</Label>
@@ -246,6 +237,15 @@ const UserProfile = (props) => {
                       ) : null}
                     </div>
                   </div>
+                </div>
+                <div className="text-end">
+                  <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                  style={{ color: "#000000", backgroundColor: "#b18d57", border: "1px solid #b18d57" }}
+                  >
+                    Update
+                  </button>
                 </div>
               </CardBody>
             </Card>
