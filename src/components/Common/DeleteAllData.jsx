@@ -4,7 +4,7 @@ import { Modal, ModalBody } from "reactstrap";
 
 const DeleteAllModal = ({ show, onDeleteClick, onCloseClick }) => {
   return (
-    <Modal size="sm" isOpen={show} toggle={onCloseClick} centered={true}>
+    <Modal size="sm" isOpen={show} toggle={onCloseClick}>
       <div className="modal-content">
         <ModalBody className="px-4 py-5 text-center">
           <button

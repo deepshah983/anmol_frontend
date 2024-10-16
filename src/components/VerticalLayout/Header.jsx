@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 // Import menuDropdown
 import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
-import logoLightSvg from "../../assets/images/logo-light.svg";
+import logoLightSvg from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -80,7 +80,7 @@ const Header = props => {
           <div className="d-flex">
             <Link to="/dashboard" className="logo logo-light">
               <span className="logo-sm">
-                <img src={logoLightSvg} alt="" height="22" />
+                <img src={logoLightSvg} alt="" height="40" width="100%" style={{textAlign:"center"}} />
               </span>
             </Link>
           </div>

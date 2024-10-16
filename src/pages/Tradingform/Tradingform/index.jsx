@@ -624,7 +624,7 @@ const index = (props) => {
                 ))}
               </select>
             </div> */}
-            <div className="col-sm-1">Total: {total}</div>
+            <div className="col-sm-4">Total: {total}</div>
           </div>
         </div>
         <ReactPaginate
@@ -707,7 +707,7 @@ const index = (props) => {
         handleImport={handleImportClick}
       />
            <CustomPagination />
-          <Modal className="TreadModal" isOpen={modal} toggle={toggle}>
+          <Modal className="TreadModal" isOpen={modal} toggle={toggle} >
             <ModalHeader toggle={toggle} tag="h4">
               {!!isEdit ? "Add/Edit Tread" : "Add/Edit Tread"}
             </ModalHeader>
