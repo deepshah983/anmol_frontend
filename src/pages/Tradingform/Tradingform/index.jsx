@@ -62,6 +62,7 @@ const index = (props) => {
   };
   const [strategies, setStrategies] = useState([]);
   const [scripts, setScripts] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
@@ -82,8 +83,6 @@ const index = (props) => {
     status: "",
   });
 
-  console.log(strategies);
-  
   const request = (reset_offset = true) => {
 
     let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
@@ -101,12 +100,11 @@ const index = (props) => {
     request();
   };
 
-   /** New function to fetch scripts data*/
+  /** New function to fetch scripts data*/
   const fetchScripts = () => {
     let url = `/scrips/fetch-instruments`;
     getData(url)
       .then((response) => {
-        console.log("Scripts Response:", response); 
         let instruments = response?.data;
         setScripts(response.data.data.instruments);
         setLoading(false);
@@ -115,21 +113,40 @@ const index = (props) => {
         console.error("Error fetching scripts:", error);
       });
   };
+  // New search function to fetch data based on input
+  const searchScripts = (searchTerm) => {
+    if (!searchTerm) {
+      // If search term is empty, fetch all scripts
+      fetchScripts();
+      return;
+    }
 
-     /** New function to fetch scripts data*/
-     const fetchStrategies = () => {
-      let url = `/strategies`;
-      getData(url)
-        .then((response) => {
-          console.log("strag Response:", response); 
-          setStrategies(response.data.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching scripts:", error);
-        });
-    };
-  
+    let url = `/scrips/fetch-instruments?search=${searchTerm}`; // Adjust the endpoint as needed
+    getData(url)
+      .then((response) => {
+        let instruments = response?.data;
+
+        setScripts(response.data.data.instruments);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error searching scripts:", error);
+      });
+  };
+
+  /** New function to fetch scripts data*/
+  const fetchStrategies = () => {
+    let url = `/strategies`;
+    getData(url)
+      .then((response) => {
+        setStrategies(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching scripts:", error);
+      });
+  };
+
 
 
   /**start export import funtions */
@@ -778,26 +795,23 @@ const index = (props) => {
                           <Label className="form-label ">Terminal Symbol</Label>
 
                           <Select
-  name="terminalSymbol"
-  classNamePrefix="custom-react-select" // Custom prefix for class names
-  styles={customStyles}
-  options={scripts.map((script) => ({
-    label: script.terminalSymbol,
-    value: script.terminalSymbol,
-  }))}
-  onChange={(selectedOption) =>
-    validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '')
-  }
-  onBlur={validation.handleBlur}
-  value={scripts
-    .map((script) => ({
-      label: script.terminalSymbol,
-      value: script.terminalSymbol,
-    }))
-    .find((option) => option.value === validation.values.terminalSymbol) || null}
-  isSearchable
-  placeholder="Select Symbol"
-/>
+                            name="terminalSymbol"
+                            classNamePrefix="custom-react-select"
+                            styles={customStyles}
+                            options={scripts.map((script) => ({
+                              label: script.terminalSymbol,
+                              value: script.terminalSymbol,
+                            }))}
+                            onChange={(selectedOption) => {
+                              setSelectedOption(selectedOption); // Update selected option state
+                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
+                            }}
+                            onBlur={validation.handleBlur}
+                            value={selectedOption} // Set value based on selected option state
+                            isSearchable
+                            placeholder="Select Symbol"
+                            onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+                          />
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}
