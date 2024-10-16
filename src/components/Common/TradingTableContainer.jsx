@@ -302,7 +302,6 @@ const TradingTableContainer = ({
                       ))}
                       <span 
                         className="hello-span"
-                        style={{ backgroundColor: "#a7844c" }}
                       >
                           <button className="btn btn-buy mx-1">Buy</button>
                           <button className="btn btn-sell mx-1">Sell</button>

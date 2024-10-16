@@ -37,6 +37,7 @@
       padding: 0 1.5rem;
       text-align: center;
       width: $navbar-brand-box-width;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
   }
   
   .logo {
@@ -126,6 +127,10 @@
       width: 46px;
       background-color: rgba($yellow, 0.50);
       padding: 3px;
+      @media (max-width: 767.98px) {
+        height: 40px;
+        width: 40px;
+      }
   }
   
   .noti-icon {

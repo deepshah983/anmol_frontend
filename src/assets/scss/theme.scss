@@ -889,6 +889,12 @@ textarea.form-control {
 
 .TreadModal{
   --bs-modal-width: 800px;
+    @media (max-width: 991.98px) {
+      --bs-modal-width: 700px;
+    }
+    @media (max-width: 767.98px) {
+      --bs-modal-width: 550px;
+    }
 }
 .add-treads{
   .add-tread-beside{
@@ -896,6 +902,9 @@ textarea.form-control {
     flex-direction: row;
     flex-wrap: nowrap;
     margin: 0px -10px;
+    @media (max-width: 576.98px) {
+      flex-direction: column;
+    }
     .add-tread{
       display: flex;
       flex-direction: column;
@@ -930,6 +939,9 @@ textarea.form-control {
     flex-direction: row;
     flex-wrap: nowrap;
     margin: 0px -10px;
+    @media (max-width: 576.98px) {
+      flex-direction: column;
+    }
     input{
       display: block;
       width: 100%;
@@ -966,6 +978,9 @@ textarea.form-control {
       flex-wrap: nowrap;
       margin-bottom: 15px;
       padding: 0px;
+      @media (max-width: 576.98px) {
+        margin-bottom: 0px;
+      }
       .price-buffer{
         padding: 0px; align-items: center; margin-right: 15px;
         input[type="radio"]{

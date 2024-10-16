@@ -16952,6 +16952,9 @@
   content: "\F0415";
   font-size: 20px;
   font-weight: 900;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-plus-box::before {
