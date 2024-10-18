@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import ReactPaginate from "react-paginate";
 import Papa from 'papaparse';
 import GoldenTradingLoader from '../../../components/Loader';
+import Select from 'react-select';
 import {
   Card,
   CardBody,
@@ -39,10 +40,29 @@ const index = (props) => {
 
   useEffect(() => {
     getNavigation();
+    fetchScripts();
+    fetchStrategies();
   }, []);
 
-
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      backgroundColor: '#fff', // Control background color
+      borderColor: '#ced4da',
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: '#fff', // Dropdown menu background color
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#f0f0f0' : '#fff',
+      color: '#333',
+    }),
+  };
   const [strategies, setStrategies] = useState([]);
+  const [scripts, setScripts] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
@@ -63,12 +83,11 @@ const index = (props) => {
     status: "",
   });
 
-    const request = (reset_offset = true) => {
+  const request = (reset_offset = true) => {
 
     let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
     getData(url).then((response) => {
-    
-      setStrategies(response?.data?.data);
+
       setNavs(response?.data?.data);
       setTotal(response?.data?.totalCount);
       setLoading(false);
@@ -80,6 +99,54 @@ const index = (props) => {
   const getNavigation = () => {
     request();
   };
+
+  /** New function to fetch scripts data*/
+  const fetchScripts = () => {
+    let url = `/scrips/fetch-instruments`;
+    getData(url)
+      .then((response) => {
+        let instruments = response?.data;
+        setScripts(response.data.data.instruments);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching scripts:", error);
+      });
+  };
+  // New search function to fetch data based on input
+  const searchScripts = (searchTerm) => {
+    if (!searchTerm) {
+      // If search term is empty, fetch all scripts
+      fetchScripts();
+      return;
+    }
+
+    let url = `/scrips/fetch-instruments?search=${searchTerm}`; // Adjust the endpoint as needed
+    getData(url)
+      .then((response) => {
+        let instruments = response?.data;
+
+        setScripts(response.data.data.instruments);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error searching scripts:", error);
+      });
+  };
+
+  /** New function to fetch scripts data*/
+  const fetchStrategies = () => {
+    let url = `/strategies`;
+    getData(url)
+      .then((response) => {
+        setStrategies(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching scripts:", error);
+      });
+  };
+
 
 
   /**start export import funtions */
@@ -109,7 +176,7 @@ const index = (props) => {
       }));
 
       // Generate CSV file
-      const csvContent = "data:text/csv;charset=utf-8," 
+      const csvContent = "data:text/csv;charset=utf-8,"
         + Object.keys(csvData[0]).join(",") + "\n"
         + csvData.map(row => Object.values(row).join(",")).join("\n");
 
@@ -129,7 +196,7 @@ const index = (props) => {
   };
 
 
-   const handleImportClick = () => {
+  const handleImportClick = () => {
     setImportModal(true);
   };
 
@@ -193,7 +260,7 @@ const index = (props) => {
       setShowFields(false);
       setShowRadioButtons(false);
     }
-    
+
     // Call the original handleChange from validation
     validation.handleChange(event);
   };
@@ -223,9 +290,9 @@ const index = (props) => {
       price: (navigation && navigation.price) || "",
       triggerPrice: (navigation && navigation.triggerPrice) || "",
     },
-    
+
     validationSchema: Yup.object().shape({
-       terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
+      terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
       optionType: Yup.string().required("Please Select Option Type"),
       dynamicExpiry: Yup.string().required("Please Select Dynamic Expiry"),
       dynamicStrike: Yup.string().required("Please Select Dynamic Strike"),
@@ -234,7 +301,7 @@ const index = (props) => {
       entryOrder: Yup.string().required("Please Select Entry Order"),
       exitOrder: Yup.string().required("Please Select Exit Order"),
       strategy: Yup.string().required("Please Select Strategy"),
-    
+
       price: Yup.string().when('entryOrder', {
         is: 'SLL',
         then: Yup.string().required("Please Enter Price"),
@@ -252,13 +319,13 @@ const index = (props) => {
           .oneOf(['fixed', 'percent'], "Invalid Price Buffer Type"),
         otherwise: Yup.string(),
       }),
-    
+
       priceBuffer: Yup.string().when(['entryOrder', 'priceBufferType'], {
         is: (entryOrder, priceBufferType) => entryOrder === 'market',
         then: Yup.string().required("Please Enter Price Buffer"),
         otherwise: Yup.string(),
       }),
-    
+
     }),
     onSubmit: (values) => {
       let form = themeConfig.functions.read_form("traingForm");
@@ -266,7 +333,7 @@ const index = (props) => {
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
-      
+
       if (isEdit) {
         formData.append("id", values._id);
         updateNavigation(values.id, formData);
@@ -278,7 +345,7 @@ const index = (props) => {
       setShowFields(false);
       setShowRadioButtons(false);
       validation.resetForm();
-      
+
       toggle();
     },
   });
@@ -296,7 +363,7 @@ const index = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-         query.page = 0;
+        query.page = 0;
         setQuery({ ...query });
         request();
         return success(response.data.message);
@@ -304,7 +371,7 @@ const index = (props) => {
   };
 
   const updateNavigation = (id, form_data) => {
-    
+
     updateData(`tradingForm/${id}`, form_data)
       .then((response) => {
         if (response.data.error) {
@@ -316,7 +383,7 @@ const index = (props) => {
   };
   const handleCustomerClick = (arg) => {
     const nav = arg;
-    
+
     setNav({
       id: nav._id,
       terminalSymbol: nav.terminalSymbol,
@@ -367,7 +434,7 @@ const index = (props) => {
   };
 
   const handleSelectStrategy = (strategyId) => {
-    setSelectedStrategies(prevSelected => 
+    setSelectedStrategies(prevSelected =>
       prevSelected.includes(strategyId)
         ? prevSelected.filter(id => id !== strategyId)
         : [...prevSelected, strategyId]
@@ -531,13 +598,13 @@ const index = (props) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteAllModal, setDeleteAllModal] = useState(false);
   const onClickDelete = (navigation) => {
-    
+
     setNav(navigation);
     setDeleteModal(true);
   };
 
   const handleDeleteCustomer = () => {
-    
+
     if (navigation && navigation._id) {
 
       deleteData(`tradingForm/${navigation._id}`)
@@ -547,7 +614,7 @@ const index = (props) => {
           }
 
           setDeleteModal(false);
-         
+
           request();
           return success(response.data.message);
         });
@@ -555,8 +622,8 @@ const index = (props) => {
   };
 
   const handleDeleteAllData = () => {
- 
-    if(selectedStrategies.length > 0){
+
+    if (selectedStrategies.length > 0) {
       deleteData(`tradingForm/selectedDataErase/${selectedStrategies}`)
         .then((response) => {
           if (response.data.error) {
@@ -565,21 +632,21 @@ const index = (props) => {
 
           setDeleteAllModal(false);
           query.page = 0;
-          setQuery(query); 
+          setQuery(query);
           request();
           return success(response.data.message);
         });
-      }
+    }
   };
 
-  
+
 
   const handleCustomerClicks = () => {
 
     setIsEdit(false);
     setShowFields(false);
-      setShowRadioButtons(false);
-      validation.resetForm();
+    setShowRadioButtons(false);
+    validation.resetForm();
     toggle();
   };
 
@@ -589,9 +656,9 @@ const index = (props) => {
   }
 
   const handlePagination = (page) => {
-    
+
     query.offset = page.selected * query.limit;
-    query.page = page.selected ;
+    query.page = page.selected;
     setQuery(query);
     request(false);
   };
@@ -651,7 +718,7 @@ const index = (props) => {
     );
   };
   return (
-   
+
     <React.Fragment>
       <Modal isOpen={importModal} toggle={() => setImportModal(false)}>
         <ModalHeader toggle={() => setImportModal(false)}>Import CSV</ModalHeader>
@@ -677,13 +744,13 @@ const index = (props) => {
         onCloseClick={() => setDeleteModal(false)}
       />
       <DeleteAllModal
-      show={deleteAllModal}
-      onDeleteClick={handleDeleteAllData}
-      onCloseClick={() => setDeleteAllModal(false)}
-    />
+        show={deleteAllModal}
+        onDeleteClick={handleDeleteAllData}
+        onCloseClick={() => setDeleteAllModal(false)}
+      />
       <Card>
         <CardBody>
-       
+
           {/* <TradingTableContainer
             columns={columns}
             data={navs}
@@ -695,7 +762,6 @@ const index = (props) => {
             customPageSize={600}
             className="custom-header-css"
           /> */}
-        
 
         <TradingTableContainer
         columns={columns}
@@ -726,80 +792,77 @@ const index = (props) => {
               >
                 <Row>
                   <Col className="col-12">
-                  <div className="add-treads">
-                    <div className="add-tread-beside">
+                    <div className="add-treads">
+                      <div className="add-tread-beside">
                         <div className="add-tread col-md-8">
                           <Label className="form-label ">Terminal Symbol</Label>
-                          <Input
-                              type="select"
-                              name="terminalSymbol"
-                              className="select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.terminalSymbol || ""}
-                              invalid={
-                                validation.touched.terminalSymbol && validation.errors.terminalSymbol
-                                  ? true
-                                  : false
-                              }
-                            >
-                            <option value="" disabled selected>Select Symbol</option>
-                            <option value="TATA POWER">NIFTY</option>
-                            <option value="BCG">BANK NIFTY</option>
-                            <option value="SIEMENS">SIEMENS</option>
-                            <option value="LALPATHLAB">LALPATHLAB</option>
-                            <option value="HINDCOPPER">HINDCOPPER</option>
-                            <option value="M & M">M & M</option>
-                            <option value="COCHIN SHIPYARD">COCHIN SHIPYARD</option>
-                            </Input>
-                      {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.terminalSymbol}
-                        </FormFeedback>
-                      ) : null}
+
+                          <Select
+                            name="terminalSymbol"
+                            classNamePrefix="custom-react-select"
+                            styles={customStyles}
+                            options={scripts.map((script) => ({
+                              label: script.terminalSymbol,
+                              value: script.terminalSymbol,
+                            }))}
+                            onChange={(selectedOption) => {
+                              setSelectedOption(selectedOption); // Update selected option state
+                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
+                            }}
+                            onBlur={validation.handleBlur}
+                            value={selectedOption} // Set value based on selected option state
+                            isSearchable
+                            placeholder="Select Symbol"
+                            onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+                          />
+                          {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.terminalSymbol}
+                            </FormFeedback>
+                          ) : null}
                         </div>
                         <div className="add-tread col-md-4">
                           <Label className="form-label">Option Type</Label>
                           <Input
-                              type="select"
-                              name="optionType"
-                              className="select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.optionType || ""}
-                              invalid={
-                                validation.touched.optionType && validation.errors.optionType
-                                  ? true
-                                  : false
-                              }
-                            >
+                            type="select"
+                            name="optionType"
+                            className="select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.optionType || ""}
+                            invalid={
+                              validation.touched.optionType && validation.errors.optionType
+                                ? true
+                                : false
+                            }
+                          >
                             <option value="" disabled selected>Select Option</option>
                             <option value="CE">CE</option>
                             <option value="PE">PE</option>
-                            </Input>
-                      {validation.touched.optionType && validation.errors.optionType ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.optionType}
-                        </FormFeedback>
-                      ) : null}
+                          </Input>
+                          {validation.touched.optionType && validation.errors.optionType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.optionType}
+                            </FormFeedback>
+                          ) : null}
                         </div>
                       </div>
                       <div className="add-tread-beside">
                         <div className="add-tread col-md-3">
                           <Label className="form-label md-1">Dynamic Expiry</Label>
                           <Input
-                              type="select"
-                              name="dynamicExpiry"
-                              className="select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.dynamicExpiry || ""}
-                              invalid={
-                                validation.touched.dynamicExpiry && validation.errors.dynamicExpiry
-                                  ? true
-                                  : false
-                              }
-                            >
+                            type="select"
+                            name="dynamicExpiry"
+                            className="select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.dynamicExpiry || ""}
+                            invalid={
+                              validation.touched.dynamicExpiry && validation.errors.dynamicExpiry
+                                ? true
+                                : false
+                            }
+                          >
                             <option value="" disabled selected>Select Expiry Date</option>
                             <option value="5th September">5th September</option>
                             <option value="12th September">12th September</option>
@@ -810,94 +873,94 @@ const index = (props) => {
                             <option value="17th October">17th October</option>
                             <option value="24th October">24th October</option>
                             <option value="31st October">31st October</option>
-                            </Input>
-                      {validation.touched.dynamicExpiry && validation.errors.dynamicExpiry ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.dynamicExpiry}
-                        </FormFeedback>
-                      ) : null}
-                      </div>
-                      <div className="add-tread col-md-3">
-                        <Label className="form-label">Dynamic Strike</Label>
-                        
-                        <Input
-                              type="select"
-                              name="dynamicStrike"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.dynamicStrike || ""}
-                              invalid={
-                                validation.touched.dynamicStrike && validation.errors.dynamicStrike
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select Strike</option>
-                          <option value="Intraday">25100</option>
-                          <option value="Delivery">25200</option>
                           </Input>
-                      {validation.touched.dynamicStrike && validation.errors.dynamicStrike ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.dynamicStrike}
-                        </FormFeedback>
-                      ) : null}
-                      </div>
-                      <div className="add-tread col-md-3">
-                        <Label className="form-label">Qty Type</Label>
-                        <Input
-                              type="select"
-                              name="qtyType"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.qtyType || ""}
-                              invalid={
-                                validation.touched.qtyType && validation.errors.qtyType
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select Qty</option>
-                          <option value="Intraday">FIXED</option>
-                          <option value="Delivery">EXPLORER</option>
+                          {validation.touched.dynamicExpiry && validation.errors.dynamicExpiry ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.dynamicExpiry}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label">Dynamic Strike</Label>
+
+                          <Input
+                            type="select"
+                            name="dynamicStrike"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.dynamicStrike || ""}
+                            invalid={
+                              validation.touched.dynamicStrike && validation.errors.dynamicStrike
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select Strike</option>
+                            <option value="Intraday">25100</option>
+                            <option value="Delivery">25200</option>
                           </Input>
-                      {validation.touched.qtyType && validation.errors.qtyType ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.qtyType}
-                        </FormFeedback>
-                      ) : null}
-                      </div>
-                      <div className="add-tread col-md-3">
-                        <Label className="form-label">ProdType</Label>
-                        <Input
-                              type="select"
-                              name="prodType"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.prodType || ""}
-                              invalid={
-                                validation.touched.prodType && validation.errors.prodType
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select  Prod Type</option>
-                          <option value="Intraday">MIS</option>
-                          <option value="Delivery">Delivery</option>
+                          {validation.touched.dynamicStrike && validation.errors.dynamicStrike ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.dynamicStrike}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label">Qty Type</Label>
+                          <Input
+                            type="select"
+                            name="qtyType"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.qtyType || ""}
+                            invalid={
+                              validation.touched.qtyType && validation.errors.qtyType
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select Qty</option>
+                            <option value="Intraday">FIXED</option>
+                            <option value="Delivery">EXPLORER</option>
                           </Input>
-                      {validation.touched.prodType && validation.errors.prodType ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.prodType}
-                        </FormFeedback>
-                      ) : null}
+                          {validation.touched.qtyType && validation.errors.qtyType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.qtyType}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label">ProdType</Label>
+                          <Input
+                            type="select"
+                            name="prodType"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.prodType || ""}
+                            invalid={
+                              validation.touched.prodType && validation.errors.prodType
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select  Prod Type</option>
+                            <option value="Intraday">MIS</option>
+                            <option value="Delivery">Delivery</option>
+                          </Input>
+                          {validation.touched.prodType && validation.errors.prodType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.prodType}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
                       </div>
-                    </div>
-                    <div className="add-tread-beside">
-                      <div className="add-tread col-md-4">
-                        <Label className="form-label">Entry Order</Label>
-                        <Input
+                      <div className="add-tread-beside">
+                        <div className="add-tread col-md-4">
+                          <Label className="form-label">Entry Order</Label>
+                          <Input
                             type="select"
                             name="entryOrder"
                             className="col-md-6 select-script"
@@ -916,203 +979,208 @@ const index = (props) => {
                               {validation.errors.entryOrder}
                             </FormFeedback>
                           ) : null}
-                      </div>
-                      <div className="add-tread col-md-4">
-                        <Label className="form-label">Exit Order</Label>
-                        <Input
-                              type="select"
-                              name="exitOrder"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.exitOrder || ""}
-                              invalid={
-                                validation.touched.exitOrder && validation.errors.exitOrder
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select Exit Order</option>
-                          <option value="Intraday">MARKET</option>
-                          <option value="Delivery">Delivery</option>
+                        </div>
+                        <div className="add-tread col-md-4">
+                          <Label className="form-label">Exit Order</Label>
+                          <Input
+                            type="select"
+                            name="exitOrder"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.exitOrder || ""}
+                            invalid={
+                              validation.touched.exitOrder && validation.errors.exitOrder
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select Exit Order</option>
+                            <option value="Intraday">MARKET</option>
+                            <option value="Delivery">Delivery</option>
                           </Input>
-                      {validation.touched.exitOrder && validation.errors.exitOrder ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.exitOrder}
-                        </FormFeedback>
-                      ) : null}
+                          {validation.touched.exitOrder && validation.errors.exitOrder ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.exitOrder}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                        <div className="add-tread col-md-4">
+                          <Label className="form-label">Strategy</Label>
+                          <Input
+                            type="select"
+                            name="strategy"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.strategy || ""}
+                            invalid={
+                              validation.touched.strategy && validation.errors.strategy
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select Strategy</option>
+                            {strategies.length > 0 &&
+                              strategies.map((strategy) => (
+                                <option key={strategy.name} value={strategy.name}>
+                                  {strategy.name} {/* Adjust the property to display in dropdown */}
+                                </option>
+                              ))
+                            }
+                          </Input>
+                          {validation.touched.strategy && validation.errors.strategy ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.strategy}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
                       </div>
-                      <div className="add-tread col-md-4">
-                        <Label className="form-label">Strategy</Label>
-                        <Input
-                              type="select"
-                              name="strategy"
-                              className="col-md-6 select-script"
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.strategy || ""}
-                              invalid={
-                                validation.touched.strategy && validation.errors.strategy
-                                  ? true
-                                  : false
-                              }
-                            >
-                          <option value="" disabled selected>Select</option>
-                          <option value="Intraday">MIS</option>
-                          <option value="Delivery">Delivery</option>
-                        </Input>
-                      {validation.touched.strategy && validation.errors.strategy ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors.strategy}
-                        </FormFeedback>
-                      ) : null}
-                      </div>
-                    </div>
-                    <div className="add-tread-beside">
-                      <div className="add-tread  col-md-12">
-                        {showFields && (
+                      <div className="add-tread-beside">
+                        <div className="add-tread  col-md-12">
+                          {showFields && (
                             <div>
                               <div className="for-sll">
                                 <div className="add-tread col-md-6">
                                   <label htmlFor="field1">Price</label>
                                   <Input
-                                      name="price"
-                                      type="number"
-                                      className="select-script"
-                                      id="field1"
-                                      placeholder="Enter Price"
-                                      onChange={validation.handleChange}
-                                      onBlur={validation.handleBlur}
-                                      value={validation.values?.price || ""}
-                                      invalid={
-                                        validation.touched?.price && validation.errors?.price
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    {validation.touched?.price && validation.errors?.price ? (
-                                      <FormFeedback type="invalid">
-                                        {validation.errors?.price}
-                                      </FormFeedback>
-                                    ) : null}
+                                    name="price"
+                                    type="number"
+                                    className="select-script"
+                                    id="field1"
+                                    placeholder="Enter Price"
+                                    onChange={validation.handleChange}
+                                    onBlur={validation.handleBlur}
+                                    value={validation.values?.price || ""}
+                                    invalid={
+                                      validation.touched?.price && validation.errors?.price
+                                        ? true
+                                        : false
+                                    }
+                                  />
+                                  {validation.touched?.price && validation.errors?.price ? (
+                                    <FormFeedback type="invalid">
+                                      {validation.errors?.price}
+                                    </FormFeedback>
+                                  ) : null}
                                 </div>
 
                                 <div className="add-tread col-md-6">
                                   <label htmlFor="field2">Trigger Price</label>
-                                  
+
                                   <Input
-                                      name="triggerPrice"
-                                      type="number"
-                                      className="select-script"
-                                      id="field2"
-                                      placeholder="Enter Trigger Price"
-                                      onChange={validation.handleChange}
-                                      onBlur={validation.handleBlur}
-                                      value={validation.values?.triggerPrice || ""}
-                                      invalid={
-                                        validation.touched?.triggerPrice && validation.errors?.triggerPrice
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    {validation.touched?.triggerPrice && validation.errors?.triggerPrice ? (
-                                      <FormFeedback type="invalid">
-                                        {validation.errors?.triggerPrice}
-                                      </FormFeedback>
-                                    ) : null}
+                                    name="triggerPrice"
+                                    type="number"
+                                    className="select-script"
+                                    id="field2"
+                                    placeholder="Enter Trigger Price"
+                                    onChange={validation.handleChange}
+                                    onBlur={validation.handleBlur}
+                                    value={validation.values?.triggerPrice || ""}
+                                    invalid={
+                                      validation.touched?.triggerPrice && validation.errors?.triggerPrice
+                                        ? true
+                                        : false
+                                    }
+                                  />
+                                  {validation.touched?.triggerPrice && validation.errors?.triggerPrice ? (
+                                    <FormFeedback type="invalid">
+                                      {validation.errors?.triggerPrice}
+                                    </FormFeedback>
+                                  ) : null}
                                 </div>
                               </div>
 
                             </div>
                           )}
+                        </div>
+                      </div>
+                      <div className="add-tread-beside">
+                        <div className="add-tread  col-md-12">
+                          {showRadioButtons && (
+                            <div className="for-sll">
+                              <div className="add-tread col-md-6">
+                                <label htmlFor="field5">Price Buffer Type</label>
+                                <div className="add-tread price-buffer col-md-12">
+                                  <label className="price-buffer">
+                                    <input
+                                      type="radio"
+                                      name="priceBufferType"
+                                      value="fixed"
+                                      checked={validation.values.priceBufferType === "fixed"}
+                                      onBlur={validation.handleBlur}
+                                      onChange={validation.handleChange}
+                                      invalid={
+                                        validation.touched?.priceBufferType && validation.errors?.priceBufferType
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    Fixed
+                                  </label>
+                                  <label className="price-buffer">
+                                    <input
+                                      type="radio"
+                                      name="priceBufferType"
+                                      value="percent"
+                                      checked={validation.values.priceBufferType === "percent"}
+                                      onBlur={validation.handleBlur}
+                                      onChange={validation.handleChange}
+                                      invalid={
+                                        validation.touched?.priceBufferType && validation.errors?.priceBufferType
+                                          ? true
+                                          : false
+                                      }
+                                    />
+                                    Percent
+                                  </label>
+                                  {validation.touched.priceBufferType && validation.errors.priceBufferType ? (
+                                    <div>{validation.errors.priceBufferType}</div>
+                                  ) : null}
+                                </div>
+                              </div>
+                              <div className="add-tread col-md-6">
+                                <label htmlFor="priceBuffer">Price Buffer</label>
+                                <Input
+                                  name="priceBuffer"
+                                  type="number"
+                                  className="select-script"
+                                  id="priceBuffer"
+                                  placeholder="Enter Price Buffer"
+                                  onChange={validation.handleChange}
+                                  onBlur={validation.handleBlur}
+                                  value={validation.values?.priceBuffer || ""}
+                                  invalid={
+                                    validation.touched?.priceBuffer && validation.errors?.priceBuffer
+                                      ? true
+                                      : false
+                                  }
+                                />
+                                {validation.touched?.priceBuffer && validation.errors?.priceBuffer ? (
+                                  <FormFeedback type="invalid">
+                                    {validation.errors?.priceBuffer}
+                                  </FormFeedback>
+                                ) : null}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="add-tread-beside">
-                      <div className="add-tread  col-md-12">
-                      {showRadioButtons && (
-                  <div className="for-sll">
-                    <div className="add-tread col-md-6">
-                      <label htmlFor="field5">Price Buffer Type</label>
-                      <div className="add-tread price-buffer col-md-12">
-                        <label className="price-buffer">
-                          <input
-                            type="radio"
-                            name="priceBufferType"
-                            value="fixed"
-                            checked={validation.values.priceBufferType === "fixed"}
-                            onBlur={validation.handleBlur}
-                            onChange={validation.handleChange}
-                            invalid={
-                              validation.touched?.priceBufferType && validation.errors?.priceBufferType
-                                ? true
-                                : false
-                            }
-                          />
-                          Fixed
-                        </label>
-                        <label className="price-buffer">
-                          <input
-                            type="radio"
-                            name="priceBufferType"
-                            value="percent"
-                            checked={validation.values.priceBufferType === "percent"}
-                            onBlur={validation.handleBlur}
-                            onChange={validation.handleChange}
-                            invalid={
-                              validation.touched?.priceBufferType && validation.errors?.priceBufferType
-                                ? true
-                                : false
-                            }
-                          />
-                          Percent
-                        </label>
-                        {validation.touched.priceBufferType && validation.errors.priceBufferType ? (
-                          <div>{validation.errors.priceBufferType}</div>
-                        ) : null}
-                      </div>
-                    </div>
-            <div className="add-tread col-md-6">
-              <label htmlFor="priceBuffer">Price Buffer</label>
-              <Input
-                        name="priceBuffer"
-                        type="number"
-                        className="select-script"
-                        id="priceBuffer"
-                        placeholder="Enter Price Buffer"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values?.priceBuffer || ""}
-                        invalid={
-                          validation.touched?.priceBuffer && validation.errors?.priceBuffer
-                            ? true
-                            : false
-                        }
-                      />
-                      {validation.touched?.priceBuffer && validation.errors?.priceBuffer ? (
-                        <FormFeedback type="invalid">
-                          {validation.errors?.priceBuffer}
-                        </FormFeedback>
-                      ) : null}
-            </div>
-        </div>
-      )}
-                      </div>
-                    </div>
-                  </div>
-                    
+
                   </Col>
                 </Row>
                 <Row>
                   <Col>
                     <div className="text-end">
-                      {!isEdit && 
-                      <button
-                        type="button"
-                        className="btn btn-danger save-customer mx-2"
-                        onClick={handleReset}
-                      >
-                        Reset
-                      </button>
+                      {!isEdit &&
+                        <button
+                          type="button"
+                          className="btn btn-danger save-customer mx-2"
+                          onClick={handleReset}
+                        >
+                          Reset
+                        </button>
                       }
                       <button
                         type="submit"
@@ -1120,7 +1188,7 @@ const index = (props) => {
                       >
                         Save
                       </button>
-                      
+
                     </div>
                   </Col>
                 </Row>
