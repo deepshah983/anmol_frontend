@@ -72,21 +72,24 @@ const Header = props => {
     setMenuOpen(!menuOpen);
     tToggle(); 
   };
-  
-
   return (
     <React.Fragment>
       <header id="page-topbar">
         <div className="navbar-header">
         <div className="d-flex">
-            <button
-                type="button"
-                onClick={handleMenuToggle}
-                className="btn btn-sm px-3 font-size-18 header-item"
-                id="vertical-menu-btn"
-            >
-                <i className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
-            </button>
+        <button
+          type="button"
+          className="btn btn-sm px-3 font-size-18 header-item"
+          id="vertical-menu-btn"
+          onClick={(e) => e.preventDefault()} 
+          style={{ cursor: 'default' }} 
+        >
+          <i
+            className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`}
+            onClick={handleMenuToggle}
+            style={{ cursor: 'pointer' }} 
+          />
+        </button>
         </div>
 
           <div className="d-flex">
