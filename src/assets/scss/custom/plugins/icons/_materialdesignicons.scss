@@ -1586,6 +1586,9 @@
   content: "\F072E";
   font-size: 20px;
   font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-arrow-down-bold-box::before {
@@ -1872,6 +1875,9 @@
   content: "\F0737";
   font-size: 20px;
   font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-arrow-up-bold-box::before {
@@ -7520,8 +7526,11 @@
 
 .mdis-delete::before {
   content: "\F01B4";
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-delete-alert::before {

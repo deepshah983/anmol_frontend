@@ -248,9 +248,9 @@ const StrategyManagement = () => {
               onClick={() => handleStrategyClick(row.original)}
             >
               <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
-              <UncontrolledTooltip placement="top" target="edittooltip">
+              {/* <UncontrolledTooltip placement="top" target="edittooltip">
                 Edit
-              </UncontrolledTooltip>
+              </UncontrolledTooltip> */}
             </Link>
 
             <Link
@@ -259,9 +259,9 @@ const StrategyManagement = () => {
               onClick={() => onClickDelete(row.original)}
             >
               <i className="mdi mdi-delete font-size-18" id="deletetooltip" />
-              <UncontrolledTooltip placement="top" target="deletetooltip">
+              {/* <UncontrolledTooltip placement="top" target="deletetooltip">
                 Delete
-              </UncontrolledTooltip>
+              </UncontrolledTooltip> */}
             </Link>
           </div>
         ),
@@ -533,12 +533,15 @@ const StrategyManagement = () => {
                 />
                 <FormFeedback>{validation.errors.quantityMultiplier}</FormFeedback>
               </Col>
-
+              <div
+              style={{ textAlign: "right"}}
+              >
               <Col className="mb-3">
                 <Button color="primary" type="submit">
                   {isEdit ? "Update" : "Submit"}
                 </Button>
               </Col>
+              </div>
             </Row>
           </Form>
         </ModalBody>

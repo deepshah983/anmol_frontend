@@ -57,25 +57,37 @@ const Header = props => {
     }
   }
 
+  const handleClick = (event) => {
+    event.preventDefault();
+
+  const [isSidebarEnabled, setIsSidebarEnabled] = useState(true);
+  const [icon, setIcon] = useState(fa-times); // Initial icon
+
+  const handleToggle = () => {
+      setIsSidebarEnabled(!isSidebarEnabled);
+      setIcon(isSidebarEnabled ? faBars : faTimes); // Toggle icon
+  };
+};
   const handleMenuToggle = () => {
     setMenuOpen(!menuOpen);
     tToggle(); 
   };
+  
 
   return (
     <React.Fragment>
       <header id="page-topbar">
         <div className="navbar-header">
-          <div className="d-flex">
+        <div className="d-flex">
             <button
-              type="button"
-              onClick={handleMenuToggle} 
-              className="btn btn-sm px-3 font-size-18 header-item"
-              id="vertical-menu-btn"
+                type="button"
+                onClick={handleMenuToggle}
+                className="btn btn-sm px-3 font-size-18 header-item"
+                id="vertical-menu-btn"
             >
-              <i className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
+                <i className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
             </button>
-          </div>
+        </div>
 
           <div className="d-flex">
             <Link to="/dashboard" className="logo logo-light">

@@ -153,6 +153,27 @@ const SidebarContent = (props) => {
     }
   }
 
+  const handleLiClick = () => {
+    document.body.classList.remove('sidebar-enable');
+  };
+
+  useEffect(() => {
+    // Select all 'li' elements within the specific 'ul'
+    const liElements = document.querySelectorAll('.metismenu.list-unstyled.mm-show.mm-active li');
+
+    // Add event listener to each 'li'
+    liElements.forEach(li => {
+      li.addEventListener('click', handleLiClick);
+    });
+
+    // Cleanup event listeners on unmount
+    return () => {
+      liElements.forEach(li => {
+        li.removeEventListener('click', handleLiClick);
+      });
+    };
+  }, []);
+
   return (
     <React.Fragment>
       <SimpleBar className="h-100" ref={ref}>
