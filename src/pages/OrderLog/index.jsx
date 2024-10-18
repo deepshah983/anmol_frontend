@@ -22,9 +22,9 @@ const index = () => {
   return (
     <>
       <ToastElement />
-      <div className="page-content">
+      <div className="page-content orderLog">
         <Container fluid>
-          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Trading Forms" />
+          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Order Log" />
                 <OrderLog />
         </Container>
       </div>

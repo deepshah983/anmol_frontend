@@ -493,9 +493,9 @@ const index = (props) => {
                 }}
               >
                 <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
-                <UncontrolledTooltip placement="top" target="edittooltip">
+                {/* <UncontrolledTooltip placement="top" target="edittooltip">
                   Edit
-                </UncontrolledTooltip>
+                </UncontrolledTooltip> */}
               </Link>
               <Link
                 to="#"
@@ -506,9 +506,9 @@ const index = (props) => {
                 }}
               >
                 <i className="mdi mdi-delete font-size-18" id="deletetooltip" />
-                <UncontrolledTooltip placement="top" target="deletetooltip">
+                {/* <UncontrolledTooltip placement="top" target="deletetooltip">
                   Delete
-                </UncontrolledTooltip>
+                </UncontrolledTooltip> */}
               </Link>
             </div>
           );
@@ -661,9 +661,13 @@ const index = (props) => {
               <Label for="csvFile">Select CSV file</Label>
               <Input type="file" name="csvFile" id="csvFile" onChange={handleFileChange} />
             </FormGroup>
+            <div 
+            style={{ textAlign: "right"}}
+            >
             <Button color="primary" onClick={handleImport}>
               Import
             </Button>
+            </div>
           </Form>
         </ModalBody>
       </Modal>
@@ -754,7 +758,7 @@ const index = (props) => {
                         </FormFeedback>
                       ) : null}
                         </div>
-                        <div className="add-tread col-md-3">
+                        <div className="add-tread col-md-4">
                           <Label className="form-label">Option Type</Label>
                           <Input
                               type="select"

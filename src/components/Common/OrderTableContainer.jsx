@@ -245,7 +245,7 @@ const TradingTableContainer = ({
           <Col sm="12">
             <div className="text-sm-start" >
                 <div className="add-orderlog col-md-12">
-                  <div className="col-5">
+                  <div className="add-script col-5">
                     <select className="select-script col-5" id="cars" name="cars">
                         <option value="" disabled selected>All Script</option>
                         <option value="TATA POWER">NIFTY</option>
@@ -271,7 +271,6 @@ const TradingTableContainer = ({
                         <input type="date" id="start-date" />
                         <span><b>To</b></span>
                         <input type="date" id="end-date" />
-                        <span className="date-difference" id="date-difference"></span>
                     </div>
                     <div className="total-records col-2">
                         <h5>Total Records: 8</h5>
@@ -337,7 +336,7 @@ const TradingTableContainer = ({
           </tbody>
         </Table>
       </div>
-      {isPagination && (
+      {/* {isPagination && (
         <Row className="justify-content-md-end justify-content-center align-items-center">
           <Col className="col-md-auto">
             <div className="d-flex gap-1">
@@ -383,7 +382,7 @@ const TradingTableContainer = ({
             </div>
           </Col>
         </Row>
-      )}
+      )} */}
     </Fragment>
   );
 };
