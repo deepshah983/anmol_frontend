@@ -64,6 +64,7 @@ const TradingTableContainer = ({
   navId,
   isPagination,
   isAddOptions,
+  isWatchList,
   isAddUserList,
   isExport,
   handleOrderClicks,
@@ -220,6 +221,7 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdis-plus " />
               </Button>
+              
               <Button
                 type="button"
                 color="danger"
@@ -229,6 +231,8 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdis-delete " />
               </Button>
+              {isWatchList &&
+              <>
               <Button
                 type="button"
                 color="info"
@@ -238,6 +242,7 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdi-arrow-up-bold" />
               </Button>
+              
               <Button
                 type="button"
                 color="info"
@@ -247,6 +252,8 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdi-arrow-down-bold" />
               </Button>
+              </>
+            }
             </div>
           </Col>
         )}
@@ -300,6 +307,8 @@ const TradingTableContainer = ({
                           {cell.render("Cell")}
                         </td>
                       ))}
+                      {isWatchList &&
+                      <>
                       <span 
                         className="hello-span"
                       >
@@ -308,6 +317,8 @@ const TradingTableContainer = ({
                           <button className="btn btn-sell mx-1">Short</button>
                           <button className="btn btn-buy mx-1">Cover</button>
                       </span>
+                      </>
+                     }
                     </tr>
                   </Fragment>
                 );
