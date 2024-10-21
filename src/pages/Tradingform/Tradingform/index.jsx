@@ -83,6 +83,12 @@ const index = (props) => {
     status: "",
   });
 
+  const exchangeClasses = {
+    'NSE': 'exchange-nse',
+    'NFO': 'exchange-nfo'
+  };
+  
+
   const request = (reset_offset = true) => {
 
     let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
@@ -798,23 +804,37 @@ const index = (props) => {
                           <Label className="form-label ">Terminal Symbol</Label>
 
                           <Select
-                            name="terminalSymbol"
-                            classNamePrefix="custom-react-select"
-                            styles={customStyles}
-                            options={scripts.map((script) => ({
-                              label: script.terminalSymbol,
-                              value: script.terminalSymbol,
-                            }))}
-                            onChange={(selectedOption) => {
-                              setSelectedOption(selectedOption); // Update selected option state
-                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
-                            }}
-                            onBlur={validation.handleBlur}
-                            value={selectedOption} // Set value based on selected option state
-                            isSearchable
-                            placeholder="Select Symbol"
-                            onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
-                          />
+  name="terminalSymbol"
+  classNamePrefix="custom-react-select"
+  styles={customStyles}
+  options={scripts.map((script) => ({
+    label: script.terminalSymbol,
+    value: script.terminalSymbol,
+    exchange: script.exchange, // Replace with actual data source for the small text
+  }))}
+  onChange={(selectedOption) => {
+    setSelectedOption(selectedOption); // Update selected option state
+    validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
+  }}
+  onBlur={validation.handleBlur}
+  value={selectedOption} // Set value based on selected option state
+  isSearchable
+  placeholder="Select Symbol"
+  onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+  formatOptionLabel={({ label, exchange }) => {
+    // Get the class based on the exchange value
+    const className = exchangeClasses[exchange] || defaultClass;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between' }} >
+        <span >{label}</span>
+        <small className={className}>
+          {exchange}
+        </small>
+      </div>
+    );
+  }}
+/>
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}

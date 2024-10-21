@@ -1331,3 +1331,17 @@ tbody tr td:first-child .form-check, thead tr th:first-child .form-check{
     display: none;
   } 
 }
+
+.exchange-nse {
+  background-color: #f8d7da; /* Light red */
+  color: #df514c;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.exchange-nfo {
+  background-color: #d4edda; /* Light green */
+  color: #3ce062;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
