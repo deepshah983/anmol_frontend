@@ -30,7 +30,7 @@ import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
 import DeleteAllModal from "../../../components/Common/DeleteAllData";
 import TradingTableContainer from "../../../components/Common/TradingTableContainer";
-
+import HideShowSection from "../../../components/Common/HideShowSection";
 import { success, error } from "../../../components/toast";
 // Column
 import { Designation, Email } from "../../NavigationCol";
@@ -94,6 +94,7 @@ const index = (props) => {
     let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
     getData(url).then((response) => {
 
+     
       setNavs(response?.data?.data);
       setTotal(response?.data?.totalCount);
       setLoading(false);
@@ -351,13 +352,14 @@ const index = (props) => {
       setShowFields(false);
       setShowRadioButtons(false);
       validation.resetForm();
-
+      setSelectedOption(null)
       toggle();
     },
   });
 
   const handleReset = () => {
     validation.resetForm();
+    setSelectedOption(null);
     setShowFields(false);
     setShowRadioButtons(false);
   };
@@ -433,23 +435,19 @@ const index = (props) => {
 
   const handleSelectAllChange = (e) => {
     if (e.target.checked) {
-      setSelectedStrategies(strategies.map(strategy => strategy._id));
+      setSelectedStrategies(navs.map(strategy => strategy._id));
     } else {
       setSelectedStrategies([]);
     }
   };
 
   const handleSelectStrategy = (strategyId) => {
-    setSelectedStrategies(prevSelected =>
+    setSelectedStrategies(prevSelected => 
       prevSelected.includes(strategyId)
         ? prevSelected.filter(id => id !== strategyId)
         : [...prevSelected, strategyId]
     );
   };
-
-  const getSelectedStrategies = useCallback(() => {
-    return strategies.filter(strategy => selectedStrategies.includes(strategy._id));
-  }, [strategies, selectedStrategies]);
 
 
   // Customber Column
@@ -463,7 +461,7 @@ const index = (props) => {
               className="form-check-input"
               id="selectAll"
               onChange={handleSelectAllChange}
-              checked={selectedStrategies.length === strategies.length && strategies.length !== 0}
+              checked={selectedStrategies.length === navs.length && navs.length !== 0}
             />
           </div>
         ),
@@ -756,25 +754,13 @@ const index = (props) => {
       />
       <Card>
         <CardBody>
-
-          {/* <TradingTableContainer
-            columns={columns}
-            data={navs}
-            isGlobalFilter={true}
-            isAddCustList={true}
-            isPagination={false}
-            handleCustomerClick={handleCustomerClicks}
-            selectedDataDelete={selectedDataDelete}
-            customPageSize={600}
-            className="custom-header-css"
-          /> */}
-
         <TradingTableContainer
         columns={columns}
         data={navs}
         isGlobalFilter={true}
         isAddCustList={true}
         isPagination={false}
+        isWatchList={true}
         handleCustomerClick={handleCustomerClicks}
         selectedDataDelete={selectedDataDelete}
         customPageSize={600}
