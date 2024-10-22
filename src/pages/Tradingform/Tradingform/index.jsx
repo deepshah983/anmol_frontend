@@ -14,7 +14,6 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  UncontrolledTooltip,
   Input,
   FormFeedback,
   Label,
@@ -112,7 +111,6 @@ const index = (props) => {
     let url = `/scrips/fetch-instruments`;
     getData(url)
       .then((response) => {
-        let instruments = response?.data;
         setScripts(response.data.data.instruments);
         setLoading(false);
       })
@@ -257,6 +255,9 @@ const index = (props) => {
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
+
+    console.log(selectedValue);
+    
     if (selectedValue === 'SLL') {
       setShowFields(true);
       setShowRadioButtons(false);
@@ -296,13 +297,23 @@ const index = (props) => {
       priceBufferType: (navigation && navigation.priceBufferType) || "",
       price: (navigation && navigation.price) || "",
       triggerPrice: (navigation && navigation.triggerPrice) || "",
+      hasExpiry: false,
+      hasStrike: false,
     },
 
     validationSchema: Yup.object().shape({
       terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
       optionType: Yup.string().required("Please Select Option Type"),
-      dynamicExpiry: Yup.string().required("Please Select Dynamic Expiry"),
-      dynamicStrike: Yup.string().required("Please Select Dynamic Strike"),
+      dynamicExpiry: Yup.string().when('hasExpiry', {
+        is: true,
+        then: Yup.string().required("Please Select Dynamic Expiry"),
+        otherwise: Yup.string().notRequired(),
+      }),
+      dynamicStrike: Yup.string().when('hasStrike', {
+        is: true,
+        then: Yup.string().required("Please Select Dynamic Strike"),
+        otherwise: Yup.string().notRequired(),
+      }),
       qtyType: Yup.string().required("Please Select Qty Type"),
       prodType: Yup.string().required("Please Select Prod Type"),
       entryOrder: Yup.string().required("Please Select Entry Order"),
@@ -337,6 +348,8 @@ const index = (props) => {
     onSubmit: (values) => {
       let form = themeConfig.functions.read_form("traingForm");
       let formData = new FormData();
+      formData.append("hasExpiry", validation.values.hasExpiry);
+      formData.append("hasStrike", validation.values.hasStrike);
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
@@ -449,6 +462,44 @@ const index = (props) => {
     );
   };
 
+  // const handleSymbolChange = (selected) => {
+
+  //   console.log("selectedOption", selected);
+    
+  //   setSelectedOption(selected);
+  //   validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
+  //   validation.setFieldValue('optionType', selected ? selected.instrument_type : '');
+  //   validation.setFieldValue('dynamicExpiry', selected ? selected.expiry : '');
+  //   validation.setFieldValue('dynamicStrike', selected ? selected.strike?.toString() : '');
+  // };
+
+  const handleSymbolChange = (selected) => {
+    console.log("selectedOption", selected);
+    setSelectedOption(selected);
+    validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
+    validation.setFieldValue('optionType', '');
+    validation.setFieldValue('dynamicExpiry', '');
+    validation.setFieldValue('dynamicStrike', '');
+    validation.setFieldValue('hasExpiry', selected && selected.expiry ? true : false);
+    validation.setFieldValue('hasStrike', selected && selected.strike ? true : false);
+  };
+
+  const getOptionTypes = () => {
+    if (!selectedOption) return [];
+    const types = ['CE', 'PE'];
+    if (selectedOption.instrument_type === 'EQ') types.push('EQ');
+    return types;
+  };
+
+  const getExpiryDates = () => {
+    if (!selectedOption || !selectedOption.expiry) return [];
+    return [selectedOption.expiry];
+  };
+
+  const getStrikes = () => {
+    if (!selectedOption || !selectedOption.strike) return [];
+    return [selectedOption.strike.toString()];
+  };
 
   // Customber Column
   const columns = useMemo(
@@ -827,6 +878,43 @@ const index = (props) => {
                               );
                             }}
                           />
+                              name="terminalSymbol"
+                              classNamePrefix="custom-react-select"
+                              styles={customStyles}
+                              options={scripts.map((script) => ({
+                                label: script.terminalSymbol,
+                                value: script.terminalSymbol,
+                                exchange: script.exchange,
+                                strike: script.strike,
+                                instrument_type: script.instrument_type,
+                                last_price: script.last_price,
+                                lot_size: script.lot_size,
+                                strike: script.strike,
+                                tick_size: script.tick_size,
+                                expiry: script.expiry
+                              }))}
+                              onChange={handleSymbolChange}
+                              onBlur={validation.handleBlur}
+                              value={selectedOption} // Set value based on selected option state
+                              isSearchable
+                              placeholder="Select Symbol"
+                              onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+                              formatOptionLabel={({ label, exchange }) => {
+                                // Get the class based on the exchange value
+                                const className = exchangeClasses[exchange] || defaultClass;
+                                //  console.log(label);
+                                //  console.log(exchange);
+                                 
+                                return (
+                                  <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between' }} >
+                                    <span >{label}</span>
+                                    <small className={className}>
+                                      {exchange}
+                                    </small>
+                                  </div>
+                                );
+                              }}
+                            />
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}
@@ -856,6 +944,14 @@ const index = (props) => {
                                 </option>
                               ))
                             }
+                            {/* <option value="" disabled selected>Select Option</option>
+                            <option value="CE">CE</option>
+                            <option value="PE">PE</option>
+                            <option value="EQ">EQ</option> */}
+                             <option value="">Select Option Type</option>
+                              {getOptionTypes().map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
                           </Input>
                           {validation.touched.strategy && validation.errors.strategy ? (
                             <FormFeedback type="invalid">
@@ -891,6 +987,11 @@ const index = (props) => {
                             <option value="17th October">17th October</option>
                             <option value="24th October">24th October</option>
                             <option value="31st October">31st October</option>
+                            {/* <option value="" disabled selected>Select Expiry Date</option> */}
+                            <option value="">Select Dynamic Expiry</option>
+                            {getExpiryDates().map((date) => (
+                              <option key={date} value={date}>{date}</option>
+                            ))}
                           </Input>
                           {validation.touched.dynamicExpiry && validation.errors.dynamicExpiry ? (
                             <FormFeedback type="invalid">
@@ -915,9 +1016,11 @@ const index = (props) => {
                             }
                             disabled={isInputDisabled}
                           >
-                            <option value="" disabled selected>Select Strike</option>
-                            <option value="Intraday">25100</option>
-                            <option value="Delivery">25200</option>
+                            {/* <option value="" disabled selected>Select Strike</option> */}
+                            <option value="">Select Dynamic Strike</option>
+                            {getStrikes().map((strike) => (
+                              <option key={strike} value={strike}>{strike}</option>
+                            ))}
                           </Input>
                           {validation.touched.dynamicStrike && validation.errors.dynamicStrike ? (
                             <FormFeedback type="invalid">
