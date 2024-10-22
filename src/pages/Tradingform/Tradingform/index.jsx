@@ -63,6 +63,7 @@ const index = (props) => {
   const [strategies, setStrategies] = useState([]);
   const [scripts, setScripts] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isInputDisabled, setIsInputDisabled] = useState(true);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
@@ -87,7 +88,6 @@ const index = (props) => {
     'NSE': 'exchange-nse',
     'NFO': 'exchange-nfo'
   };
-
 
   const request = (reset_offset = true) => {
 
@@ -813,8 +813,15 @@ const index = (props) => {
                               exchange: script.exchange, // Replace with actual data source for the small text
                             }))}
                             onChange={(selectedOption) => {
+                              console.log('Selected option:', selectedOption);
                               setSelectedOption(selectedOption); // Update selected option state
                               validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
+
+                              if (selectedOption.exchange === 'NFO') {
+                                setIsInputDisabled(false); // Enable input if exchange is "NFO"
+                              } else {
+                                setIsInputDisabled(true); // Keep input disabled for other exchanges
+                              }
                             }}
                             onBlur={validation.handleBlur}
                             value={selectedOption} // Set value based on selected option state
@@ -887,6 +894,7 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+                            disabled={isInputDisabled}
                           >
                             <option value="" disabled selected>Select Expiry</option>
                             <option value="5th September">5th September</option>
@@ -920,6 +928,7 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+                            disabled={isInputDisabled}
                           >
                             <option value="" disabled selected>Select Strike</option>
                             <option value="Intraday">25100</option>
@@ -930,6 +939,34 @@ const index = (props) => {
                               {validation.errors.dynamicStrike}
                             </FormFeedback>
                           ) : null}
+                        </div>
+
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label">Option Type</Label>
+                          <Input
+                            type="select"
+                            name="optionType"
+                            className="select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.optionType || ""}
+                            invalid={
+                              validation.touched.optionType && validation.errors.optionType
+                                ? true
+                                : false
+                            }
+                            disabled={isInputDisabled}
+                          >
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="CE">CE</option>
+                            <option value="PE">PE</option>
+                          </Input>
+                          {validation.touched.optionType && validation.errors.optionType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.optionType}
+                            </FormFeedback>
+                          ) : null}
+
                         </div>
                         <div className="add-tread col-md-3">
                           <Label className="form-label">Qty Type</Label>
@@ -945,6 +982,7 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+
                           >
                             <option value="" disabled selected>Select Qty</option>
                             <option value="Intraday">FIXED</option>
@@ -953,31 +991,6 @@ const index = (props) => {
                           {validation.touched.qtyType && validation.errors.qtyType ? (
                             <FormFeedback type="invalid">
                               {validation.errors.qtyType}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
-                        <div className="add-tread col-md-3">
-                          <Label className="form-label">Option Type</Label>
-                          <Input
-                            type="select"
-                            name="optionType"
-                            className="select-script"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.optionType || ""}
-                            invalid={
-                              validation.touched.optionType && validation.errors.optionType
-                                ? true
-                                : false
-                            }
-                          >
-                            <option value="" disabled selected>Select Option</option>
-                            <option value="CE">CE</option>
-                            <option value="PE">PE</option>
-                          </Input>
-                          {validation.touched.optionType && validation.errors.optionType ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.optionType}
                             </FormFeedback>
                           ) : null}
                         </div>
