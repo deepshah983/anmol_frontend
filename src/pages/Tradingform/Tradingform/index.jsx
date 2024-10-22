@@ -87,7 +87,7 @@ const index = (props) => {
     'NSE': 'exchange-nse',
     'NFO': 'exchange-nfo'
   };
-  
+
 
   const request = (reset_offset = true) => {
 
@@ -734,12 +734,12 @@ const index = (props) => {
               <Label for="csvFile">Select CSV file</Label>
               <Input type="file" name="csvFile" id="csvFile" onChange={handleFileChange} />
             </FormGroup>
-            <div 
-            style={{ textAlign: "right"}}
+            <div
+              style={{ textAlign: "right" }}
             >
-            <Button color="primary" onClick={handleImport}>
-              Import
-            </Button>
+              <Button color="primary" onClick={handleImport}>
+                Import
+              </Button>
             </div>
           </Form>
         </ModalBody>
@@ -769,20 +769,20 @@ const index = (props) => {
             className="custom-header-css"
           /> */}
 
-        <TradingTableContainer
-        columns={columns}
-        data={navs}
-        isGlobalFilter={true}
-        isAddCustList={true}
-        isPagination={false}
-        handleCustomerClick={handleCustomerClicks}
-        selectedDataDelete={selectedDataDelete}
-        customPageSize={600}
-        className="custom-header-css"
-        handleExport={handleExport}
-        handleImport={handleImportClick}
-      />
-           <CustomPagination />
+          <TradingTableContainer
+            columns={columns}
+            data={navs}
+            isGlobalFilter={true}
+            isAddCustList={true}
+            isPagination={false}
+            handleCustomerClick={handleCustomerClicks}
+            selectedDataDelete={selectedDataDelete}
+            customPageSize={600}
+            className="custom-header-css"
+            handleExport={handleExport}
+            handleImport={handleImportClick}
+          />
+          <CustomPagination />
           <Modal className="TreadModal" isOpen={modal} toggle={toggle} >
             <ModalHeader toggle={toggle} tag="h4">
               {!!isEdit ? "Add/Edit Tread" : "Add/Edit Tread"}
@@ -804,37 +804,37 @@ const index = (props) => {
                           <Label className="form-label ">Terminal Symbol</Label>
 
                           <Select
-  name="terminalSymbol"
-  classNamePrefix="custom-react-select"
-  styles={customStyles}
-  options={scripts.map((script) => ({
-    label: script.terminalSymbol,
-    value: script.terminalSymbol,
-    exchange: script.exchange, // Replace with actual data source for the small text
-  }))}
-  onChange={(selectedOption) => {
-    setSelectedOption(selectedOption); // Update selected option state
-    validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
-  }}
-  onBlur={validation.handleBlur}
-  value={selectedOption} // Set value based on selected option state
-  isSearchable
-  placeholder="Select Symbol"
-  onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
-  formatOptionLabel={({ label, exchange }) => {
-    // Get the class based on the exchange value
-    const className = exchangeClasses[exchange] || defaultClass;
+                            name="terminalSymbol"
+                            classNamePrefix="custom-react-select"
+                            styles={customStyles}
+                            options={scripts.map((script) => ({
+                              label: script.terminalSymbol,
+                              value: script.terminalSymbol,
+                              exchange: script.exchange, // Replace with actual data source for the small text
+                            }))}
+                            onChange={(selectedOption) => {
+                              setSelectedOption(selectedOption); // Update selected option state
+                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
+                            }}
+                            onBlur={validation.handleBlur}
+                            value={selectedOption} // Set value based on selected option state
+                            isSearchable
+                            placeholder="Select Symbol"
+                            onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+                            formatOptionLabel={({ label, exchange }) => {
+                              // Get the class based on the exchange value
+                              const className = exchangeClasses[exchange] || defaultClass;
 
-    return (
-      <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between' }} >
-        <span >{label}</span>
-        <small className={className}>
-          {exchange}
-        </small>
-      </div>
-    );
-  }}
-/>
+                              return (
+                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
+                                  <span >{label}</span>
+                                  <small className={className}>
+                                    {exchange}
+                                  </small>
+                                </div>
+                              );
+                            }}
+                          />
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}
@@ -842,27 +842,32 @@ const index = (props) => {
                           ) : null}
                         </div>
                         <div className="add-tread col-md-4">
-                          <Label className="form-label">Option Type</Label>
+                          <Label className="form-label">Strategy</Label>
                           <Input
                             type="select"
-                            name="optionType"
-                            className="select-script"
+                            name="strategy"
+                            className="col-md-6 select-script"
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            value={validation.values.optionType || ""}
+                            value={validation.values.strategy || ""}
                             invalid={
-                              validation.touched.optionType && validation.errors.optionType
+                              validation.touched.strategy && validation.errors.strategy
                                 ? true
                                 : false
                             }
                           >
-                            <option value="" disabled selected>Select Option</option>
-                            <option value="CE">CE</option>
-                            <option value="PE">PE</option>
+                            <option value="" disabled selected>Select Strategy</option>
+                            {strategies.length > 0 &&
+                              strategies.map((strategy) => (
+                                <option key={strategy.name} value={strategy.name}>
+                                  {strategy.name} {/* Adjust the property to display in dropdown */}
+                                </option>
+                              ))
+                            }
                           </Input>
-                          {validation.touched.optionType && validation.errors.optionType ? (
+                          {validation.touched.strategy && validation.errors.strategy ? (
                             <FormFeedback type="invalid">
-                              {validation.errors.optionType}
+                              {validation.errors.strategy}
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -883,7 +888,7 @@ const index = (props) => {
                                 : false
                             }
                           >
-                            <option value="" disabled selected>Select Expiry Date</option>
+                            <option value="" disabled selected>Select Expiry</option>
                             <option value="5th September">5th September</option>
                             <option value="12th September">12th September</option>
                             <option value="19th September">19th September</option>
@@ -952,6 +957,34 @@ const index = (props) => {
                           ) : null}
                         </div>
                         <div className="add-tread col-md-3">
+                          <Label className="form-label">Option Type</Label>
+                          <Input
+                            type="select"
+                            name="optionType"
+                            className="select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.optionType || ""}
+                            invalid={
+                              validation.touched.optionType && validation.errors.optionType
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="CE">CE</option>
+                            <option value="PE">PE</option>
+                          </Input>
+                          {validation.touched.optionType && validation.errors.optionType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.optionType}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div className="add-tread-beside">
+                        <div className="add-tread col-md-4">
+
                           <Label className="form-label">ProdType</Label>
                           <Input
                             type="select"
@@ -975,9 +1008,8 @@ const index = (props) => {
                               {validation.errors.prodType}
                             </FormFeedback>
                           ) : null}
+
                         </div>
-                      </div>
-                      <div className="add-tread-beside">
                         <div className="add-tread col-md-4">
                           <Label className="form-label">Entry Order</Label>
                           <Input
@@ -1025,36 +1057,7 @@ const index = (props) => {
                             </FormFeedback>
                           ) : null}
                         </div>
-                        <div className="add-tread col-md-4">
-                          <Label className="form-label">Strategy</Label>
-                          <Input
-                            type="select"
-                            name="strategy"
-                            className="col-md-6 select-script"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.strategy || ""}
-                            invalid={
-                              validation.touched.strategy && validation.errors.strategy
-                                ? true
-                                : false
-                            }
-                          >
-                            <option value="" disabled selected>Select Strategy</option>
-                            {strategies.length > 0 &&
-                              strategies.map((strategy) => (
-                                <option key={strategy.name} value={strategy.name}>
-                                  {strategy.name} {/* Adjust the property to display in dropdown */}
-                                </option>
-                              ))
-                            }
-                          </Input>
-                          {validation.touched.strategy && validation.errors.strategy ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.strategy}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
+
                       </div>
                       <div className="add-tread-beside">
                         <div className="add-tread  col-md-12">
