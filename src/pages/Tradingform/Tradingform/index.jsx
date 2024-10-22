@@ -63,6 +63,7 @@ const index = (props) => {
   const [strategies, setStrategies] = useState([]);
   const [scripts, setScripts] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isInputDisabled, setIsInputDisabled] = useState(true);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
@@ -87,7 +88,6 @@ const index = (props) => {
     'NSE': 'exchange-nse',
     'NFO': 'exchange-nfo'
   };
-  
 
   const request = (reset_offset = true) => {
 
@@ -732,12 +732,12 @@ const index = (props) => {
               <Label for="csvFile">Select CSV file</Label>
               <Input type="file" name="csvFile" id="csvFile" onChange={handleFileChange} />
             </FormGroup>
-            <div 
-            style={{ textAlign: "right"}}
+            <div
+              style={{ textAlign: "right" }}
             >
-            <Button color="primary" onClick={handleImport}>
-              Import
-            </Button>
+              <Button color="primary" onClick={handleImport}>
+                Import
+              </Button>
             </div>
           </Form>
         </ModalBody>
@@ -790,37 +790,43 @@ const index = (props) => {
                           <Label className="form-label ">Terminal Symbol</Label>
 
                           <Select
-  name="terminalSymbol"
-  classNamePrefix="custom-react-select"
-  styles={customStyles}
-  options={scripts.map((script) => ({
-    label: script.terminalSymbol,
-    value: script.terminalSymbol,
-    exchange: script.exchange, // Replace with actual data source for the small text
-  }))}
-  onChange={(selectedOption) => {
-    setSelectedOption(selectedOption); // Update selected option state
-    validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
-  }}
-  onBlur={validation.handleBlur}
-  value={selectedOption} // Set value based on selected option state
-  isSearchable
-  placeholder="Select Symbol"
-  onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
-  formatOptionLabel={({ label, exchange }) => {
-    // Get the class based on the exchange value
-    const className = exchangeClasses[exchange] || defaultClass;
+                            name="terminalSymbol"
+                            classNamePrefix="custom-react-select"
+                            styles={customStyles}
+                            options={scripts.map((script) => ({
+                              label: script.terminalSymbol,
+                              value: script.terminalSymbol,
+                              exchange: script.exchange, // Replace with actual data source for the small text
+                            }))}
+                            onChange={(selectedOption) => {
+                              setSelectedOption(selectedOption); // Update selected option state
+                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
 
-    return (
-      <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between' }} >
-        <span >{label}</span>
-        <small className={className}>
-          {exchange}
-        </small>
-      </div>
-    );
-  }}
-/>
+                              if (selectedOption.exchange === 'NFO') {
+                                setIsInputDisabled(false); // Enable input if exchange is "NFO"
+                              } else {
+                                setIsInputDisabled(true); // Keep input disabled for other exchanges
+                              }
+                            }}
+                            onBlur={validation.handleBlur}
+                            value={selectedOption} // Set value based on selected option state
+                            isSearchable
+                            placeholder="Select Symbol"
+                            onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
+                            formatOptionLabel={({ label, exchange }) => {
+                              // Get the class based on the exchange value
+                              const className = exchangeClasses[exchange] || defaultClass;
+
+                              return (
+                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
+                                  <span >{label}</span>
+                                  <small className={className}>
+                                    {exchange}
+                                  </small>
+                                </div>
+                              );
+                            }}
+                          />
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}
@@ -828,27 +834,32 @@ const index = (props) => {
                           ) : null}
                         </div>
                         <div className="add-tread col-md-4">
-                          <Label className="form-label">Option Type</Label>
+                          <Label className="form-label">Strategy</Label>
                           <Input
                             type="select"
-                            name="optionType"
-                            className="select-script"
+                            name="strategy"
+                            className="col-md-6 select-script"
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            value={validation.values.optionType || ""}
+                            value={validation.values.strategy || ""}
                             invalid={
-                              validation.touched.optionType && validation.errors.optionType
+                              validation.touched.strategy && validation.errors.strategy
                                 ? true
                                 : false
                             }
                           >
-                            <option value="" disabled selected>Select Option</option>
-                            <option value="CE">CE</option>
-                            <option value="PE">PE</option>
+                            <option value="" disabled selected>Select Strategy</option>
+                            {strategies.length > 0 &&
+                              strategies.map((strategy) => (
+                                <option key={strategy.name} value={strategy.name}>
+                                  {strategy.name} {/* Adjust the property to display in dropdown */}
+                                </option>
+                              ))
+                            }
                           </Input>
-                          {validation.touched.optionType && validation.errors.optionType ? (
+                          {validation.touched.strategy && validation.errors.strategy ? (
                             <FormFeedback type="invalid">
-                              {validation.errors.optionType}
+                              {validation.errors.strategy}
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -868,8 +879,9 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+                            disabled={isInputDisabled}
                           >
-                            <option value="" disabled selected>Select Expiry Date</option>
+                            <option value="" disabled selected>Select Expiry</option>
                             <option value="5th September">5th September</option>
                             <option value="12th September">12th September</option>
                             <option value="19th September">19th September</option>
@@ -901,6 +913,7 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+                            disabled={isInputDisabled}
                           >
                             <option value="" disabled selected>Select Strike</option>
                             <option value="Intraday">25100</option>
@@ -911,6 +924,34 @@ const index = (props) => {
                               {validation.errors.dynamicStrike}
                             </FormFeedback>
                           ) : null}
+                        </div>
+
+                        <div className="add-tread col-md-3">
+                          <Label className="form-label">Option Type</Label>
+                          <Input
+                            type="select"
+                            name="optionType"
+                            className="select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.optionType || ""}
+                            invalid={
+                              validation.touched.optionType && validation.errors.optionType
+                                ? true
+                                : false
+                            }
+                            disabled={isInputDisabled}
+                          >
+                            <option value="" disabled selected>Select Option</option>
+                            <option value="CE">CE</option>
+                            <option value="PE">PE</option>
+                          </Input>
+                          {validation.touched.optionType && validation.errors.optionType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.optionType}
+                            </FormFeedback>
+                          ) : null}
+
                         </div>
                         <div className="add-tread col-md-3">
                           <Label className="form-label">Qty Type</Label>
@@ -926,6 +967,7 @@ const index = (props) => {
                                 ? true
                                 : false
                             }
+
                           >
                             <option value="" disabled selected>Select Qty</option>
                             <option value="Intraday">FIXED</option>
@@ -937,7 +979,10 @@ const index = (props) => {
                             </FormFeedback>
                           ) : null}
                         </div>
-                        <div className="add-tread col-md-3">
+                      </div>
+                      <div className="add-tread-beside">
+                        <div className="add-tread col-md-4">
+
                           <Label className="form-label">ProdType</Label>
                           <Input
                             type="select"
@@ -961,9 +1006,8 @@ const index = (props) => {
                               {validation.errors.prodType}
                             </FormFeedback>
                           ) : null}
+
                         </div>
-                      </div>
-                      <div className="add-tread-beside">
                         <div className="add-tread col-md-4">
                           <Label className="form-label">Entry Order</Label>
                           <Input
@@ -1011,36 +1055,7 @@ const index = (props) => {
                             </FormFeedback>
                           ) : null}
                         </div>
-                        <div className="add-tread col-md-4">
-                          <Label className="form-label">Strategy</Label>
-                          <Input
-                            type="select"
-                            name="strategy"
-                            className="col-md-6 select-script"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.strategy || ""}
-                            invalid={
-                              validation.touched.strategy && validation.errors.strategy
-                                ? true
-                                : false
-                            }
-                          >
-                            <option value="" disabled selected>Select Strategy</option>
-                            {strategies.length > 0 &&
-                              strategies.map((strategy) => (
-                                <option key={strategy.name} value={strategy.name}>
-                                  {strategy.name} {/* Adjust the property to display in dropdown */}
-                                </option>
-                              ))
-                            }
-                          </Input>
-                          {validation.touched.strategy && validation.errors.strategy ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.strategy}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
+
                       </div>
                       <div className="add-tread-beside">
                         <div className="add-tread  col-md-12">
