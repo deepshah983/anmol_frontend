@@ -482,6 +482,12 @@ const index = (props) => {
     validation.setFieldValue('dynamicStrike', '');
     validation.setFieldValue('hasExpiry', selected && selected.expiry ? true : false);
     validation.setFieldValue('hasStrike', selected && selected.strike ? true : false);
+
+    if (selected.exchange === 'NFO') {
+      setIsInputDisabled(false); // Enable input if exchange is "NFO"
+    } else {
+      setIsInputDisabled(true); // Keep input disabled for other exchanges
+    }
   };
 
   const getOptionTypes = () => {
@@ -847,18 +853,16 @@ const index = (props) => {
                             options={scripts.map((script) => ({
                               label: script.terminalSymbol,
                               value: script.terminalSymbol,
-                              exchange: script.exchange, // Replace with actual data source for the small text
+                              exchange: script.exchange,
+                              strike: script.strike,
+                              instrument_type: script.instrument_type,
+                              last_price: script.last_price,
+                              lot_size: script.lot_size,
+                              strike: script.strike,
+                              tick_size: script.tick_size,
+                              expiry: script.expiry
                             }))}
-                            onChange={(selectedOption) => {
-                              setSelectedOption(selectedOption); // Update selected option state
-                              validation.setFieldValue('terminalSymbol', selectedOption ? selectedOption.value : '');
-
-                              if (selectedOption.exchange === 'NFO') {
-                                setIsInputDisabled(false); // Enable input if exchange is "NFO"
-                              } else {
-                                setIsInputDisabled(true); // Keep input disabled for other exchanges
-                              }
-                            }}
+                            onChange={handleSymbolChange}
                             onBlur={validation.handleBlur}
                             value={selectedOption} // Set value based on selected option state
                             isSearchable
@@ -878,43 +882,6 @@ const index = (props) => {
                               );
                             }}
                           />
-                              name="terminalSymbol"
-                              classNamePrefix="custom-react-select"
-                              styles={customStyles}
-                              options={scripts.map((script) => ({
-                                label: script.terminalSymbol,
-                                value: script.terminalSymbol,
-                                exchange: script.exchange,
-                                strike: script.strike,
-                                instrument_type: script.instrument_type,
-                                last_price: script.last_price,
-                                lot_size: script.lot_size,
-                                strike: script.strike,
-                                tick_size: script.tick_size,
-                                expiry: script.expiry
-                              }))}
-                              onChange={handleSymbolChange}
-                              onBlur={validation.handleBlur}
-                              value={selectedOption} // Set value based on selected option state
-                              isSearchable
-                              placeholder="Select Symbol"
-                              onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
-                              formatOptionLabel={({ label, exchange }) => {
-                                // Get the class based on the exchange value
-                                const className = exchangeClasses[exchange] || defaultClass;
-                                //  console.log(label);
-                                //  console.log(exchange);
-                                 
-                                return (
-                                  <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between' }} >
-                                    <span >{label}</span>
-                                    <small className={className}>
-                                      {exchange}
-                                    </small>
-                                  </div>
-                                );
-                              }}
-                            />
                           {validation.touched.terminalSymbol && validation.errors.terminalSymbol ? (
                             <FormFeedback type="invalid">
                               {validation.errors.terminalSymbol}
@@ -977,18 +944,8 @@ const index = (props) => {
                             }
                             disabled={isInputDisabled}
                           >
-                            <option value="" disabled selected>Select Expiry</option>
-                            <option value="5th September">5th September</option>
-                            <option value="12th September">12th September</option>
-                            <option value="19th September">19th September</option>
-                            <option value="26th September">26th September</option>
-                            <option value="3rd October">3rd October</option>
-                            <option value="10th October">10th October</option>
-                            <option value="17th October">17th October</option>
-                            <option value="24th October">24th October</option>
-                            <option value="31st October">31st October</option>
-                            {/* <option value="" disabled selected>Select Expiry Date</option> */}
-                            <option value="">Select Dynamic Expiry</option>
+                           
+                            <option value="" disabled selected>Select Expiry Date</option>
                             {getExpiryDates().map((date) => (
                               <option key={date} value={date}>{date}</option>
                             ))}
@@ -1016,8 +973,7 @@ const index = (props) => {
                             }
                             disabled={isInputDisabled}
                           >
-                            {/* <option value="" disabled selected>Select Strike</option> */}
-                            <option value="">Select Dynamic Strike</option>
+                            <option value="" disabled selected>Select Strike</option>
                             {getStrikes().map((strike) => (
                               <option key={strike} value={strike}>{strike}</option>
                             ))}
