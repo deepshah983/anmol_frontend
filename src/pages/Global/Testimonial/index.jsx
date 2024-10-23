@@ -35,7 +35,7 @@ import HideShowSection from "../../../components/Common/HideShowSection";
 
 const index = (props) => {
   //meta title
-  document.title = "Home | Anmol Admin & Dashboard Template";
+  document.title = "Home | Vishal Wealth Admin & Dashboard Template";
 
   const [navs, setNavs] = useState([]);
   const [count, setCount] = useState(0);

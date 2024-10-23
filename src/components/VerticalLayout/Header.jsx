@@ -1,29 +1,11 @@
 import PropTypes from 'prop-types';
 import React, { useState } from "react";
-
 import { connect } from "react-redux";
-import { Row, Col } from "reactstrap";
 import { Link } from "react-router-dom";
 
-// Reactstrap
-import { Dropdown, DropdownToggle, DropdownMenu } from "reactstrap";
-
 // Import menuDropdown
-import LanguageDropdown from "../CommonForBoth/TopbarDropdown/LanguageDropdown";
-import NotificationDropdown from "../CommonForBoth/TopbarDropdown/NotificationDropdown";
 import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
-import megamenuImg from "../../assets/images/megamenu-img.png";
-
-// import images
-import github from "../../assets/images/brands/github.png";
-import bitbucket from "../../assets/images/brands/bitbucket.png";
-import dribbble from "../../assets/images/brands/dribbble.png";
-import dropbox from "../../assets/images/brands/dropbox.png";
-import mail_chimp from "../../assets/images/brands/mail_chimp.png";
-import slack from "../../assets/images/brands/slack.png";
-
-import logo from "../../assets/images/logo.svg";
-import logoLightSvg from "../../assets/images/logo-light.svg";
+import logoLightSvg from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -37,16 +19,14 @@ import {
 
 const Header = props => {
   const [search, setsearch] = useState(false);
-  const [megaMenu, setmegaMenu] = useState(false);
-  const [socialDrp, setsocialDrp] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // State to manage icon toggle
 
   function toggleFullscreen() {
     if (
       !document.fullscreenElement &&
-      /* alternative standard method */ !document.mozFullScreenElement &&
+      !document.mozFullScreenElement &&
       !document.webkitFullscreenElement
     ) {
-      // current working methods
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen();
       } else if (document.documentElement.mozRequestFullScreen) {
@@ -77,81 +57,48 @@ const Header = props => {
     }
   }
 
+  const handleClick = (event) => {
+    event.preventDefault();
+
+  const [isSidebarEnabled, setIsSidebarEnabled] = useState(true);
+  const [icon, setIcon] = useState(fa-times); // Initial icon
+
+  const handleToggle = () => {
+      setIsSidebarEnabled(!isSidebarEnabled);
+      setIcon(isSidebarEnabled ? faBars : faTimes); // Toggle icon
+  };
+};
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen);
+    tToggle(); 
+  };
+  
+
   return (
     <React.Fragment>
       <header id="page-topbar">
         <div className="navbar-header">
-          <div className="d-flex">
-
-            <div className="navbar-brand-box d-lg-none d-md-block">
-              <Link to="/dashboard" className="logo logo-dark">
-                <span className="logo-sm">
-                  <img src={logo} alt="" height="22" />
-                </span>
-              </Link>
-
-              <Link to="/dashboard" className="logo logo-light">
-                <span className="logo-sm">
-                  <img src={logoLightSvg} alt="" height="22" />
-                </span>
-              </Link>
-            </div>
-
+        <div className="d-flex">
             <button
-              type="button"
-              onClick={() => {
-                tToggle();
-              }}
-              className="btn btn-sm px-3 font-size-16 header-item "
-              id="vertical-menu-btn"
-            >
-              <i className="fa fa-fw fa-bars" />
-            </button>
-
-            
-          </div>
-          <div className="d-flex">
-            <div className="dropdown d-inline-block d-lg-none ms-2">
-              <button
-                onClick={() => {
-                  setsearch(!search);
-                }}
                 type="button"
-                className="btn header-item noti-icon "
-                id="page-header-search-dropdown"
-              >
-                <i className="mdi mdi-magnify" />
-              </button>
-              <div
-                className={
-                  search
-                    ? "dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 show"
-                    : "dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
-                }
-                aria-labelledby="page-header-search-dropdown"
-              >
-                <form className="p-3">
-                  <div className="form-group m-0">
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search ..."
-                        aria-label="Recipient's username"
-                      />
-                      <div className="input-group-append">
-                        <button className="btn btn-primary" type="submit">
-                          <i className="mdi mdi-magnify" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
+                onClick={handleMenuToggle}
+                className="btn btn-sm px-3 font-size-18 header-item"
+                id="vertical-menu-btn"
+            >
+                <i className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`} />
+            </button>
+        </div>
 
+          <div className="d-flex">
+            <Link to="/dashboard" className="logo logo-light">
+              <span className="logo-sm">
+                <img src={logoLightSvg} alt="" height="40" width="100%" style={{textAlign:"center"}} />
+              </span>
+            </Link>
+          </div>
+
+          <div className="d-flex">
             <ProfileMenu />
-            
           </div>
         </div>
       </header>

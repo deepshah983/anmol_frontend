@@ -4,7 +4,7 @@ import { Modal, ModalBody } from "reactstrap";
 
 const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
   return (
-    <Modal size="sm" isOpen={show} toggle={onCloseClick} centered={true}>
+    <Modal size="sm" isOpen={show} toggle={onCloseClick} >
       <div className="modal-content">
         <ModalBody className="px-4 py-5 text-center">
           <button
@@ -18,7 +18,7 @@ const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
             </div>
           </div>
           <p className="text-muted font-size-16 mb-4">
-            Are you sure you want to permanently erase the data.
+            Are you sure you want to permanently erase the data?
           </p>
 
           <div className="hstack gap-2 justify-content-center mb-0">

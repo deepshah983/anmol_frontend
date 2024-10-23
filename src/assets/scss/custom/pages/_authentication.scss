@@ -87,3 +87,17 @@
         }
     }
 }
+.account-pages{
+    .bg-primary.bg-soft{
+        background-color: rgb(174 139 83 / 70%) !important;
+        .text-primary{
+            color: #000 !important;
+        }
+        
+    }
+    .btn.btn-primary.btn-block{
+        background-color: rgb(174 139 83 / 70%) !important;
+        color: #000;
+        border: rgb(174 139 83 / 70%) !important;
+    }
+}

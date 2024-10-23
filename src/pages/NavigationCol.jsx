@@ -10,11 +10,78 @@ const Name = (cell) => {
   return cell.value ? cell.value : "";
 };
 
+const Status = (cell) => {
+  const hasValue = cell.value ? true : false;
+  return (
+    <button
+      style={{
+        color: hasValue ? 'green' : 'red',
+        padding: '5px 10px',
+        border: 'none',
+        fontSize: '14px',
+        fontWeight: '500',
+        borderRadius: '5px',
+        cursor: 'pointer'
+      }}
+    >
+      {hasValue ? 'Active' : 'Inactive'}
+    </button>
+  );
+};
+
 const Url = (cell) => {
   return cell.value ? cell.value : "";
 };
 
 const Designation = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const ID = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Type = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Symbol = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const OrderType = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const TrigPrice = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Qty = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Instrument = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Strategy = (cell) => {
+  return cell.value !== undefined && cell.value !== null ? cell.value : "";
+};
+
+const Source = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Mode = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const Message = (cell) => {
+  return cell.value ? cell.value : "";
+};
+
+const ReceivedAt = (cell) => {
   return cell.value ? cell.value : "";
 };
 
@@ -149,9 +216,19 @@ const UpdateType = (cell) => {
 const Number = (cell) => {
   return cell.value ? cell.value : "";
 };
+const CheckboxCellRenderer = ({ value }) => {
+  return (
+    <input
+      type="checkbox"
+      checked={Boolean(value)}
+      readOnly
+    />
+  );
+};
 export {
     Id,
     Name,
+    Status,
     Url,
     Description,
     Title,
@@ -180,5 +257,18 @@ export {
     Count,
     Pincode,
     UpdateType,
-    Number
+    Number,
+    ID,
+    Type,
+    Symbol,
+    OrderType,
+    TrigPrice,
+    Qty,
+    Instrument,
+    Strategy,
+    Source,
+    Mode,
+    Message,
+    ReceivedAt,
+    CheckboxCellRenderer
 };

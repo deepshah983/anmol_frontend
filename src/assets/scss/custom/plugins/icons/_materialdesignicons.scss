@@ -1584,6 +1584,11 @@
 
 .mdi-arrow-down-bold::before {
   content: "\F072E";
+  font-size: 20px;
+  font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-arrow-down-bold-box::before {
@@ -1868,6 +1873,11 @@
 
 .mdi-arrow-up-bold::before {
   content: "\F0737";
+  font-size: 20px;
+  font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-arrow-up-bold-box::before {
@@ -7512,6 +7522,15 @@
 
 .mdi-delete::before {
   content: "\F01B4";
+}
+
+.mdis-delete::before {
+  content: "\F01B4";
+  font-size: 20px;
+  font-weight: 500;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-delete-alert::before {
@@ -16936,6 +16955,15 @@
 
 .mdi-plus::before {
   content: "\F0415";
+}
+
+.mdis-plus::before {
+  content: "\F0415";
+  font-size: 20px;
+  font-weight: 900;
+  @media (max-width: 576.98px) {
+    font-size: 17px;  
+  }
 }
 
 .mdi-plus-box::before {

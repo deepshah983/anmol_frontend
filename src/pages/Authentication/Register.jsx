@@ -14,8 +14,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 // import images
-import profileImg from "../../assets/images/profile-img.png";
 import logoImg from "../../assets/images/logo.svg";
+import profile from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 
 const Register = props => {
   document.title = "Register | Skote - Vite React Admin & Dashboard Template";
@@ -61,6 +61,13 @@ const Register = props => {
       </div>
       <div className="account-pages my-5 pt-sm-5">
         <Container>
+        <div className="row mb-4">
+            <div className="col-xl-12 text-center">
+              <a href="/">
+                <img src={profile} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
+              </a>
+            </div>
+        </div>
           <Row className="justify-content-center">
             <Col md={8} lg={6} xl={5}>
               <Card className="overflow-hidden">
@@ -68,31 +75,19 @@ const Register = props => {
                   <Row>
                     <Col className="col-7">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Free Register</h5>
-                        <p>Get your free Skote account now.</p>
+                        <h5 className="text-primary m-0">Register</h5>
+                        
                       </div>
-                    </Col>
-                    <Col className="col-5 align-self-end">
-                      <img src={profileImg} alt="" className="img-fluid" />
                     </Col>
                   </Row>
                 </div>
                 <CardBody className="pt-0">
                   <div>
                     <Link to="/">
-                      <div className="avatar-md profile-user-wid mb-4">
-                        <span className="avatar-title rounded-circle bg-light">
-                          <img
-                            src={logoImg}
-                            alt=""
-                            className="rounded-circle"
-                            height="34"
-                          />
-                        </span>
-                      </div>
+                     
                     </Link>
                   </div>
-                  <div className="p-2">
+                  <div className="p-2 pt-4 pb-4" >
                     <Form
                       className="form-horizontal"
                       onSubmit={(e) => {
@@ -169,20 +164,14 @@ const Register = props => {
                       <div className="mt-4">
                         <button
                           className="btn btn-primary btn-block "
+                          style={{ width:"100%" }}
                           type="submit"
                         >
                           Register
                         </button>
                       </div>
 
-                      <div className="mt-4 text-center">
-                        <p className="mb-0">
-                          By registering you agree to the Skote{" "}
-                          <Link to="#" className="text-primary">
-                            Terms of Use
-                          </Link>
-                        </p>
-                      </div>
+                      
                     </Form>
                   </div>
                 </CardBody>
@@ -196,8 +185,8 @@ const Register = props => {
                   </Link>{" "}
                 </p>
                 <p>
-                  © {new Date().getFullYear()} Skote. Crafted with{" "}
-                  <i className="mdi mdi-heart text-danger" /> by Themesbrand
+                  © {new Date().getFullYear()} Vishal 4 Wealth. Care {" "}
+                  <i className="mdi mdi-heart text-danger" /> by Bliss Web Solution.
                 </p>
               </div>
             </Col>

@@ -105,7 +105,7 @@ box-shadow: $box-shadow;
                   display: inline-block;
                   min-width: 1.75rem;
                   padding-bottom: .125em;
-                  font-size: 1.25rem;
+                  font-size: 1.35rem;
                   line-height: 1.40625rem;
                   vertical-align: middle;
                   color: $sidebar-menu-item-icon-color;
@@ -132,7 +132,7 @@ box-shadow: $box-shadow;
 
                   a {
                       padding: .4rem 1.5rem .4rem 3.5rem;
-                      font-size: 13px;
+                      font-size: 20px;
                       color: $sidebar-menu-sub-item-color;
                       &:hover {
                           color: $sidebar-menu-item-hover-color;
@@ -159,14 +159,36 @@ box-shadow: $box-shadow;
 }
 
 .menu-title {
-  padding: 12px 20px !important;
+  padding: 12px 24px !important;
   letter-spacing: .05em;
   pointer-events: none;
   cursor: default;
-  font-size: 11px;
+  font-size: 15px;
   text-transform: uppercase;
   color: $sidebar-menu-item-icon-color;
   font-weight: $font-weight-semibold;
+}
+
+.list-unstyled.mm-show.mm-active{
+  padding-left: 0px;
+  li {
+    &:hover{
+      padding-left: 8px;
+      transition: all 0.5s ease-in-out;
+    }
+    a{
+      span{
+        font-size: 15px !important;
+      }
+    }
+  }
+}
+
+.vertical-collpsed.sidebar-enable li:hover span {
+    display: none !important;
+}
+.vertical-collpsed.sidebar-enable li:hover {
+    padding-left: 0px !important;
 }
 
 .mm-active {
@@ -179,9 +201,12 @@ box-shadow: $box-shadow;
   }
   .active {
       color: $sidebar-menu-item-active-color !important;
-
+      background-color: #a7844c;
       i {
           color: $sidebar-menu-item-active-color !important;
+      }
+      span{
+        font-weight: 400;
       }
       
   }
@@ -399,6 +424,7 @@ body[data-sidebar="dark"] {
 
                   i {
                       color: $sidebar-dark-menu-item-icon-color;
+                      padding-bottom: 0px;
                   }
   
                   &:hover {
@@ -438,9 +464,9 @@ body[data-sidebar="dark"] {
     #sidebar-menu {
       > ul {
         > li {
-          &:hover {
+          &:hover { 
             > a {
-              background: lighten($sidebar-dark-bg, 2%);
+              
               color: $sidebar-dark-menu-item-hover-color;
               i {
                 color: $sidebar-dark-menu-item-hover-color;
@@ -1069,4 +1095,22 @@ background-image: linear-gradient(to right, #f46a6a, #f1b44c);
 }
 .gradient-strong-great-whale {
 background-image: linear-gradient(to right, darken($primary, 10%), #50a5f1);
+}
+
+
+
+.simplebar-content-wrapper {
+  overflow-x: scroll;
+  overflow-y: hidden; /* or you can use 'overflow: scroll;' if you want both scrolling */
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu > ul > li:hover > a {
+  position: relative;
+  width: 70px;
+  background-color: whitesmoke;
+  transition: none;
+}
+
+.vertical-collpsed .vertical-menu #sidebar-menu > ul > li:hover span {
+  display: none; 
 }

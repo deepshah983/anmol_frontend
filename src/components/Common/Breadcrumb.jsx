@@ -9,7 +9,7 @@ const Breadcrumb = props => {
       <Col xs="12">
         <div className="page-title-box d-sm-flex align-items-center justify-content-between">
           <h4 className="mb-0 font-size-18">{props.breadcrumbItem}</h4>
-          <div className="page-title-right">
+          {/* <div className="page-title-right">
             <ol className="breadcrumb m-0">
               <BreadcrumbItem>
                 <Link className="breadcrumbLink" to={props.titleUrl ? props.titleUrl : "#" }>{props.title}</Link>
@@ -18,7 +18,7 @@ const Breadcrumb = props => {
                 <span role="button">{props.breadcrumbItem}</span>
               </BreadcrumbItem>
             </ol>
-          </div>
+          </div> */}
         </div>
       </Col>
     </Row>

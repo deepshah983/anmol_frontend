@@ -27,13 +27,13 @@ import {
 import { loginUser, socialLogin } from "../../store/actions";
 
 // import images
-import profile from "../../assets/images/AngelOne-Logo.png";
+import profile from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 import logo from "../../assets/images/ishan_group_logo.png";
 import backgroundVideo from "../../assets/video/219832_small.mp4";
 
 const Login = (props) => {
   //meta title
-  document.title = "Login | Anmol Admin & Dashboard Template";
+  document.title = "Login | Vishal Wealth Admin & Dashboard Template";
   const dispatch = useDispatch();
 
   const validation = useFormik({
@@ -75,7 +75,7 @@ const Login = (props) => {
         <div className="row mb-4">
             <div className="col-xl-12 text-center">
               <a href="/">
-                <img src={profile} alt="Anmol Login" className="img-fluid" height="100px" width="230px" />
+                <img src={profile} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
               </a>
             </div>
         </div>
@@ -84,14 +84,14 @@ const Login = (props) => {
               <Card className="overflow-hidden">
                 <div className="bg-primary bg-soft">
                   <Row>
-                    <Col xs={7}>
+                    <Col xs={12}>
                       <div className="text-primary p-4">
                         <h5 className="text-primary m-0">Welcome Back !</h5>
                       </div>
                     </Col>
                   </Row>
                 </div>
-                <CardBody className="pt-1">
+                <CardBody className="pt-2">
                   <div className="p-2">
                     <Form
                       className="form-horizontal"
@@ -163,6 +163,15 @@ const Login = (props) => {
                         <Link to="/forgot-password" className="text-muted">
                           <i className="mdi mdi-lock me-1" />
                           Forgot your password?
+                        </Link>
+                      </div>
+                      <div className="mt-1 text-center">
+                        <Link to="/forgot-password" className="text-muted">
+                          <i className="mdi mdi-lock me-1" />
+                          Don't have an account? {" "}
+                          <Link to="/register" className="font-weight-medium text-primary">
+                          Register
+                        </Link>{" "}
                         </Link>
                       </div>
                     </Form>

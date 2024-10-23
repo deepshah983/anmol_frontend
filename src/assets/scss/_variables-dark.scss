@@ -10,19 +10,19 @@ $sidebar-menu-item-color: #545a6d;
 $sidebar-menu-sub-item-color: #545a6d;
 $sidebar-menu-item-icon-color: #7f8387;
 $sidebar-menu-item-hover-color: #383c40;
-$sidebar-menu-item-active-color: #556ee6;
+$sidebar-menu-item-active-color: #000000;
 $sidebar-width: 280px;
 $sidebar-collapsed-width: 70px;
 $sidebar-width-sm: 160px;
 $layout-collapsed-min-height: 1760px;
 
 // Vertical Sidebar - Dark
-$sidebar-dark-bg: #1f1f1f; //2c313a
+$sidebar-dark-bg: #ffffff; //2c313a
 $sidebar-dark-menu-item-color: #a6b0cf;
 $sidebar-dark-menu-sub-item-color: #79829c;
 $sidebar-dark-menu-item-icon-color: #6a7187;
-$sidebar-dark-menu-item-hover-color: #ffffff;
-$sidebar-dark-menu-item-active-color: #ffffff;
+$sidebar-dark-menu-item-hover-color: #000000;
+$sidebar-dark-menu-item-active-color: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(166,128,73,1) 0%, rgba(189,154,100,1) 100%);
 
 // Topbar - Deafult Light
 $header-height: 70px;
@@ -54,7 +54,7 @@ $display-none: block;
 $display-block: none;
 
 // Brand
-$navbar-brand-box-width: 250px;
+$navbar-brand-box-width: 290px;
 
 // Boxed layout width
 $boxed-layout-width: 1300px;
@@ -91,6 +91,7 @@ $gray-800: #eff2f7;
 $gray-900: #f8f9fa;
 $black: #000;
 $orange: #ff7300;
+$yellow: #b38e58;
 // scss-docs-end gray-color-variables
 
 // fusv-disable
@@ -1508,7 +1509,7 @@ $modal-inner-padding: 1rem;
 
 // Margin between elements in footer, must be lower than or equal to 2 * $modal-inner-padding
 $modal-footer-margin-between: 0.5rem;
-$modal-dialog-margin: 0.5rem;
+$modal-dialog-margin: 15px;
 $modal-dialog-margin-y-sm-up: 1.75rem;
 
 $modal-title-line-height: $line-height-base;
