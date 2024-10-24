@@ -118,6 +118,23 @@ const index = (props) => {
         console.error("Error fetching scripts:", error);
       });
   };
+
+  const eBuyClick = (data) => {
+    console.log('Selected data:', data);
+  };
+
+  const eSellClick = (data) => {
+    console.log('Selected data:', data);
+  };
+
+  const eShortClick = (data) => {
+    console.log('Selected data:', data);
+  };
+
+  const eCoverClick = (data) => {
+    console.log('Selected data:', data);
+  };
+
   // New search function to fetch data based on input
   const searchScripts = (searchTerm) => {
     if (!searchTerm) {
@@ -824,6 +841,10 @@ const index = (props) => {
         className="custom-header-css"
         handleExport={handleExport}
         handleImport={handleImportClick}
+        eBuyClick={eBuyClick}
+        eSellClick={eSellClick}
+        eShortClick={eShortClick}
+        eCoverClick={eCoverClick}
       />
            <CustomPagination />
           <Modal className="TreadModal" isOpen={modal} toggle={toggle} >
@@ -845,7 +866,6 @@ const index = (props) => {
                       <div className="add-tread-beside">
                         <div className="add-tread col-md-8">
                           <Label className="form-label ">Terminal Symbol</Label>
-
                           <Select
                             name="terminalSymbol"
                             classNamePrefix="custom-react-select"

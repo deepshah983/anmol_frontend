@@ -67,6 +67,10 @@ const TradingTableContainer = ({
   isWatchList,
   isAddUserList,
   isExport,
+  eBuyClick,
+  eSellClick,
+  eShortClick,
+  eCoverClick,
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
@@ -308,16 +312,16 @@ const TradingTableContainer = ({
                         </td>
                       ))}
                       {isWatchList &&
-                      <>
+                      <td>
                       <span 
                         className="hello-span"
                       >
-                          <button className="btn btn-buy mx-1">Buy</button>
-                          <button className="btn btn-sell mx-1">Sell</button>
-                          <button className="btn btn-sell mx-1">Short</button>
-                          <button className="btn btn-buy mx-1">Cover</button>
+                          <button className="btn btn-buy mx-1" onClick={() => eBuyClick(row.original)}>Buy</button>
+                          <button className="btn btn-sell mx-1" onClick={() => eSellClick(row.original)}>Sell</button>
+                          <button className="btn btn-sell mx-1" onClick={() => eShortClick(row.original)}>Short</button>
+                          <button className="btn btn-buy mx-1" onClick={() => eCoverClick(row.original)}>Cover</button>
                       </span>
-                      </>
+                      </td>
                      }
                     </tr>
                   </Fragment>
