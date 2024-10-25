@@ -61,61 +61,61 @@ const Users = (props) => {
     request();
   }, [location]);
 
-    const request = (reset_offset = true) => {
-     
+  const request = (reset_offset = true) => {
+
     // if (reset_offset) {
     //   query.offset = 0;
     //   setQuery(query);
     // }
     let result;
 
-      if (query.status === 'active') {
-          result = 1;
-      } else if (query.status === 'inactive') {
-          result = 0;
-      } else {
-          result = '';
-      }
-  
+    if (query.status === 'active') {
+      result = 1;
+    } else if (query.status === 'inactive') {
+      result = 0;
+    } else {
+      result = '';
+    }
+
     let url = `/clients?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}&status=${result}`;
     getData(url).then((response) => {
       let clients = response?.data?.data?.clients;
-        let strategies = response?.data?.data?.strategies;
-        let userStrategy = response?.data?.data?.userStrategy;
-        let treadSetting = response?.data?.data?.clients?.treadSetting;
-        
-        clients = clients.map(client => {
-          let assignedStrategy = '';
-          userStrategy.map(strategy => {
-            // Replace the assigned strategy ID with the strategy name
-            if(client._id == strategy.parent_id){
+      let strategies = response?.data?.data?.strategies;
+      let userStrategy = response?.data?.data?.userStrategy;
+      let treadSetting = response?.data?.data?.clients?.treadSetting;
+
+      clients = clients.map(client => {
+        let assignedStrategy = '';
+        userStrategy.map(strategy => {
+          // Replace the assigned strategy ID with the strategy name
+          if (client._id == strategy.parent_id) {
             client.selectedStrategy = strategy.assigned_stratagies;
             strategy.assigned_stratagies.map(row => {
-              if(assignedStrategy == '')
-              assignedStrategy = row?.label;
-            else
-            assignedStrategy = assignedStrategy+', '+row?.label;
-          })
-        }
-          })
-          client.assignedstrategy = assignedStrategy;
-          return client;
-        
-        });
-         
-        strategies = strategies.map(row => {
-          row.label = row.name;
-          row.value = row._id;
+              if (assignedStrategy == '')
+                assignedStrategy = row?.label;
+              else
+                assignedStrategy = assignedStrategy + ', ' + row?.label;
+            })
+          }
+        })
+        client.assignedstrategy = assignedStrategy;
+        return client;
 
-          return row;
-        });
-        // After processing, update state with the modified clients and strategies
+      });
+
+      strategies = strategies.map(row => {
+        row.label = row.name;
+        row.value = row._id;
+
+        return row;
+      });
+      // After processing, update state with the modified clients and strategies
       setNavs(clients);
       setStrategy(strategies);
       setTotal(response?.data?.totalClients);
 
-      setLoading(false)  
-      
+      setLoading(false)
+
     });
 
 
@@ -142,6 +142,7 @@ const Users = (props) => {
       name: (navigation && navigation.name) || "",
       email: (navigation && navigation.email) || "",
       phone: (navigation && navigation.phone) || "",
+      quantityMultiplier: (navigation && navigation.quantityMultiplier) || "",
       entryBalance: (navigation && navigation.entryBalance) || "",
       availableCash: (navigation && navigation.availableCash) || "",
       status: (navigation && navigation.status) || "",
@@ -161,7 +162,8 @@ const Users = (props) => {
       entryBalance: Yup.number()
         .required("Please Enter Entry Balance")
         .min(0, "Entry Balance must be at least 0"),
-      status: Yup.string().test('conditional-required', 'Please Select Status', function(value) {
+      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
+      status: Yup.string().test('conditional-required', 'Please Select Status', function (value) {
         // If the initial status is 0, don't require a value
         if (navigation?.status === 0 || navigation?.status === '0') {
           return true;
@@ -170,7 +172,7 @@ const Users = (props) => {
       }),
     }),
     onSubmit: (values) => {
-      
+
       let form = themeConfig.functions.read_form("createClient");
       let formData = new FormData();
       Object.keys(form).map((key) => {
@@ -184,7 +186,7 @@ const Users = (props) => {
         addUser(formData);
 
       }
-     
+
     },
   });
 
@@ -193,7 +195,7 @@ const Users = (props) => {
 
     postData("/clients", form_data)
       .then((response) => {
-        
+
         if (response.data.error) {
           return error(response.data.error);
         }
@@ -203,8 +205,8 @@ const Users = (props) => {
         validation.resetForm();
         toggle();
         return success(response.data.message);
-       
-      
+
+
       })
       .catch((err) => {
         return error(err?.response?.data?.error);
@@ -218,7 +220,7 @@ const Users = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        
+
         // query.page = 0;
         // setQuery({ ...query });
         request();
@@ -250,15 +252,15 @@ const Users = (props) => {
       appKey: Yup.string().required("Please Enter appKey"),
     }),
     onSubmit: (values) => {
-      
+
       let form = themeConfig.functions.read_form("treadSetting");
       let formData = new FormData();
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
-      
-        formData.append("parent_id", values.id);
-        TreadSetting(values.id, formData);
+
+      formData.append("parent_id", values.id);
+      TreadSetting(values.id, formData);
     },
   });
   //end validation Tread Setting
@@ -271,7 +273,7 @@ const Users = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        
+
         // query.page = 0;
         // setQuery({ ...query });
         request();
@@ -285,32 +287,32 @@ const Users = (props) => {
   };
   //end
 
-   // validation
-   const validationAssignStratagy = useFormik({
+  // validation
+  const validationAssignStratagy = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
-    
+
     initialValues: {
       id: (navigation && navigation.id) || "",
       assignedstrategy: (navigation && navigation.assignedstrategy) || "",
 
     },
     onSubmit: (values) => {
-    
+
       const transformedArray = tags.map((item) => ({
         strategy_id: item._id, // If item.blog_id exists, use it; otherwise, use item.id
         label: item.label,
         value: item.value,
         parent_id: values.id, // Add the desired parent_id value here
       }));
-  
+
       let tagsData = {
         tags: transformedArray,
         parent_id: values.id
       }
 
       updateAssignStrategy(tagsData);
-     
+
     },
   });
 
@@ -321,7 +323,7 @@ const Users = (props) => {
         if (response.data.error) {
           return error(response.data.message);
         }
-        
+
         // query.page = 0;
         // setQuery({ ...query });
         request();
@@ -336,7 +338,7 @@ const Users = (props) => {
 
   const handleCustomerClick = (arg) => {
     const nav = arg;
-  
+
     const status = nav.status ? nav.status : 0;
 
     setNav({
@@ -346,39 +348,40 @@ const Users = (props) => {
       phone: nav.phone,
       position: nav.position,
       entryBalance: nav.entryBalance,
+      quantityMultiplier: nav.quantityMultiplier,
       availableCash: nav.availableCash,
       status: status
     });
-   
+
     setIsEdit(true);
     toggle();
   };
 
 
-    const assignStrategyClick = (arg) => {
-      const nav = arg;
-      
-      let assignStrategyNav = '';
-  
-      strategy.map((row) => {
-       if(row.name == nav.assignedstrategy){
-          assignStrategyNav = row._id;
-       }
-      })
-  
-      setNav({
-        id: nav._id,
-        assignedstrategy: assignStrategyNav,
-      });
-     setTags(nav.selectedStrategy)
-      setIsEdit(true);
-      toggleAssignStrategy();
-    };
+  const assignStrategyClick = (arg) => {
+    const nav = arg;
+
+    let assignStrategyNav = '';
+
+    strategy.map((row) => {
+      if (row.name == nav.assignedstrategy) {
+        assignStrategyNav = row._id;
+      }
+    })
+
+    setNav({
+      id: nav._id,
+      assignedstrategy: assignStrategyNav,
+    });
+    setTags(nav.selectedStrategy)
+    setIsEdit(true);
+    toggleAssignStrategy();
+  };
 
 
   const handleCheckingClick = (arg) => {
     const nav = arg;
-    
+
     setNav({
       id: nav._id,
       userId: nav?.treadSetting?.userId,
@@ -402,18 +405,18 @@ const Users = (props) => {
 
     // If status is 'all', remove the status parameter, otherwise set it
     if (status === 'all') {
-        params.delete('status');  // Remove the 'status' parameter if it's 'all'
+      params.delete('status');  // Remove the 'status' parameter if it's 'all'
     } else {
-        params.set('status', status);  // Set the 'status' parameter to the new value
+      params.set('status', status);  // Set the 'status' parameter to the new value
     }
 
     // Construct the new URL
     let newUrl = window.location.pathname;
-    
+
     // Only append the query string if there are remaining parameters
     const queryString = params.toString();
     if (queryString) {
-        newUrl += `?${queryString}`;
+      newUrl += `?${queryString}`;
     }
 
     // Update the URL without reloading the page
@@ -421,7 +424,7 @@ const Users = (props) => {
 
     // Trigger the request (optional)
     request(true);
-};
+  };
 
 
 
@@ -497,6 +500,13 @@ const Users = (props) => {
         },
       },
       {
+        Header: "Quantity Multiplier",
+        accessor: "quantityMultiplier",
+        Cell: (cellProps) => {
+          return <Designation {...cellProps} />;
+        },
+      },
+      {
         Header: "Assign Stratagies",
         accessor: "assignedstrategy",
         filterable: true,
@@ -523,18 +533,18 @@ const Users = (props) => {
                 to="#"
                 className="text-success"
                 onClick={() => {
-                  
+
                 }}
               >
                 <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
                 <div className="text-success-script">
-                  <div    onClick={() => {
-                  const customerData = cellProps.row.original;
-                  assignStrategyClick(customerData);
-                }}>Manage Strategy</div>
+                  <div onClick={() => {
+                    const customerData = cellProps.row.original;
+                    assignStrategyClick(customerData);
+                  }}>Manage Strategy</div>
                 </div>
               </Link>
-              
+
             </div>
           );
         },
@@ -576,7 +586,7 @@ const Users = (props) => {
 
 
   const handleDeleteCustomer = () => {
-    
+
     if (navigation && navigation._id) {
 
       deleteData(`/clients/${navigation._id}`)
@@ -632,7 +642,7 @@ const Users = (props) => {
       padding: 0
     }),
     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-   
+
       return {
         ...styles,
         backgroundColor: isFocused ? "#999999" : "white",
@@ -642,9 +652,9 @@ const Users = (props) => {
   };
 
   const handlePagination = (page) => {
-    
+
     query.offset = page.selected * query.limit;
-    query.page = page.selected ;
+    query.page = page.selected;
     setQuery(query);
     request(false);
   };
@@ -656,11 +666,11 @@ const Users = (props) => {
       setQuery({ ...query });
       request();
     };
-    
+
     if (loading) {
       return <GoldenTradingLoader />;
     }
- 
+
     return (
       <div className="mt-2">
         <div className="container position-absolute">
@@ -709,7 +719,7 @@ const Users = (props) => {
     setSelectedUser(value);
   }
 
-  function filterUserByStatus(users){
+  function filterUserByStatus(users) {
     return [...users].filter(user => selectedUser === 'all' ? user : user.status?.toString() === selectedUser?.toString());
   }
 
@@ -722,7 +732,7 @@ const Users = (props) => {
       />
       <Card>
         <CardBody>
-        
+
           <TableContainer
             columns={columns}
             data={filterUserByStatus(navs)}
@@ -738,7 +748,7 @@ const Users = (props) => {
             selectedOption={selectedUser}
             changeOption={changeUserOption}
           />
-        
+
           <CustomPagination />
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle} tag="h4">
@@ -749,7 +759,7 @@ const Users = (props) => {
                 id="createClient"
                 onSubmit={(e) => {
                   e.preventDefault();
-                 
+
                   validation.handleSubmit();
                   return false;
                 }}
@@ -840,6 +850,24 @@ const Users = (props) => {
                         </FormFeedback>
                       ) : null}
                     </div>
+                    <Col className="mb-3" md={12}>
+                      <Label htmlFor="quantityMultiplier">Quantity Multiplier</Label>
+                      <Input
+                        name="quantityMultiplier"
+                        id="quantityMultiplier"
+                        placeholder="Quantity Multiplier"
+                        type="number"
+                        value={isEdit && validation.values.quantityMultiplier == 0 ? 0 : validation.values.quantityMultiplier || ""}
+                        onBlur={validation.handleBlur}
+                        onChange={validation.handleChange}
+                        invalid={validation.touched.quantityMultiplier && validation.errors.quantityMultiplier}
+                      />
+                      {validation.touched.quantityMultiplier && validation.errors.quantityMultiplier ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.quantityMultiplier}
+                        </FormFeedback>
+                      ) : null}
+                    </Col>
                     <div className="mb-3">
                       <Label className="form-label">Status<small className="asterisk">*</small></Label>
                       <Input
@@ -891,7 +919,7 @@ const Users = (props) => {
                 id="treadSetting"
                 onSubmit={(e) => {
                   e.preventDefault();
-                 validationTreadSetting.handleSubmit();
+                  validationTreadSetting.handleSubmit();
                   return false;
                 }}
               >
@@ -899,7 +927,7 @@ const Users = (props) => {
                   <Col className="col-12">
                     <div className="mb-3">
                       <Label className="form-label">User ID<small className="asterisk">*</small></Label>
-                      
+
                       <Input
                         name="userId"
                         type="text"
@@ -963,7 +991,7 @@ const Users = (props) => {
                     </div>
                     <div className="mb-3">
                       <Label className="form-label">App key<small className="asterisk">*</small></Label>
-                     
+
                       <Input
                         name="appKey"
                         type="text"
@@ -1001,7 +1029,7 @@ const Users = (props) => {
             </ModalBody>
           </Modal>
 
-           {/* start assign strategy popup */}
+          {/* start assign strategy popup */}
           <Modal isOpen={modalAssignStrategy} toggle={toggleAssignStrategy}>
             <ModalHeader toggle={toggleAssignStrategy} tag="h4">
               Stratagy
@@ -1015,47 +1043,47 @@ const Users = (props) => {
                   return false;
                 }}
               >
-            <Row>
-              <Col className="col-12">
-                <div className="mb-3">
-                <div className="col-xl-12 mt-1">
-                  <div className="form-group">
-                    {(strategy !== null) ? (
-                      <Select
-                      styles={customStyles}
-                        isClearable={false}
-                        isMulti
-                        options={strategy}
-                        value={tags}
-                        name="strategy"
-                        className='react-select'
-                        classNamePrefix='select'
-                        isDisabled={false}
-                        onChange={e => {
-                          setTags(e)
-                        }}
-                      />
-                    ) : <></>}
-                    
-                  </div>
-                </div>
-              </div>
-              </Col>
-              </Row>
+                <Row>
+                  <Col className="col-12">
+                    <div className="mb-3">
+                      <div className="col-xl-12 mt-1">
+                        <div className="form-group">
+                          {(strategy !== null) ? (
+                            <Select
+                              styles={customStyles}
+                              isClearable={false}
+                              isMulti
+                              options={strategy}
+                              value={tags}
+                              name="strategy"
+                              className='react-select'
+                              classNamePrefix='select'
+                              isDisabled={false}
+                              onChange={e => {
+                                setTags(e)
+                              }}
+                            />
+                          ) : <></>}
+
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
                 <Row>
                   <Col>
-                  <div className="d-flex justify-content-end">
-                  <Button color="success" type="submit">
-                    Save
-                  </Button>
-                </div>
+                    <div className="d-flex justify-content-end">
+                      <Button color="success" type="submit">
+                        Save
+                      </Button>
+                    </div>
                   </Col>
                 </Row>
               </Form>
             </ModalBody>
-           
+
           </Modal>
-            {/* end assign strategy popup */}
+          {/* end assign strategy popup */}
         </CardBody>
       </Card>
     </React.Fragment>
