@@ -95,7 +95,6 @@ const StrategyManagement = () => {
       // entryTime: Yup.string().required("Please Enter Entry Time"),
       // exitTime: Yup.string().required("Please Enter Exit Time"),
       // squareOffTime: Yup.string().required("Please Enter Square-off Time"),
-      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
     }),
     onSubmit: (values) => {
       let form = themeConfig.functions.read_form("createStrategy");
@@ -231,11 +230,6 @@ const StrategyManagement = () => {
       {
         Header: "Square-off Time",
         accessor: "squareOffTime",
-        Cell: ({ value }) => <Strategy value={value} />,
-      },
-      {
-        Header: "Quantity Multiplier",
-        accessor: "quantityMultiplier",
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
@@ -517,21 +511,6 @@ const StrategyManagement = () => {
                   invalid={validation.touched.squareOffTime && validation.errors.squareOffTime}
                 />
                 <FormFeedback>{validation.errors.squareOffTime}</FormFeedback>
-              </Col>
-
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="quantityMultiplier">Quantity Multiplier</Label>
-                <Input
-                  name="quantityMultiplier"
-                  id="quantityMultiplier"
-                  placeholder="Quantity Multiplier"
-                  type="number"
-                  value={isEdit && validation.values.quantityMultiplier == 0 ? 0 : validation.values.quantityMultiplier || ""}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.quantityMultiplier && validation.errors.quantityMultiplier}
-                />
-                <FormFeedback>{validation.errors.quantityMultiplier}</FormFeedback>
               </Col>
               <div
               style={{ textAlign: "right"}}
