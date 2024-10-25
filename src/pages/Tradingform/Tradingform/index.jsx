@@ -29,19 +29,14 @@ import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
 import DeleteAllModal from "../../../components/Common/DeleteAllData";
 import TradingTableContainer from "../../../components/Common/TradingTableContainer";
-import HideShowSection from "../../../components/Common/HideShowSection";
 import { success, error } from "../../../components/toast";
 // Column
-import { Designation, Email } from "../../NavigationCol";
+import { Designation, Email, QtyType } from "../../NavigationCol";
 
 const index = (props) => {
   const [navs, setNavs] = useState([]);
 
-  useEffect(() => {
-    getNavigation();
-    fetchScripts();
-    fetchStrategies();
-  }, []);
+ 
 
   const customStyles = {
     control: (provided) => ({
@@ -61,18 +56,20 @@ const index = (props) => {
   };
   const [strategies, setStrategies] = useState([]);
   const [scripts, setScripts] = useState([]);
+  const [orderTypes, setOrderTypes] = useState([]);
+  const [prodType, setProdType] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isInputDisabled, setIsInputDisabled] = useState(true);
   const [modal, setModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [navigation, setNav] = useState(null);
   const [showFields, setShowFields] = useState(false);
-  const [showRadioButtons, setShowRadioButtons] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
   const [total, setTotal] = useState(null);
   const [loading, setLoading] = React.useState(true);
   const [importModal, setImportModal] = useState(false);
   const [importFile, setImportFile] = useState(null);
+  const [price, setPrice] = useState(null);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -83,57 +80,72 @@ const index = (props) => {
     status: "",
   });
 
+  useEffect(() => {
+    getNavigation();
+    fetchScripts();
+    fetchStrategies();
+  }, []);
+
   const exchangeClasses = {
     'NSE': 'exchange-nse',
     'NFO': 'exchange-nfo'
-  };
-
-  const request = (reset_offset = true) => {
-
-    let url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
-    getData(url).then((response) => {
-
-     
-      setNavs(response?.data?.data);
-      setTotal(response?.data?.totalCount);
-      setLoading(false);
-    });
-
-
   };
 
   const getNavigation = () => {
     request();
   };
 
-  /** New function to fetch scripts data*/
-  const fetchScripts = () => {
-    let url = `/scrips/fetch-instruments`;
-    getData(url)
-      .then((response) => {
-        setScripts(response.data.data.instruments);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching scripts:", error);
-      });
-  };
+ // API request handlers using useCallback to prevent recreation on every render
+ const request = useCallback(async (reset_offset = true) => {
+  try {
+    setLoading(true);
+    const url = `/tradingForm?limit=${query.limit}&page_no=${query.page + 1}&search=${query.search}`;
+    const response = await getData(url);
+    
+    if (response?.data?.data) {
+      setNavs(response.data.data);
+      setTotal(response.data.totalCount);
+    }
+  } catch (error) {
+    console.error('Error fetching trading form data:', error);
+  } finally {
+    setLoading(false);
+  }
+}, [query.limit, query.page, query.search]);
 
-  const eBuyClick = (data) => {
-    console.log('Selected data:', data);
-  };
+const fetchScripts = useCallback(async () => {
+  try {
+    setLoading(true);
+    const url = '/scrips/fetch-instruments';
+    const response = await getData(url);
+    
+    if (response?.data?.data) {
+      setScripts(response.data.data.instruments);
+      setProdType(response.data.data.tokenData[0]?.orderTypes || []);
+      setOrderTypes(response.data.data.tokenData[0]?.products || []);
+    }
+  } catch (error) {
+    console.error('Error fetching scripts:', error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
-  const eSellClick = (data) => {
-    console.log('Selected data:', data);
-  };
+const eBuyClick = (data) => {
+  console.log('Selected data:', data);
+};
 
-  const eShortClick = (data) => {
-    console.log('Selected data:', data);
-  };
+const eSellClick = (data) => {
+  console.log('Selected data:', data);
+};
 
-  const eCoverClick = (data) => {
-    console.log('Selected data:', data);
-  };
+const eShortClick = (data) => {
+  console.log('Selected data:', data);
+};
+
+const eCoverClick = (data) => {
+  console.log('Selected data:', data);
+};
 
   // New search function to fetch data based on input
   const searchScripts = (searchTerm) => {
@@ -156,18 +168,59 @@ const index = (props) => {
       });
   };
 
-  /** New function to fetch scripts data*/
-  const fetchStrategies = () => {
-    let url = `/strategies`;
-    getData(url)
-      .then((response) => {
-        setStrategies(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching scripts:", error);
-      });
+const fetchStrategies = useCallback(async () => {
+  try {
+    setLoading(true);
+    const url = '/strategies';
+    const response = await getData(url);
+    
+    if (response?.data?.data) {
+      setStrategies(response.data.data);
+    }
+  } catch (error) {
+    console.error('Error fetching strategies:', error);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+// Initial data fetch
+useEffect(() => {
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+      // Use Promise.all to fetch data concurrently
+      await Promise.all([
+        request(),
+        fetchScripts(),
+        fetchStrategies()
+      ]);
+    } catch (error) {
+      console.error('Error fetching initial data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  fetchInitialData();
+}, [request, fetchScripts, fetchStrategies]);
+
+// Update search handler
+const handleSearch = useCallback((searchTerm) => {
+  setQuery(prev => ({
+    ...prev,
+    search: searchTerm,
+    page: 0 // Reset page when searching
+  }));
+}, []);
+
+// Page change handler
+const handlePageChange = useCallback((newPage) => {
+  setQuery(prev => ({
+    ...prev,
+    page: newPage
+  }));
+}, []);
 
 
 
@@ -277,13 +330,8 @@ const index = (props) => {
     
     if (selectedValue === 'SLL') {
       setShowFields(true);
-      setShowRadioButtons(false);
-    } else if (selectedValue === 'market') {
-      setShowFields(false);
-      setShowRadioButtons(true);
     } else {
       setShowFields(false);
-      setShowRadioButtons(false);
     }
 
     // Call the original handleChange from validation
@@ -302,6 +350,9 @@ const index = (props) => {
       dynamicExpiry: (navigation && navigation.dynamicExpiry) || "",
       dynamicStrike: (navigation && navigation.dynamicStrike) || "",
       qtyType: (navigation && navigation.qtyType) || "",
+      quantity: (navigation && navigation.quantity) || "",
+      exposure: (navigation && navigation.exposure) || "",
+      roundLotSize: (navigation && navigation.roundLotSize) || "",
       prodType: (navigation && navigation.prodType) || "",
       entryOrder: (navigation && navigation.entryOrder) || "",
       exitOrder: (navigation && navigation.exitOrder) || "",
@@ -310,8 +361,6 @@ const index = (props) => {
       portalPassword: (navigation && navigation.portalPassword) || "",
       userKey: (navigation && navigation.userKey) || "",
       appKey: (navigation && navigation.appKey) || "",
-      priceBuffer: (navigation && navigation.priceBuffer) || "",
-      priceBufferType: (navigation && navigation.priceBufferType) || "",
       price: (navigation && navigation.price) || "",
       triggerPrice: (navigation && navigation.triggerPrice) || "",
       hasExpiry: false,
@@ -331,7 +380,19 @@ const index = (props) => {
         then: Yup.string().required("Please Select Dynamic Strike"),
         otherwise: Yup.string().notRequired(),
       }),
-      qtyType: Yup.string().required("Please Select Qty Type"),
+      qtyType: Yup.string().required("Please select a quantity type"),
+      quantity: Yup.number().when("qtyType", {
+        is: "fixed",
+        then: Yup.number().required("Quantity is required").min(1, "Quantity must be positive")
+      }),
+      exposure: Yup.number().when("qtyType", {
+        is: "explorer",
+        then: Yup.number().required("Exposure is required").min(1, "Exposure must be positive")
+      }),
+      roundLotSize: Yup.number().when("qtyType", {
+        is: "explorer",
+        then: Yup.number().required("Round lot size is required").min(1, "Round lot size must be positive")
+      }),
       prodType: Yup.string().required("Please Select Prod Type"),
       entryOrder: Yup.string().required("Please Select Entry Order"),
       exitOrder: Yup.string().required("Please Select Exit Order"),
@@ -347,22 +408,11 @@ const index = (props) => {
         then: Yup.string().required("Please Enter Trigger Price"),
         otherwise: Yup.string(),
       }),
-      priceBufferType: Yup.string().when('entryOrder', {
-        is: 'market',
-        then: Yup.string()
-          .required("Please Select Price Buffer Type")
-          .oneOf(['fixed', 'percent'], "Invalid Price Buffer Type"),
-        otherwise: Yup.string(),
-      }),
-
-      priceBuffer: Yup.string().when(['entryOrder', 'priceBufferType'], {
-        is: (entryOrder, priceBufferType) => entryOrder === 'market',
-        then: Yup.string().required("Please Enter Price Buffer"),
-        otherwise: Yup.string(),
-      }),
+ 
 
     }),
     onSubmit: (values) => {
+     
       let form = themeConfig.functions.read_form("traingForm");
       let formData = new FormData();
       formData.append("hasExpiry", validation.values.hasExpiry);
@@ -372,7 +422,7 @@ const index = (props) => {
       });
 
       if (isEdit) {
-        formData.append("id", values._id);
+        formData.append("id", values.id);
         updateNavigation(values.id, formData);
       } else {
 
@@ -380,7 +430,7 @@ const index = (props) => {
 
       }
       setShowFields(false);
-      setShowRadioButtons(false);
+     
       validation.resetForm();
       setSelectedOption(null)
       toggle();
@@ -391,7 +441,7 @@ const index = (props) => {
     validation.resetForm();
     setSelectedOption(null);
     setShowFields(false);
-    setShowRadioButtons(false);
+  
   };
   const addNewNavigation = (form_data) => {
 
@@ -419,49 +469,70 @@ const index = (props) => {
         return success(response.data.message);
       });
   };
+
+
   const handleCustomerClick = (arg) => {
     const nav = arg;
+    
+    // Create the selected option object for the Select component
+    const selectedSymbolOption = {
+      label: nav?.terminalSymbol,
+      value: nav?.terminalSymbol,
+      exchange: nav?.exchange, // Make sure this is available in nav
+      strike: nav?.dynamicStrike,
+      instrument_type: nav?.optionType,
+      last_price: nav?.last_price,
+      lot_size: nav?.lot_size,
+      tick_size: nav?.tick_size,
+      expiry: nav?.dynamicExpiry
+    };
+    
+    // Set the selected option for the Select component
+    setSelectedOption(selectedSymbolOption);
 
     setNav({
       id: nav._id,
-      terminalSymbol: nav.terminalSymbol,
-      optionType: nav.optionType,
-      dynamicExpiry: nav.dynamicExpiry,
-      dynamicStrike: nav.dynamicStrike,
-      qtyType: nav.qtyType,
-      prodType: nav.prodType,
-      entryOrder: nav.entryOrder,
-      exitOrder: nav.exitOrder,
-      strategy: nav.strategy,
-      portalUserId: nav.portalUserId,
-      portalPassword: nav.portalPassword,
-      userKey: nav.userKey,
-      appKey: nav.appKey,
-      priceBuffer: nav.priceBuffer,
-      priceBufferType: nav.priceBufferType,
-      price: nav.price,
-      triggerPrice: nav.triggerPrice
+      terminalSymbol: nav?.terminalSymbol,
+      optionType: nav?.optionType,
+      dynamicExpiry: nav?.dynamicExpiry,
+      dynamicStrike: nav?.dynamicStrike,
+      qtyType: nav?.qtyType,
+      prodType: nav?.prodType,
+      entryOrder: nav?.entryOrder,
+      exitOrder: nav?.exitOrder,
+      strategy: nav?.strategy,
+      portalUserId: nav?.portalUserId,
+      portalPassword: nav?.portalPassword,
+      userKey: nav?.userKey,
+      appKey: nav?.appKey,
+      priceBuffer: nav?.priceBuffer,
+      priceBufferType: nav?.priceBufferType,
+      price: nav?.price,
+      triggerPrice: nav?.triggerPrice,
+      quantity: nav?.quantity,
+      exposure: nav?.exposure,
+      roundLotSize: nav?.roundLotSize
     });
 
     // Update validation values
     validation.setValues({
       ...validation.values,
+      terminalSymbol: nav.terminalSymbol,
+      optionType: nav.optionType,
+      dynamicExpiry: nav.dynamicExpiry,
+      dynamicStrike: nav.dynamicStrike,
+      qtyType: nav.qtyType,
       ...nav
     });
 
     setIsEdit(true);
     if (nav.entryOrder === 'SLL') {
       setShowFields(true);
-      setShowRadioButtons(false);
-    } else if (nav.entryOrder === 'market') {
-      setShowFields(false);
-      setShowRadioButtons(true);
     } else {
       setShowFields(false);
-      setShowRadioButtons(false);
     }
     toggle();
-  };
+};
 
   const handleSelectAllChange = (e) => {
     if (e.target.checked) {
@@ -479,17 +550,6 @@ const index = (props) => {
     );
   };
 
-  // const handleSymbolChange = (selected) => {
-
-  //   console.log("selectedOption", selected);
-    
-  //   setSelectedOption(selected);
-  //   validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
-  //   validation.setFieldValue('optionType', selected ? selected.instrument_type : '');
-  //   validation.setFieldValue('dynamicExpiry', selected ? selected.expiry : '');
-  //   validation.setFieldValue('dynamicStrike', selected ? selected.strike?.toString() : '');
-  // };
-
   const handleSymbolChange = (selected) => {
     console.log("selectedOption", selected);
     setSelectedOption(selected);
@@ -505,22 +565,87 @@ const index = (props) => {
     } else {
       setIsInputDisabled(true); // Keep input disabled for other exchanges
     }
+
+    const label = selected.value;
+    const exchange = selected.exchange;
+
+    getData(`tradeQuote/${exchange}:${label}`)
+    .then((response) => {
+      if (response.data.error) {
+        return error(response.data.message);
+      }
+     
+      console.log(response.data?.data?.data?.[`${exchange}:${label}`]);
+
+      setPrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
+    });
+
   };
 
   const getOptionTypes = () => {
-    if (!selectedOption) return [];
-    const types = ['CE', 'PE'];
-    if (selectedOption.instrument_type === 'EQ') types.push('EQ');
-    return types;
+  
+    if (!selectedOption || !selectedOption.instrument_type) return [];
+    validation.values.optionType = selectedOption.instrument_type;
+    return [selectedOption.instrument_type];
   };
 
-  const getExpiryDates = () => {
-    if (!selectedOption || !selectedOption.expiry) return [];
-    return [selectedOption.expiry];
-  };
+  const getExpiryDates = useCallback(() => {
+    // Return empty if no selected option or expiry
+    if (!selectedOption?.expiry) return [];
+  
+    // Function to check if string is already formatted
+    const isAlreadyFormatted = (dateString) => {
+      const pattern = /^\d{1,2}(st|nd|rd|th)\s+[A-Za-z]+$/;
+      return pattern.test(dateString);
+    };
+  
+    // Function to get ordinal suffix
+    const getOrdinalSuffix = (day) => {
+      if (day > 3 && day < 21) return 'th';
+      switch (day % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    };
+  
+    // Function to format date
+    const formatDate = (dateString) => {
+      try {
+        const inputDate = new Date(dateString);
+        
+        // Check if date is valid
+        if (!isNaN(inputDate.getTime())) {
+          const day = inputDate.getDate();
+          const month = inputDate.toLocaleString('default', { month: 'long' });
+          return `${day}${getOrdinalSuffix(day)} ${month}`;
+        }
+        return dateString; // Return original string if date is invalid
+      } catch (error) {
+        return dateString; // Return original string if parsing fails
+      }
+    };
+  
+    // Get the formatted string
+    const formattedString = isAlreadyFormatted(selectedOption.expiry)
+      ? selectedOption.expiry
+      : formatDate(selectedOption.expiry);
+      
+    // Only update form value if it's different and not already being updated
+    if (validation.values.dynamicExpiry !== formattedString && !validation.isSubmitting) {
+      // Use requestAnimationFrame to batch the update
+      requestAnimationFrame(() => {
+        validation.setFieldValue('dynamicExpiry', formattedString);
+      });
+    }
+  
+    return [formattedString];
+  }, [selectedOption?.expiry, validation.values.dynamicExpiry]); // Only depend on necessary values
 
   const getStrikes = () => {
     if (!selectedOption || !selectedOption.strike) return [];
+    validation.values.dynamicStrike = selectedOption.strike.toString()
     return [selectedOption.strike.toString()];
   };
 
@@ -589,7 +714,7 @@ const index = (props) => {
         accessor: "qtyType",
         filterable: true,
         Cell: (cellProps) => {
-          return <Designation {...cellProps} />;
+          return <QtyType {...cellProps} />;
         },
       },
       {
@@ -723,7 +848,6 @@ const index = (props) => {
 
     setIsEdit(false);
     setShowFields(false);
-    setShowRadioButtons(false);
     validation.resetForm();
     toggle();
   };
@@ -756,19 +880,6 @@ const index = (props) => {
       <div className="mt-2">
         <div className="container position-absolute">
           <div className="row">
-            {/* <div className="col-sm-1">
-              <select
-                className="form-select form-select-sm"
-                onChange={updateLimit}
-                value={query.limit}
-              >
-                {limit.map((value) => (
-                  <option value={value} key={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div> */}
             <div className="col-sm-4">Total: {total}</div>
           </div>
         </div>
@@ -890,7 +1001,7 @@ const index = (props) => {
                             onInputChange={(inputValue) => searchScripts(inputValue)} // Call search function on input change
                             formatOptionLabel={({ label, exchange }) => {
                               // Get the class based on the exchange value
-                              const className = exchangeClasses[exchange] || defaultClass;
+                              const className = exchangeClasses[exchange];
 
                               return (
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
@@ -923,7 +1034,7 @@ const index = (props) => {
                                 : false
                             }
                           >
-                            <option value="" disabled selected>Select Strategy</option>
+                            <option value="">Select Strategy</option>
                             {strategies.length > 0 &&
                               strategies.map((strategy) => (
                                 <option key={strategy.name} value={strategy.name}>
@@ -931,14 +1042,7 @@ const index = (props) => {
                                 </option>
                               ))
                             }
-                            {/* <option value="" disabled selected>Select Option</option>
-                            <option value="CE">CE</option>
-                            <option value="PE">PE</option>
-                            <option value="EQ">EQ</option> */}
-                             <option value="">Select Option Type</option>
-                              {getOptionTypes().map((type) => (
-                                <option key={type} value={type}>{type}</option>
-                              ))}
+                            
                           </Input>
                           {validation.touched.strategy && validation.errors.strategy ? (
                             <FormFeedback type="invalid">
@@ -965,7 +1069,7 @@ const index = (props) => {
                             disabled={isInputDisabled}
                           >
                            
-                            <option value="" disabled selected>Select Expiry Date</option>
+                            <option value="" disabled>Select Expiry Date</option>
                             {getExpiryDates().map((date) => (
                               <option key={date} value={date}>{date}</option>
                             ))}
@@ -986,14 +1090,10 @@ const index = (props) => {
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
                             value={validation.values.dynamicStrike || ""}
-                            invalid={
-                              validation.touched.dynamicStrike && validation.errors.dynamicStrike
-                                ? true
-                                : false
-                            }
+                            invalid={validation.touched.dynamicStrike && validation.errors.dynamicStrike ? "true" : undefined}
                             disabled={isInputDisabled}
                           >
-                            <option value="" disabled selected>Select Strike</option>
+                            <option value="" disabled>Select Strike</option>
                             {getStrikes().map((strike) => (
                               <option key={strike} value={strike}>{strike}</option>
                             ))}
@@ -1014,16 +1114,13 @@ const index = (props) => {
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
                             value={validation.values.optionType || ""}
-                            invalid={
-                              validation.touched.optionType && validation.errors.optionType
-                                ? true
-                                : false
-                            }
-                            disabled={isInputDisabled}
+                            invalid={validation.touched.optionType && validation.errors.optionType ? "true" : undefined}
+                           
                           >
-                            <option value="" disabled selected>Select Option</option>
-                            <option value="CE">CE</option>
-                            <option value="PE">PE</option>
+                            <option value="" disabled>Select Option Type</option>
+                              {getOptionTypes().map((type) => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
                           </Input>
                           {validation.touched.optionType && validation.errors.optionType ? (
                             <FormFeedback type="invalid">
@@ -1032,35 +1129,8 @@ const index = (props) => {
                           ) : null}
 
                         </div>
+                       
                         <div className="add-tread col-md-3">
-                          <Label className="form-label">Qty Type</Label>
-                          <Input
-                            type="select"
-                            name="qtyType"
-                            className="col-md-6 select-script"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.qtyType || ""}
-                            invalid={
-                              validation.touched.qtyType && validation.errors.qtyType
-                                ? true
-                                : false
-                            }
-
-                          >
-                            <option value="" disabled selected>Select Qty</option>
-                            <option value="Intraday">FIXED</option>
-                            <option value="Delivery">EXPLORER</option>
-                          </Input>
-                          {validation.touched.qtyType && validation.errors.qtyType ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.qtyType}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
-                      </div>
-                      <div className="add-tread-beside">
-                        <div className="add-tread col-md-4">
 
                           <Label className="form-label">ProdType</Label>
                           <Input
@@ -1076,9 +1146,10 @@ const index = (props) => {
                                 : false
                             }
                           >
-                            <option value="" disabled selected>Select  Prod Type</option>
-                            <option value="Intraday">MIS</option>
-                            <option value="Delivery">Delivery</option>
+                            <option value="">Select  Prod Type</option>
+                            {prodType.map((strike) => (
+                              <option key={strike} value={strike}>{strike}</option>
+                            ))}
                           </Input>
                           {validation.touched.prodType && validation.errors.prodType ? (
                             <FormFeedback type="invalid">
@@ -1086,6 +1157,29 @@ const index = (props) => {
                             </FormFeedback>
                           ) : null}
 
+                        </div>
+                      </div>
+                      <div className="add-tread-beside">
+                      <div className="add-tread col-md-4">
+                          <Label className="form-label">Qty Type</Label>
+                          <Input
+                            type="select"
+                            name="qtyType"
+                            className="col-md-6 select-script"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.qtyType || ""}
+                            invalid={validation.touched.qtyType && validation.errors.qtyType ? "true" : undefined}
+                          >
+                            <option value="">Select Qty</option>
+                            <option value="fixed">FIXED</option>
+                            <option value="explorer">EXPLORER</option>
+                          </Input>
+                          {validation.touched.qtyType && validation.errors.qtyType ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.qtyType}
+                            </FormFeedback>
+                          ) : null}
                         </div>
                         <div className="add-tread col-md-4">
                           <Label className="form-label">Entry Order</Label>
@@ -1098,10 +1192,9 @@ const index = (props) => {
                             value={validation.values.entryOrder || ""}
                             invalid={validation.touched.entryOrder && validation.errors.entryOrder ? true : false}
                           >
-                            <option value="" disabled>Select Prod Type</option>
+                            <option value="" disabled>Select Entry Order</option>
                             <option value="SLL">SLL</option>
                             <option value="market">MARKET</option>
-                            <option value="option2">Option 2</option>
                           </Input>
                           {validation.touched.entryOrder && validation.errors.entryOrder ? (
                             <FormFeedback type="invalid">
@@ -1112,22 +1205,19 @@ const index = (props) => {
                         <div className="add-tread col-md-4">
                           <Label className="form-label">Exit Order</Label>
                           <Input
-                            type="select"
-                            name="exitOrder"
-                            className="col-md-6 select-script"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.exitOrder || ""}
-                            invalid={
-                              validation.touched.exitOrder && validation.errors.exitOrder
-                                ? true
-                                : false
-                            }
-                          >
-                            <option value="" disabled selected>Select Exit Order</option>
-                            <option value="Intraday">MARKET</option>
-                            <option value="Delivery">Delivery</option>
-                          </Input>
+                                type="select"
+                                name="exitOrder"
+                                className="col-md-6 select-script"
+                                onChange={validation.handleChange}
+                                onBlur={validation.handleBlur}
+                                value={validation.values.exitOrder || ""}
+                                invalid={validation.touched.exitOrder && validation.errors.exitOrder ? true : false}
+                              >
+                                <option value="">Select Exit Order</option>
+                                <option value="Intraday">MARKET</option>
+                                <option value="Delivery">Delivery</option>
+                              </Input>
+                           
                           {validation.touched.exitOrder && validation.errors.exitOrder ? (
                             <FormFeedback type="invalid">
                               {validation.errors.exitOrder}
@@ -1195,78 +1285,77 @@ const index = (props) => {
                           )}
                         </div>
                       </div>
+                    
                       <div className="add-tread-beside">
-                        <div className="add-tread  col-md-12">
-                          {showRadioButtons && (
-                            <div className="for-sll">
-                              <div className="add-tread col-md-6">
-                                <label htmlFor="field5">Price Buffer Type</label>
-                                <div className="add-tread price-buffer col-md-12">
-                                  <label className="price-buffer">
-                                    <input
-                                      type="radio"
-                                      name="priceBufferType"
-                                      value="fixed"
-                                      checked={validation.values.priceBufferType === "fixed"}
-                                      onBlur={validation.handleBlur}
-                                      onChange={validation.handleChange}
-                                      invalid={
-                                        validation.touched?.priceBufferType && validation.errors?.priceBufferType
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    Fixed
-                                  </label>
-                                  <label className="price-buffer">
-                                    <input
-                                      type="radio"
-                                      name="priceBufferType"
-                                      value="percent"
-                                      checked={validation.values.priceBufferType === "percent"}
-                                      onBlur={validation.handleBlur}
-                                      onChange={validation.handleChange}
-                                      invalid={
-                                        validation.touched?.priceBufferType && validation.errors?.priceBufferType
-                                          ? true
-                                          : false
-                                      }
-                                    />
-                                    Percent
-                                  </label>
-                                  {validation.touched.priceBufferType && validation.errors.priceBufferType ? (
-                                    <div>{validation.errors.priceBufferType}</div>
-                                  ) : null}
-                                </div>
-                              </div>
-                              <div className="add-tread col-md-6">
-                                <label htmlFor="priceBuffer">Price Buffer</label>
-                                <Input
-                                  name="priceBuffer"
-                                  type="number"
-                                  className="select-script"
-                                  id="priceBuffer"
-                                  placeholder="Enter Price Buffer"
-                                  onChange={validation.handleChange}
-                                  onBlur={validation.handleBlur}
-                                  value={validation.values?.priceBuffer || ""}
-                                  invalid={
-                                    validation.touched?.priceBuffer && validation.errors?.priceBuffer
-                                      ? true
-                                      : false
-                                  }
-                                />
-                                {validation.touched?.priceBuffer && validation.errors?.priceBuffer ? (
-                                  <FormFeedback type="invalid">
-                                    {validation.errors?.priceBuffer}
-                                  </FormFeedback>
-                                ) : null}
-                              </div>
-                            </div>
-                          )}
+                  
+                      {validation.values.qtyType === "fixed" && (
+                          <div className="add-tread col-md-4">
+                            <Label className="form-label">Quantity</Label>
+                            <Input
+                              type="number"
+                              name="quantity"
+                              className="col-md-6 select-script"
+                              placeholder="Enter Quantity"
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.quantity || ""}
+                              invalid={validation.touched.quantity && validation.errors.quantity ? true : false}
+                            />
+                            {validation.touched.quantity && validation.errors.quantity ? (
+                              <FormFeedback type="invalid">
+                                {validation.errors.quantity}
+                              </FormFeedback>
+                            ) : null}
+                          </div>
+                        )}
                         </div>
-                      </div>
+                        
+                        {validation.values.qtyType === "explorer" && (
+                          <>
+                          <div className="add-tread-beside">
+                            <div className="add-tread col-md-4">
+                              <Label className="form-label">Exposure</Label>
+                              <Input
+                                type="number"
+                                name="exposure"
+                                className="col-md-6 select-script"
+                                placeholder="Enter Exposure"
+                                onChange={validation.handleChange}
+                                onBlur={validation.handleBlur}
+                                value={validation.values.exposure || ""}
+                                invalid={validation.touched.exposure && validation.errors.exposure ? true : false}
+                              />
+                              {validation.touched.exposure && validation.errors.exposure ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.exposure}
+                                </FormFeedback>
+                              ) : null}
+                            </div>
+                            <div className="add-tread col-md-4">
+                              <Label className="form-label">Round Lot Size</Label>
+                              <Input
+                                type="number"
+                                name="roundLotSize"
+                                className="col-md-6 select-script"
+                                placeholder="Enter Round Lot Size"
+                                onChange={validation.handleChange}
+                                onBlur={validation.handleBlur}
+                                value={validation.values.roundLotSize || ""}
+                                invalid={validation.touched.roundLotSize && validation.errors.roundLotSize ? true : false}
+                              />
+                              {validation.touched.roundLotSize && validation.errors.roundLotSize ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.roundLotSize}
+                                </FormFeedback>
+                              ) : null}
+                            </div>
+                            </div>
+                            
+                          </>
+                        )}
                     </div>
+                    
+                    
 
                   </Col>
                 </Row>

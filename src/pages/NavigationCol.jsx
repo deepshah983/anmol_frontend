@@ -225,6 +225,149 @@ const CheckboxCellRenderer = ({ value }) => {
     />
   );
 };
+
+// Move styles outside of the component to prevent recreation on each render
+const styles = `
+  .badge-container {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 3px;
+    min-width: fit-content;
+    height: 22px;
+    overflow: visible;
+    box-sizing: border-box;
+    background: white;
+  }
+
+  .fixed-container {
+    border: 1px solid #10B981;
+  }
+
+  .explorer-container {
+    border: 1px solid #EC4899;
+  }
+
+  .qty-badge {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: #ffffff;
+    text-transform: uppercase;
+    min-width: max-content;
+    border-radius: 2px 0 0 2px;
+  }
+
+  .fixed-badge {
+    background: #10B981;
+  }
+
+  .explorer-badge {
+    background: #EC4899;
+  }
+
+  .qty-value {
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 11px;
+    color: #4B5563;
+    background: white;
+    white-space: nowrap;
+    overflow: visible;
+    min-width: max-content;
+    flex: 1;
+  }
+
+  .qty-value span {
+    margin: 0 2px;
+  }
+
+  .badge-container > *:not(:first-child) {
+    margin-left: -1px;
+  }
+
+  .qty-badge {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .qty-value {
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge-container:hover {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+`;
+
+// Create style element only once when the module loads
+let styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+
+// Move helper functions outside component to prevent recreation
+const getTypeStyles = (type) => {
+  switch (type?.toLowerCase()) {
+    case 'fixed':
+      return 'qty-badge fixed-badge';
+    case 'explorer':
+      return 'qty-badge explorer-badge';
+    default:
+      return '';
+  }
+};
+
+const getDisplayText = (type) => {
+  switch (type?.toLowerCase()) {
+    case 'fixed':
+      return 'FIXED';
+    case 'explorer':
+      return 'EXP';
+    default:
+      return type;
+  }
+};
+
+const calculateValue = (qtyType, quantity, exposure, roundLotSize, price) => {
+  if (qtyType?.toLowerCase() === 'fixed') {
+    return quantity || 0;
+  } else if (qtyType?.toLowerCase() === 'explorer' && price && price !== 0) {
+    return `${exposure}(${price} * ${roundLotSize}) = ${Math.floor((exposure * roundLotSize) / price) || 0}`;
+  }
+  return 0;
+};
+
+const QtyType = (cell) => {
+  if (!cell.row.original) return null;
+  
+  const {
+    qtyType,
+    quantity,
+    exposure,
+    roundLotSize,
+  } = cell.row.original;
+
+  const price = 555;
+
+  return (
+    <div className={`badge-container ${qtyType?.toLowerCase() === 'fixed' ? 'fixed-container' : 'explorer-container'}`}>
+      <span className={getTypeStyles(qtyType)}>
+        {getDisplayText(qtyType)}
+      </span>
+      <span className="qty-value">
+        {calculateValue(qtyType, quantity, exposure, roundLotSize, price).toLocaleString()}
+      </span>
+    </div>
+  );
+};
+
+
 export {
     Id,
     Name,
@@ -270,5 +413,6 @@ export {
     Mode,
     Message,
     ReceivedAt,
-    CheckboxCellRenderer
+    CheckboxCellRenderer,
+    QtyType
 };
