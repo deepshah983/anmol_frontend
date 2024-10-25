@@ -334,11 +334,11 @@ const getDisplayText = (type) => {
   }
 };
 
-const calculateValue = (qtyType, quantity, exposure, roundLotSize, price) => {
+const calculateValue = (qtyType, quantity, exposure, roundLotSize, sharePrice) => {
   if (qtyType?.toLowerCase() === 'fixed') {
     return quantity || 0;
-  } else if (qtyType?.toLowerCase() === 'explorer' && price && price !== 0) {
-    return `${exposure}(${price} * ${roundLotSize}) = ${Math.floor((exposure * roundLotSize) / price) || 0}`;
+  } else if (qtyType?.toLowerCase() === 'explorer' && sharePrice && sharePrice !== 0) {
+    return `${exposure}(${sharePrice} * ${roundLotSize}) = ${Math.floor((exposure * roundLotSize) / sharePrice) || 0}`;
   }
   return 0;
 };
@@ -351,9 +351,9 @@ const QtyType = (cell) => {
     quantity,
     exposure,
     roundLotSize,
+    sharePrice
   } = cell.row.original;
 
-  const price = 555;
 
   return (
     <div className={`badge-container ${qtyType?.toLowerCase() === 'fixed' ? 'fixed-container' : 'explorer-container'}`}>
@@ -361,7 +361,7 @@ const QtyType = (cell) => {
         {getDisplayText(qtyType)}
       </span>
       <span className="qty-value">
-        {calculateValue(qtyType, quantity, exposure, roundLotSize, price).toLocaleString()}
+        {calculateValue(qtyType, quantity, exposure, roundLotSize, sharePrice).toLocaleString()}
       </span>
     </div>
   );

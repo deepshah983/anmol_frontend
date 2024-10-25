@@ -69,7 +69,7 @@ const index = (props) => {
   const [loading, setLoading] = React.useState(true);
   const [importModal, setImportModal] = useState(false);
   const [importFile, setImportFile] = useState(null);
-  const [price, setPrice] = useState(null);
+  const [sharePrice, setSharePrice] = useState(null);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -325,8 +325,6 @@ const handlePageChange = useCallback((newPage) => {
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
-
-    console.log(selectedValue);
     
     if (selectedValue === 'SLL') {
       setShowFields(true);
@@ -417,6 +415,7 @@ const handlePageChange = useCallback((newPage) => {
       let formData = new FormData();
       formData.append("hasExpiry", validation.values.hasExpiry);
       formData.append("hasStrike", validation.values.hasStrike);
+      formData.append("sharePrice", sharePrice);
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
@@ -432,6 +431,7 @@ const handlePageChange = useCallback((newPage) => {
       setShowFields(false);
      
       validation.resetForm();
+      setSharePrice(null);
       setSelectedOption(null)
       toggle();
     },
@@ -440,6 +440,7 @@ const handlePageChange = useCallback((newPage) => {
   const handleReset = () => {
     validation.resetForm();
     setSelectedOption(null);
+    setSharePrice(null);
     setShowFields(false);
   
   };
@@ -551,7 +552,7 @@ const handlePageChange = useCallback((newPage) => {
   };
 
   const handleSymbolChange = (selected) => {
-    console.log("selectedOption", selected);
+   
     setSelectedOption(selected);
     validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
     validation.setFieldValue('optionType', '');
@@ -574,10 +575,8 @@ const handlePageChange = useCallback((newPage) => {
       if (response.data.error) {
         return error(response.data.message);
       }
-     
-      console.log(response.data?.data?.data?.[`${exchange}:${label}`]);
 
-      setPrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
+      setSharePrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
     });
 
   };
@@ -989,7 +988,6 @@ const handlePageChange = useCallback((newPage) => {
                               instrument_type: script.instrument_type,
                               last_price: script.last_price,
                               lot_size: script.lot_size,
-                              strike: script.strike,
                               tick_size: script.tick_size,
                               expiry: script.expiry
                             }))}

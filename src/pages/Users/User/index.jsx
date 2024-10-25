@@ -296,9 +296,9 @@ const Users = (props) => {
 
     },
     onSubmit: (values) => {
-    
+      
       const transformedArray = tags.map((item) => ({
-        strategy_id: item._id, // If item.blog_id exists, use it; otherwise, use item.id
+        strategy_id: item?.strategy_id ? item?.strategy_id : item?._id, // If item.blog_id exists, use it; otherwise, use item.id
         label: item.label,
         value: item.value,
         parent_id: values.id, // Add the desired parent_id value here
