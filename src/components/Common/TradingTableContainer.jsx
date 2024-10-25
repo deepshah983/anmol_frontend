@@ -64,8 +64,13 @@ const TradingTableContainer = ({
   navId,
   isPagination,
   isAddOptions,
+  isWatchList,
   isAddUserList,
   isExport,
+  eBuyClick,
+  eSellClick,
+  eShortClick,
+  eCoverClick,
   handleOrderClicks,
   handleUserClick,
   handleCustomerClick,
@@ -220,6 +225,7 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdis-plus " />
               </Button>
+              
               <Button
                 type="button"
                 color="danger"
@@ -229,6 +235,8 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdis-delete " />
               </Button>
+              {isWatchList &&
+              <>
               <Button
                 type="button"
                 color="info"
@@ -238,6 +246,7 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdi-arrow-up-bold" />
               </Button>
+              
               <Button
                 type="button"
                 color="info"
@@ -247,6 +256,8 @@ const TradingTableContainer = ({
               >
                 <i className="mdi mdi-arrow-down-bold" />
               </Button>
+              </>
+            }
             </div>
           </Col>
         )}
@@ -300,14 +311,18 @@ const TradingTableContainer = ({
                           {cell.render("Cell")}
                         </td>
                       ))}
+                      {isWatchList &&
+                      <td>
                       <span 
                         className="hello-span"
                       >
-                          <button className="btn btn-buy mx-1">Buy</button>
-                          <button className="btn btn-sell mx-1">Sell</button>
-                          <button className="btn btn-sell mx-1">Short</button>
-                          <button className="btn btn-buy mx-1">Cover</button>
+                          <button className="btn btn-buy mx-1" onClick={() => eBuyClick(row.original)}>Buy</button>
+                          <button className="btn btn-sell mx-1" onClick={() => eSellClick(row.original)}>Sell</button>
+                          <button className="btn btn-sell mx-1" onClick={() => eShortClick(row.original)}>Short</button>
+                          <button className="btn btn-buy mx-1" onClick={() => eCoverClick(row.original)}>Cover</button>
                       </span>
+                      </td>
+                     }
                     </tr>
                   </Fragment>
                 );
