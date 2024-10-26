@@ -69,7 +69,7 @@ const index = (props) => {
   const [loading, setLoading] = React.useState(true);
   const [importModal, setImportModal] = useState(false);
   const [importFile, setImportFile] = useState(null);
-  const [price, setPrice] = useState(null);
+  const [sharePrice, setSharePrice] = useState(0);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -214,15 +214,6 @@ const handleSearch = useCallback((searchTerm) => {
   }));
 }, []);
 
-// Page change handler
-const handlePageChange = useCallback((newPage) => {
-  setQuery(prev => ({
-    ...prev,
-    page: newPage
-  }));
-}, []);
-
-
 
   /**start export import funtions */
   const handleExport = async () => {
@@ -325,8 +316,6 @@ const handlePageChange = useCallback((newPage) => {
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
-
-    console.log(selectedValue);
     
     if (selectedValue === 'SLL') {
       setShowFields(true);
@@ -382,15 +371,15 @@ const handlePageChange = useCallback((newPage) => {
       }),
       qtyType: Yup.string().required("Please select a quantity type"),
       quantity: Yup.number().when("qtyType", {
-        is: "fixed",
+        is: "sl",
         then: Yup.number().required("Quantity is required").min(1, "Quantity must be positive")
       }),
       exposure: Yup.number().when("qtyType", {
-        is: "explorer",
+        is: "exposure",
         then: Yup.number().required("Exposure is required").min(1, "Exposure must be positive")
       }),
       roundLotSize: Yup.number().when("qtyType", {
-        is: "explorer",
+        is: "exposure",
         then: Yup.number().required("Round lot size is required").min(1, "Round lot size must be positive")
       }),
       prodType: Yup.string().required("Please Select Prod Type"),
@@ -417,6 +406,7 @@ const handlePageChange = useCallback((newPage) => {
       let formData = new FormData();
       formData.append("hasExpiry", validation.values.hasExpiry);
       formData.append("hasStrike", validation.values.hasStrike);
+      formData.append("sharePrice", sharePrice);
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
@@ -432,6 +422,7 @@ const handlePageChange = useCallback((newPage) => {
       setShowFields(false);
      
       validation.resetForm();
+      setSharePrice(0);
       setSelectedOption(null)
       toggle();
     },
@@ -440,6 +431,7 @@ const handlePageChange = useCallback((newPage) => {
   const handleReset = () => {
     validation.resetForm();
     setSelectedOption(null);
+    setSharePrice(0);
     setShowFields(false);
   
   };
@@ -474,6 +466,8 @@ const handlePageChange = useCallback((newPage) => {
   const handleCustomerClick = (arg) => {
     const nav = arg;
     
+    console.log(nav);
+    
     // Create the selected option object for the Select component
     const selectedSymbolOption = {
       label: nav?.terminalSymbol,
@@ -489,7 +483,7 @@ const handlePageChange = useCallback((newPage) => {
     
     // Set the selected option for the Select component
     setSelectedOption(selectedSymbolOption);
-
+    setSharePrice(nav?.sharePrice)
     setNav({
       id: nav._id,
       terminalSymbol: nav?.terminalSymbol,
@@ -551,7 +545,7 @@ const handlePageChange = useCallback((newPage) => {
   };
 
   const handleSymbolChange = (selected) => {
-    console.log("selectedOption", selected);
+   
     setSelectedOption(selected);
     validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
     validation.setFieldValue('optionType', '');
@@ -574,10 +568,8 @@ const handlePageChange = useCallback((newPage) => {
       if (response.data.error) {
         return error(response.data.message);
       }
-     
-      console.log(response.data?.data?.data?.[`${exchange}:${label}`]);
 
-      setPrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
+      setSharePrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
     });
 
   };
@@ -849,6 +841,8 @@ const handlePageChange = useCallback((newPage) => {
     setIsEdit(false);
     setShowFields(false);
     validation.resetForm();
+    setSharePrice(0);
+    setSelectedOption(null)
     toggle();
   };
 
@@ -989,7 +983,6 @@ const handlePageChange = useCallback((newPage) => {
                               instrument_type: script.instrument_type,
                               last_price: script.last_price,
                               lot_size: script.lot_size,
-                              strike: script.strike,
                               tick_size: script.tick_size,
                               expiry: script.expiry
                             }))}
@@ -1172,8 +1165,8 @@ const handlePageChange = useCallback((newPage) => {
                             invalid={validation.touched.qtyType && validation.errors.qtyType ? "true" : undefined}
                           >
                             <option value="">Select Qty</option>
-                            <option value="fixed">FIXED</option>
-                            <option value="explorer">EXPLORER</option>
+                            <option value="sl">STOP LOSS</option>
+                            <option value="exposure">EXPOSURE</option>
                           </Input>
                           {validation.touched.qtyType && validation.errors.qtyType ? (
                             <FormFeedback type="invalid">
@@ -1288,7 +1281,7 @@ const handlePageChange = useCallback((newPage) => {
                     
                       <div className="add-tread-beside">
                   
-                      {validation.values.qtyType === "fixed" && (
+                      {validation.values.qtyType === "sl" && (
                           <div className="add-tread col-md-4">
                             <Label className="form-label">Quantity</Label>
                             <Input
@@ -1310,7 +1303,7 @@ const handlePageChange = useCallback((newPage) => {
                         )}
                         </div>
                         
-                        {validation.values.qtyType === "explorer" && (
+                        {validation.values.qtyType === "exposure" && (
                           <>
                           <div className="add-tread-beside">
                             <div className="add-tread col-md-4">

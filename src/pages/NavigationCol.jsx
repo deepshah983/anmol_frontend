@@ -314,9 +314,9 @@ document.head.appendChild(styleSheet);
 // Move helper functions outside component to prevent recreation
 const getTypeStyles = (type) => {
   switch (type?.toLowerCase()) {
-    case 'fixed':
+    case 'sl':
       return 'qty-badge fixed-badge';
-    case 'explorer':
+    case 'exposure':
       return 'qty-badge explorer-badge';
     default:
       return '';
@@ -325,20 +325,20 @@ const getTypeStyles = (type) => {
 
 const getDisplayText = (type) => {
   switch (type?.toLowerCase()) {
-    case 'fixed':
-      return 'FIXED';
-    case 'explorer':
+    case 'sl':
+      return 'SL';
+    case 'exposure':
       return 'EXP';
     default:
       return type;
   }
 };
 
-const calculateValue = (qtyType, quantity, exposure, roundLotSize, price) => {
-  if (qtyType?.toLowerCase() === 'fixed') {
+const calculateValue = (qtyType, quantity, exposure, roundLotSize, sharePrice) => {
+  if (qtyType?.toLowerCase() === 'sl') {
     return quantity || 0;
-  } else if (qtyType?.toLowerCase() === 'explorer' && price && price !== 0) {
-    return `${exposure}(${price} * ${roundLotSize}) = ${Math.floor((exposure * roundLotSize) / price) || 0}`;
+  } else if (qtyType?.toLowerCase() === 'exposure' && sharePrice && sharePrice !== 0) {
+    return `${exposure}/(${sharePrice} * ${roundLotSize}) = ${Math.floor((exposure * roundLotSize) / sharePrice) || 0}`;
   }
   return 0;
 };
@@ -351,17 +351,17 @@ const QtyType = (cell) => {
     quantity,
     exposure,
     roundLotSize,
+    sharePrice
   } = cell.row.original;
 
-  const price = 555;
 
   return (
-    <div className={`badge-container ${qtyType?.toLowerCase() === 'fixed' ? 'fixed-container' : 'explorer-container'}`}>
+    <div className={`badge-container ${qtyType?.toLowerCase() === 'sl' ? 'fixed-container' : 'explorer-container'}`}>
       <span className={getTypeStyles(qtyType)}>
         {getDisplayText(qtyType)}
       </span>
       <span className="qty-value">
-        {calculateValue(qtyType, quantity, exposure, roundLotSize, price).toLocaleString()}
+        {calculateValue(qtyType, quantity, exposure, roundLotSize, sharePrice).toLocaleString()}
       </span>
     </div>
   );

@@ -298,9 +298,8 @@ const Users = (props) => {
 
     },
     onSubmit: (values) => {
-
       const transformedArray = tags.map((item) => ({
-        strategy_id: item._id, // If item.blog_id exists, use it; otherwise, use item.id
+        strategy_id: item?.strategy_id ? item?.strategy_id : item?._id, // If item.blog_id exists, use it; otherwise, use item.id
         label: item.label,
         value: item.value,
         parent_id: values.id, // Add the desired parent_id value here
@@ -532,17 +531,14 @@ const Users = (props) => {
               <Link
                 to="#"
                 className="text-success"
+                title="Manage Strategy"
                 onClick={() => {
-
+                  const customerData = cellProps.row.original;
+                  assignStrategyClick(customerData);
                 }}
               >
                 <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
-                <div className="text-success-script">
-                  <div onClick={() => {
-                    const customerData = cellProps.row.original;
-                    assignStrategyClick(customerData);
-                  }}>Manage Strategy</div>
-                </div>
+         
               </Link>
 
             </div>
