@@ -531,17 +531,14 @@ const Users = (props) => {
               <Link
                 to="#"
                 className="text-success"
+                title="Manage Strategy"
                 onClick={() => {
-
+                  const customerData = cellProps.row.original;
+                  assignStrategyClick(customerData);
                 }}
               >
                 <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
-                <div className="text-success-script">
-                  <div onClick={() => {
-                    const customerData = cellProps.row.original;
-                    assignStrategyClick(customerData);
-                  }}>Manage Strategy</div>
-                </div>
+         
               </Link>
 
             </div>

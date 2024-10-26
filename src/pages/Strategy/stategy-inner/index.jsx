@@ -233,6 +233,11 @@ const StrategyManagement = () => {
         Cell: ({ value }) => <Strategy value={value} />,
       },
       {
+        Header: "Number of Users",
+        accessor: "assignedUsersCount",
+        Cell: ({ value }) => <Strategy value={value} />,
+      },
+      {
         Header: "Action",
         Cell: ({ row }) => (
           <div className="d-flex gap-3">
