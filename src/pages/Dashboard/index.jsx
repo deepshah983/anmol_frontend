@@ -14,6 +14,9 @@ import { CircularProgress } from '@material-ui/core';
 import { withTranslation } from "react-i18next";
 import { getData } from "../../components/api";
 
+const TOKEN_STORAGE_KEY = 'tokenGeneratedTime';
+const ONE_HOUR = 60 * 60 * 1000; // 1 hour in milliseconds
+
 const TotalFundDisplay = ({ totalFundData }) => {
   const displayValue = 
     totalFundData.totalAvailableCash !== undefined && totalFundData.totalAvailableCash !== null
@@ -28,7 +31,6 @@ const TotalFundDisplay = ({ totalFundData }) => {
         icon={totalCapital}
       />
     </Col>
-
   );
 };
 
@@ -36,28 +38,79 @@ const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = useState({});
   const [totalFundData, setTotalFundData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [isTokenGenerated, setIsTokenGenerated] = useState(false); // Track token generation status
+  const [tokenState, setTokenState] = useState('idle');
+  const [buttonText, setButtonText] = useState('Generate Token');
+  const [timeRemaining, setTimeRemaining] = useState(null);
 
   useEffect(() => {
-    fetchDashboardData(); // Fetch dashboard data when component mounts
+    fetchDashboardData();
     fetchTotalFund();
+    checkTokenStatus();
   }, []);
 
   useEffect(() => {
     document.title = "Dashboard | Vishal Wealth Admin & Dashboard Template";
-  }, []); // Ensure document title updates correctly
+  }, []);
 
-  // Function to fetch data from your backend API
+  // Check token status and start timer if needed
+  const checkTokenStatus = () => {
+    const tokenTime = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (tokenTime) {
+      const generatedTime = parseInt(tokenTime);
+      const currentTime = Date.now();
+      const timeDiff = currentTime - generatedTime;
+
+      if (timeDiff < ONE_HOUR) {
+        setTokenState('generated');
+        setButtonText('Token Generated');
+        startTimer(ONE_HOUR - timeDiff);
+      } else {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+        resetTokenState();
+      }
+    }
+  };
+
+  const startTimer = (duration) => {
+    setTimeRemaining(Math.floor(duration / 1000));
+    
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          resetTokenState();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  };
+
+  const resetTokenState = () => {
+    setTokenState('idle');
+    setButtonText('Generate Token');
+    setTimeRemaining(null);
+  };
+
+  const formatTimeRemaining = (seconds) => {
+    if (!seconds) return '';
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   const fetchDashboardData = () => {
     getData("/dashboard/counts")
       .then((response) => {
         const countsData = response.data.data;
-        setDashboardData(countsData); // Set the dashboard data
-        setLoading(false); // Set loading to false after data is fetched
+        setDashboardData(countsData);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching dashboard data", error);
-        setLoading(false); // Set loading to false even if there is an error
+        setLoading(false);
       });
   };
 
@@ -65,17 +118,58 @@ const Dashboard = (props) => {
     getData("/dashboard/totalFund")
       .then((response) => {
         const countsData = response.data.data;
-        setTotalFundData(countsData); // Set the dashboard data
+        setTotalFundData(countsData);
       })
       .catch((error) => {
         console.error("Error fetching dashboard data", error);
-        setLoading(false); // Set loading to false even if there is an error
+        setLoading(false);
       });
   };
 
-  // Function to handle token generation
   const handleGenerateToken = () => {
-    setIsTokenGenerated(true); // Set token as generated and button color changes to green
+    setTokenState('generating');
+    setButtonText('Generating Token...');
+
+    getData("/dashboard/generateToken")
+      .then((response) => {
+        setTokenState('generating');
+        
+        setTimeout(() => {
+          setTokenState('generated');
+          setButtonText('Token Generated');
+          localStorage.setItem(TOKEN_STORAGE_KEY, Date.now().toString());
+          startTimer(ONE_HOUR);
+        }, 1000);
+      })
+      .catch((error) => {
+        console.error("Error generating token", error);
+        resetTokenState();
+      });
+  };
+
+  const getButtonClass = () => {
+    switch (tokenState) {
+      case 'generating':
+        return 'btn-warning';
+      case 'generated':
+        return 'bg-success text-white';
+      default:
+        return 'btn-outline-danger';
+    }
+  };
+
+  const getStatusText = () => {
+    if (tokenState === 'generated' && timeRemaining) {
+      return `Token will expire in ${formatTimeRemaining(timeRemaining)}`;
+    }
+    switch (tokenState) {
+      case 'generating':
+        return 'Token is being generated...';
+      case 'generated':
+        return 'Token has been generated.';
+      default:
+        return 'Please generate a token to proceed.';
+    }
   };
 
   if (loading) {
@@ -92,19 +186,20 @@ const Dashboard = (props) => {
             <div className="dashboard">
               <Row>
                 <Col xl="12" className="generate-token-col mb-4">
-                  <div xl="3" className="token-container d-flex flex-column align-items-center mt-3">
+                  <div className="token-container d-flex flex-column align-items-center mt-3">
                     <button
-                      className={`btn btn-lg ${isTokenGenerated ? 'bg-success' : 'btn-outline-danger'}`}
+                      className={`btn btn-lg ${getButtonClass()}`}
                       type="button"
-                      onClick={handleGenerateToken} // Handle button click
+                      onClick={handleGenerateToken}
+                      disabled={tokenState === 'generating' || tokenState === 'generated'}
                     >
                       <span className="btn-label mr-2">
                         <i className="fa fa-exclamation-circle"></i>
                       </span>
-                      {isTokenGenerated ? 'Token Generated' : 'Generate Token'}
+                      {buttonText}
                     </button>
                     <h6 className="text-muted font-weight-normal mt-3 text-center" style={{ fontSize: "15px" }}>
-                      {isTokenGenerated ? 'Token has been generated.' : 'Please generate a token to proceed.'}
+                      {getStatusText()}
                     </h6>
                   </div>
                 </Col>

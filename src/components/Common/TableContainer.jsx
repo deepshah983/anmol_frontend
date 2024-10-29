@@ -119,7 +119,7 @@ const TableContainer = ({
   );
 
   const generateSortingIndicator = (column) => {
-    return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : "";
+    return column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : " 🔽";
   };
 
   const onChangeInSelect = (event) => {
@@ -239,9 +239,13 @@ const TableContainer = ({
               <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <th key={column.id}>
-                    <div {...column.getSortByToggleProps()}>
+                    {/* <div {...column.getSortByToggleProps()}>
                       {column.render("Header")}
                       {generateSortingIndicator(column)}
+                    </div> */}
+                    <div>
+                      {column.render("Header")}
+                     
                     </div>
                   </th>
                 ))}

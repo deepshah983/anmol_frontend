@@ -162,7 +162,7 @@ const Users = (props) => {
       entryBalance: Yup.number()
         .required("Please Enter Entry Balance")
         .min(0, "Entry Balance must be at least 0"),
-      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier"),
+      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier").min(1, "Entry Balance must be at least 1"),
       status: Yup.string().test('conditional-required', 'Please Select Status', function (value) {
         // If the initial status is 0, don't require a value
         if (navigation?.status === 0 || navigation?.status === '0') {
@@ -847,7 +847,7 @@ const Users = (props) => {
                       ) : null}
                     </div>
                     <Col className="mb-3" md={12}>
-                      <Label htmlFor="quantityMultiplier">Quantity Multiplier</Label>
+                      <Label htmlFor="quantityMultiplier">Quantity Multiplier<small className="asterisk">*</small></Label>
                       <Input
                         name="quantityMultiplier"
                         id="quantityMultiplier"
