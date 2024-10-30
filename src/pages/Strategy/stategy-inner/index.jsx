@@ -30,6 +30,7 @@ import {
 } from "../../../components/api";
 import DeleteModal from "../../../components/Common/DeleteModal";
 import DeleteAllModal from "../../../components/Common/DeleteAllData";
+import SelectWarning from "../../../components/Common/SelectWarning";
 import TradingTableContainer from "../../../components/Common/TradingTableContainer";
 import { success, error } from "../../../components/toast";
 import HideShowSection from "../../../components/Common/HideShowSection";
@@ -43,6 +44,7 @@ const StrategyManagement = () => {
   const [strategy, setStrategy] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteAllModal, setDeleteAllModal] = useState(false);
+  const [warningModal, setWarningModal] = useState(false);
   const [selectedStrategies, setSelectedStrategies] = useState([]);
   const [total, setTotal] = useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -321,7 +323,11 @@ const StrategyManagement = () => {
 
    //delete all data
    const selectedDataDelete = () => {
+    if(selectedStrategies.length > 0){
     setDeleteAllModal(true);
+    }else{
+      setWarningModal(true);
+    }
   }
 
   const handlePagination = (page) => {
@@ -387,7 +393,39 @@ const StrategyManagement = () => {
     );
   };
 
+<style>
+{`
+  .time-input {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+  }
 
+  .time-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  /* Disable text selection for the input value */
+  .time-input::-webkit-datetime-edit {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+
+  .time-input::-webkit-datetime-edit-fields-wrapper {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+
+  .time-input::-webkit-datetime-edit-text,
+  .time-input::-webkit-datetime-edit-hour-field,
+  .time-input::-webkit-datetime-edit-minute-field,
+  .time-input::-webkit-datetime-edit-ampm-field {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+`}
+</style>
   return (
     <>
       <DeleteModal
@@ -399,6 +437,10 @@ const StrategyManagement = () => {
       show={deleteAllModal}
       onDeleteClick={handleDeleteAllData}
       onCloseClick={() => setDeleteAllModal(false)}
+    />
+     <SelectWarning
+      show={warningModal}
+      onCloseClick={() => setWarningModal(false)}
     />
       <div className="">
         <Container fluid>
@@ -449,87 +491,122 @@ const StrategyManagement = () => {
       </div>
 
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle} tag="h4">
-          {isEdit ? "Edit Strategy" : "Add Strategy"}
-        </ModalHeader>
-        <ModalBody>
-          <Form
-            id="createStrategy"
-            onSubmit={(e) => {
-              e.preventDefault();
-              validation.handleSubmit();
-            }}
-          >
-            <Row>
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="name">Strategy Name</Label>
-                <Input
-                  name="name"
-                  id="name"
-                  placeholder="Strategy Name"
-                  type="text"
-                  value={validation.values.name}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.name && validation.errors.name}
-                />
-                <FormFeedback>{validation.errors.name}</FormFeedback>
-              </Col>
+    <ModalHeader toggle={toggle} tag="h4">
+      {isEdit ? "Edit Strategy" : "Add Strategy"}
+    </ModalHeader>
+    <ModalBody>
+      <Form
+        id="createStrategy"
+        onSubmit={(e) => {
+          e.preventDefault();
+          validation.handleSubmit();
+        }}
+      >
+        <Row>
+          <Col className="mb-3" md={12}>
+            <Label htmlFor="name">Strategy Name</Label>
+            <Input
+              name="name"
+              id="name"
+              placeholder="Strategy Name"
+              type="text"
+              value={validation.values.name}
+              onBlur={validation.handleBlur}
+              onChange={validation.handleChange}
+              invalid={validation.touched.name && validation.errors.name}
+            />
+            <FormFeedback>{validation.errors.name}</FormFeedback>
+          </Col>
 
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="entryTime">Entry Time</Label>
-                <Input
-                  name="entryTime"
-                  id="entryTime"
-                  type="time"
-                  value={validation.values.entryTime}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.entryTime && validation.errors.entryTime}
-                />
-                <FormFeedback>{validation.errors.entryTime}</FormFeedback>
-              </Col>
+          <Col className="mb-3" md={12}>
+            <Label htmlFor="entryTime">Entry Time</Label>
+            <div className="time-input-wrapper">
+              <Input
+                name="entryTime"
+                id="entryTime"
+                type="time"
+                className="time-input"
+                value={validation.values.entryTime}
+                onBlur={validation.handleBlur}
+                onChange={validation.handleChange}
+                invalid={validation.touched.entryTime && validation.errors.entryTime}
+                style={{ cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.showPicker();
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  document.getSelection()?.removeAllRanges();
+                }}
+              />
+            </div>
+            <FormFeedback>{validation.errors.entryTime}</FormFeedback>
+          </Col>
 
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="exitTime">Exit Time</Label>
-                <Input
-                  name="exitTime"
-                  id="exitTime"
-                  type="time"
-                  value={validation.values.exitTime}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.exitTime && validation.errors.exitTime}
-                />
-                <FormFeedback>{validation.errors.exitTime}</FormFeedback>
-              </Col>
+          <Col className="mb-3" md={12}>
+            <Label htmlFor="exitTime">Exit Time</Label>
+            <div className="time-input-wrapper">
+              <Input
+                name="exitTime"
+                id="exitTime"
+                type="time"
+                className="time-input"
+                value={validation.values.exitTime}
+                onBlur={validation.handleBlur}
+                onChange={validation.handleChange}
+                invalid={validation.touched.exitTime && validation.errors.exitTime}
+                style={{ cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.showPicker();
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  document.getSelection()?.removeAllRanges();
+                }}
+              />
+            </div>
+            <FormFeedback>{validation.errors.exitTime}</FormFeedback>
+          </Col>
 
-              <Col className="mb-3" md={12}>
-                <Label htmlFor="squareOffTime">Square-off Time</Label>
-                <Input
-                  name="squareOffTime"
-                  id="squareOffTime"
-                  type="time"
-                  value={validation.values.squareOffTime}
-                  onBlur={validation.handleBlur}
-                  onChange={validation.handleChange}
-                  invalid={validation.touched.squareOffTime && validation.errors.squareOffTime}
-                />
-                <FormFeedback>{validation.errors.squareOffTime}</FormFeedback>
-              </Col>
-              <div
-              style={{ textAlign: "right"}}
-              >
-              <Col className="mb-3">
-                <Button color="primary" type="submit">
-                  {isEdit ? "Update" : "Submit"}
-                </Button>
-              </Col>
-              </div>
-            </Row>
-          </Form>
-        </ModalBody>
-      </Modal>
+          <Col className="mb-3" md={12}>
+            <Label htmlFor="squareOffTime">Square-off Time</Label>
+            <div className="time-input-wrapper">
+              <Input
+                name="squareOffTime"
+                id="squareOffTime"
+                type="time"
+                className="time-input"
+                value={validation.values.squareOffTime}
+                onBlur={validation.handleBlur}
+                onChange={validation.handleChange}
+                invalid={validation.touched.squareOffTime && validation.errors.squareOffTime}
+                style={{ cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.showPicker();
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  document.getSelection()?.removeAllRanges();
+                }}
+              />
+            </div>
+            <FormFeedback>{validation.errors.squareOffTime}</FormFeedback>
+          </Col>
+          
+          <div style={{ textAlign: "right" }}>
+            <Col className="mb-3">
+              <Button color="primary" type="submit">
+                {isEdit ? "Update" : "Submit"}
+              </Button>
+            </Col>
+          </div>
+        </Row>
+      </Form>
+    </ModalBody>
+</Modal>
     </>
   );
 };
