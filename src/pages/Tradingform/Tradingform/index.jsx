@@ -28,6 +28,7 @@ import { getData, postData, updateData, deleteData } from "../../../components/a
 import themeConfig from "../../../configs/themeConfig";
 import DeleteModal from "../../../components/Common/DeleteModal";
 import DeleteAllModal from "../../../components/Common/DeleteAllData";
+import SelectWarning from "../../../components/Common/SelectWarning";
 import TradingTableContainer from "../../../components/Common/TradingTableContainer";
 import { success, error } from "../../../components/toast";
 // Column
@@ -69,7 +70,7 @@ const index = (props) => {
   const [loading, setLoading] = React.useState(true);
   const [importModal, setImportModal] = useState(false);
   const [importFile, setImportFile] = useState(null);
-  const [price, setPrice] = useState(null);
+  const [sharePrice, setSharePrice] = useState(0);
   const [query, setQuery] = useState({
     offset: 0,
     limit: 20,
@@ -133,10 +134,15 @@ const fetchScripts = useCallback(async () => {
 
 const eBuyClick = (data) => {
   console.log('Selected data:', data);
+
+    buySell(data, "BUY");
+
 };
 
 const eSellClick = (data) => {
   console.log('Selected data:', data);
+
+    buySell(data, "SELL")
 };
 
 const eShortClick = (data) => {
@@ -146,6 +152,40 @@ const eShortClick = (data) => {
 const eCoverClick = (data) => {
   console.log('Selected data:', data);
 };
+
+
+const buySell = (data, transactiontype) => {
+
+  let form_data = {
+    "variety":"NORMAL",
+    "tradingsymbol":data?.terminalSymbol,
+    "symboltoken":"3045",
+    "transactiontype":transactiontype,
+    "exchange":data?.exchange,
+    "ordertype": data?.entryOrder,
+    "producttype": data?.prodType,
+    "duration":"DAY",
+    "price": data?.sharePrice,
+    "squareoff":"0",
+    "stoploss":"0",
+    "quantity":data?.quantity
+    };
+
+
+  postData("tradingForm/buy-sell", form_data)
+  .then((response) => {
+    if (response.data.error) {
+      return error(response.data.message);
+    }
+    query.page = 0;
+    setQuery({ ...query });
+    request();
+    return success(response.data.message);
+  })
+  .catch((error) => {
+    return error(error);
+  });
+}
 
   // New search function to fetch data based on input
   const searchScripts = (searchTerm) => {
@@ -213,15 +253,6 @@ const handleSearch = useCallback((searchTerm) => {
     page: 0 // Reset page when searching
   }));
 }, []);
-
-// Page change handler
-const handlePageChange = useCallback((newPage) => {
-  setQuery(prev => ({
-    ...prev,
-    page: newPage
-  }));
-}, []);
-
 
 
   /**start export import funtions */
@@ -325,8 +356,6 @@ const handlePageChange = useCallback((newPage) => {
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
-
-    console.log(selectedValue);
     
     if (selectedValue === 'SLL') {
       setShowFields(true);
@@ -365,6 +394,10 @@ const handlePageChange = useCallback((newPage) => {
       triggerPrice: (navigation && navigation.triggerPrice) || "",
       hasExpiry: false,
       hasStrike: false,
+      exchange: (navigation && navigation.exchange) || "",
+      tickSize: (navigation && navigation.tickSize) || "",
+      instrumentType: (navigation && navigation.instrumentType) || "",
+      lotSize: (navigation && navigation.lotSize) || "",
     },
 
     validationSchema: Yup.object().shape({
@@ -382,15 +415,15 @@ const handlePageChange = useCallback((newPage) => {
       }),
       qtyType: Yup.string().required("Please select a quantity type"),
       quantity: Yup.number().when("qtyType", {
-        is: "fixed",
+        is: "sl",
         then: Yup.number().required("Quantity is required").min(1, "Quantity must be positive")
       }),
       exposure: Yup.number().when("qtyType", {
-        is: "explorer",
+        is: "exposure",
         then: Yup.number().required("Exposure is required").min(1, "Exposure must be positive")
       }),
       roundLotSize: Yup.number().when("qtyType", {
-        is: "explorer",
+        is: "exposure",
         then: Yup.number().required("Round lot size is required").min(1, "Round lot size must be positive")
       }),
       prodType: Yup.string().required("Please Select Prod Type"),
@@ -417,6 +450,11 @@ const handlePageChange = useCallback((newPage) => {
       let formData = new FormData();
       formData.append("hasExpiry", validation.values.hasExpiry);
       formData.append("hasStrike", validation.values.hasStrike);
+      formData.append("exchange", validation.values.exchange);
+      formData.append("tickSize", validation.values.tickSize);
+      formData.append("instrumentType", validation.values.instrumentType);
+      formData.append("lotSize", validation.values.lotSize);
+      formData.append("sharePrice", sharePrice);
       Object.keys(form).map((key) => {
         formData.append(key, form[key]);
       });
@@ -432,6 +470,7 @@ const handlePageChange = useCallback((newPage) => {
       setShowFields(false);
      
       validation.resetForm();
+      setSharePrice(0);
       setSelectedOption(null)
       toggle();
     },
@@ -440,6 +479,7 @@ const handlePageChange = useCallback((newPage) => {
   const handleReset = () => {
     validation.resetForm();
     setSelectedOption(null);
+    setSharePrice(0);
     setShowFields(false);
   
   };
@@ -474,6 +514,8 @@ const handlePageChange = useCallback((newPage) => {
   const handleCustomerClick = (arg) => {
     const nav = arg;
     
+    console.log(nav);
+    
     // Create the selected option object for the Select component
     const selectedSymbolOption = {
       label: nav?.terminalSymbol,
@@ -489,7 +531,7 @@ const handlePageChange = useCallback((newPage) => {
     
     // Set the selected option for the Select component
     setSelectedOption(selectedSymbolOption);
-
+    setSharePrice(nav?.sharePrice)
     setNav({
       id: nav._id,
       terminalSymbol: nav?.terminalSymbol,
@@ -551,7 +593,9 @@ const handlePageChange = useCallback((newPage) => {
   };
 
   const handleSymbolChange = (selected) => {
-    console.log("selectedOption", selected);
+   
+    console.log(selected);
+    
     setSelectedOption(selected);
     validation.setFieldValue('terminalSymbol', selected ? selected.value : '');
     validation.setFieldValue('optionType', '');
@@ -559,6 +603,11 @@ const handlePageChange = useCallback((newPage) => {
     validation.setFieldValue('dynamicStrike', '');
     validation.setFieldValue('hasExpiry', selected && selected.expiry ? true : false);
     validation.setFieldValue('hasStrike', selected && selected.strike ? true : false);
+
+    validation.setFieldValue('exchange', selected?.exchange);
+    validation.setFieldValue('tickSize', selected?.tick_size);
+    validation.setFieldValue('instrumentType', selected?.instrument_type);
+    validation.setFieldValue('lotSize', selected?.lot_size);
 
     if (selected.exchange === 'NFO') {
       setIsInputDisabled(false); // Enable input if exchange is "NFO"
@@ -574,10 +623,8 @@ const handlePageChange = useCallback((newPage) => {
       if (response.data.error) {
         return error(response.data.message);
       }
-     
-      console.log(response.data?.data?.data?.[`${exchange}:${label}`]);
 
-      setPrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
+      setSharePrice(response.data?.data?.data?.[`${exchange}:${label}`]?.last_price)
     });
 
   };
@@ -800,6 +847,7 @@ const handlePageChange = useCallback((newPage) => {
   //delete customer
   const [deleteModal, setDeleteModal] = useState(false);
   const [deleteAllModal, setDeleteAllModal] = useState(false);
+  const [warningModal, setWarningModal] = useState(false);
   const onClickDelete = (navigation) => {
 
     setNav(navigation);
@@ -849,12 +897,18 @@ const handlePageChange = useCallback((newPage) => {
     setIsEdit(false);
     setShowFields(false);
     validation.resetForm();
+    setSharePrice(0);
+    setSelectedOption(null)
     toggle();
   };
 
   //delete all data
   const selectedDataDelete = () => {
+    if(selectedStrategies.length > 0){
     setDeleteAllModal(true);
+    }else{
+      setWarningModal(true);
+    }
   }
 
   const handlePagination = (page) => {
@@ -937,6 +991,10 @@ const handlePageChange = useCallback((newPage) => {
         onDeleteClick={handleDeleteAllData}
         onCloseClick={() => setDeleteAllModal(false)}
       />
+       <SelectWarning
+        show={warningModal}
+        onCloseClick={() => setWarningModal(false)}
+     />
       <Card>
         <CardBody>
         <TradingTableContainer
@@ -989,7 +1047,6 @@ const handlePageChange = useCallback((newPage) => {
                               instrument_type: script.instrument_type,
                               last_price: script.last_price,
                               lot_size: script.lot_size,
-                              strike: script.strike,
                               tick_size: script.tick_size,
                               expiry: script.expiry
                             }))}
@@ -1172,8 +1229,8 @@ const handlePageChange = useCallback((newPage) => {
                             invalid={validation.touched.qtyType && validation.errors.qtyType ? "true" : undefined}
                           >
                             <option value="">Select Qty</option>
-                            <option value="fixed">FIXED</option>
-                            <option value="explorer">EXPLORER</option>
+                            <option value="sl">STOP LOSS</option>
+                            <option value="exposure">EXPOSURE</option>
                           </Input>
                           {validation.touched.qtyType && validation.errors.qtyType ? (
                             <FormFeedback type="invalid">
@@ -1194,7 +1251,7 @@ const handlePageChange = useCallback((newPage) => {
                           >
                             <option value="" disabled>Select Entry Order</option>
                             <option value="SLL">SLL</option>
-                            <option value="market">MARKET</option>
+                            <option value="MARKET">MARKET</option>
                           </Input>
                           {validation.touched.entryOrder && validation.errors.entryOrder ? (
                             <FormFeedback type="invalid">
@@ -1214,8 +1271,8 @@ const handlePageChange = useCallback((newPage) => {
                                 invalid={validation.touched.exitOrder && validation.errors.exitOrder ? true : false}
                               >
                                 <option value="">Select Exit Order</option>
-                                <option value="Intraday">MARKET</option>
-                                <option value="Delivery">Delivery</option>
+                                <option value="MARKET">MARKET</option>
+                                <option value="DELIVERY">Delivery</option>
                               </Input>
                            
                           {validation.touched.exitOrder && validation.errors.exitOrder ? (
@@ -1288,7 +1345,7 @@ const handlePageChange = useCallback((newPage) => {
                     
                       <div className="add-tread-beside">
                   
-                      {validation.values.qtyType === "fixed" && (
+                      {validation.values.qtyType === "sl" && (
                           <div className="add-tread col-md-4">
                             <Label className="form-label">Quantity</Label>
                             <Input
@@ -1310,7 +1367,7 @@ const handlePageChange = useCallback((newPage) => {
                         )}
                         </div>
                         
-                        {validation.values.qtyType === "explorer" && (
+                        {validation.values.qtyType === "exposure" && (
                           <>
                           <div className="add-tread-beside">
                             <div className="add-tread col-md-4">

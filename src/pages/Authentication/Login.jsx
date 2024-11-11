@@ -187,18 +187,6 @@ const Login = (props) => {
                           Forgot your password?
                         </Link>
                       </div>
-
-                      <div className="mt-1 text-center">
-                        <span className="text-muted">
-                          Don't have an account?{" "}
-                          <Link
-                            to="/register"
-                            className="font-weight-medium text-primary"
-                          >
-                            Register
-                          </Link>
-                        </span>
-                      </div>
                     </Form>
                   </div>
                 </CardBody>
