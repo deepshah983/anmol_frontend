@@ -137,7 +137,7 @@ const Login2 = () => {
 
                           <div className="mt-3 d-grid">
                             <button
-                              className="btn btn-primary btn-block "
+                              className="btn btn-block "
                               type="submit"
                             >
                               Log In

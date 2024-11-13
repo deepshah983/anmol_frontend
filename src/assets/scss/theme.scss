@@ -1387,14 +1387,19 @@ select[disabled] {
   background-color: #eff2f7;
 }
 
-
-.custom-react-select__option--is-focused {
-  background-color: #a7844c !important;
-  color: #fff; /* Optional: text color for better readability */
+#sidebar-menu .mm-show.mm-active .mm-active:hover a{
+  background-color: rgba(186, 148, 88, 0.9) !important;
+    color: #ffffff;
+    border: rgb(174 139 83 / 100%) !important;
 }
 
 /* Change background color for selected option in dropdown */
 .custom-react-select__option--is-selected {
   background-color: #a7844c !important;
   color: #fff; /* Optional: text color for better readability */
+}
+
+[type="invalid"] {
+  font-size: 12px;
+  color: red;
 }

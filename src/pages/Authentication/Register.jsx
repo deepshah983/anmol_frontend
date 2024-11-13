@@ -163,7 +163,7 @@ const Register = props => {
 
                       <div className="mt-4">
                         <button
-                          className="btn btn-primary btn-block "
+                          className="btn btn-block "
                           style={{ width:"100%" }}
                           type="submit"
                         >
