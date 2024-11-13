@@ -47,7 +47,7 @@ function* loginUser({ payload: { user, history } }) {
         yield put(loginSuccess(response));
       } else {
         // Dispatch API error action
-        yield put(apiError(response.msg));
+        yield put(apiError(response?.data?.message));
       }
       
     } else if (import.meta.env.VITE_APP_DEFAULTAUTH === "fake") {
@@ -60,7 +60,7 @@ function* loginUser({ payload: { user, history } }) {
       yield put(loginSuccess(response));
     }
   } catch (error) {
-    yield put(apiError(error.message));
+    yield put(apiError(error?.response?.data?.message));
   }
 }
 
