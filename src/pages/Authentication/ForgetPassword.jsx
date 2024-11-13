@@ -233,7 +233,7 @@ const changePassword = (values) => {
                       <Row className="mb-3">
                         <Col className="text-end p-0">
                           <button
-                            className="btn btn-primary btn-block"
+                            className="btn btn-block"
                             type="submit"
                             style={{ width: "100%" }}
                           >
@@ -292,7 +292,7 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary btn-block"
+                          className="btn btn-block"
                           type="submit"
                           style={{ width: "100%" }}
                         >
@@ -371,7 +371,7 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary btn-block"
+                          className="btn btn-block"
                           type="submit"
                           style={{ width: "100%" }}
                         >

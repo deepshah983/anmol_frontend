@@ -149,7 +149,7 @@ const Register = () => {
 
                       <div className="mt-4 d-grid">
                         <button
-                          className="btn btn-primary btn-block "
+                          className="btn btn-block "
                           type="submit"
                         >
                           Register

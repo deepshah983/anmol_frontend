@@ -228,7 +228,7 @@ const UserProfile = (props) => {
                 <div className="text-end">
                   <button 
                     type="submit" 
-                    className="btn btn-primary btn-block"
+                    className="btn btn-block"
                     style={{ color: "#ffffff", backgroundColor: "#b18d57", border: "1px solid #b18d57" }}
                   >
                     Update

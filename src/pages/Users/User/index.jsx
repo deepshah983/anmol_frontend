@@ -537,7 +537,7 @@ const Users = (props) => {
                   assignStrategyClick(customerData);
                 }}
               >
-                <i className="mdi mdi-form-select font-size-18" id="edittooltip" />
+                <i className="mdi mdi-form-select font-size-20" id="edittooltip" />
          
               </Link>
 

@@ -592,7 +592,7 @@ const RightSidebar = props => {
 
               <Link
                 to="//1.envato.market/skotereact"
-                className="btn btn-primary btn-block mt-3"
+                className="btn btn-block mt-3"
                 target="_blank"
               >
                 <i className="mdi mdi-cart ms-1" /> Purchase Now
