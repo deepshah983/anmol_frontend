@@ -178,7 +178,7 @@ const changePassword = (values) => {
                   <Row>
                     <Col xs={12}>
                       <div className="text-primary p-4">
-                        <h5 className="text-primary mb-0">Welcome Back !</h5>
+                        <h5 className="text-primary mb-0">Welcome Back!</h5>
                       
                       </div>
                     </Col>
@@ -213,7 +213,7 @@ const changePassword = (values) => {
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}

@@ -7,6 +7,7 @@ const DashboardCounts = ({ icon, title, number, status, link }) => {
 
   return (
     <Card className="overflow-hidden">
+      <Link to={status === 'all' ? '/users' : `/users?status=${status}`}>
       <div className="bg-soft dashboard">
         <Row>
           <Col xs="9">
@@ -20,9 +21,8 @@ const DashboardCounts = ({ icon, title, number, status, link }) => {
           <Col xs="3">
             <div className="text-primary total-numbers p-3">
               {status !== null ? (
-                <Link to={status === 'all' ? '/users' : `/users?status=${status}`}>
+                
                   <h2 className="numbers">{number}</h2>
-                </Link>
               ) : (
                 <h2 className="numbers">{number}</h2>
               )}
@@ -30,6 +30,7 @@ const DashboardCounts = ({ icon, title, number, status, link }) => {
           </Col>
         </Row>
       </div>
+      </Link>
     </Card>
   );
 };

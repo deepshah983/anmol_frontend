@@ -42,7 +42,7 @@ const ForgetPasswordPage = () => {
                   <Row>
                     <Col className="col-7">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary">Welcome Back!</h5>
                         <p>Sign in to continue to Skote.</p>
                       </div>
                     </Col>
@@ -80,7 +80,7 @@ const ForgetPasswordPage = () => {
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}

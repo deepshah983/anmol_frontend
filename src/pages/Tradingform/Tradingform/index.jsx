@@ -934,7 +934,7 @@ const handleSearch = useCallback((searchTerm) => {
       <div className="mt-2">
         <div className="container position-absolute">
           <div className="row">
-            <div className="col-sm-4">Total: {total}</div>
+            <div className="col-sm-4 font-size-15">Total: {total}</div>
           </div>
         </div>
         <ReactPaginate
@@ -974,7 +974,7 @@ const handleSearch = useCallback((searchTerm) => {
             <div
               style={{ textAlign: "right" }}
             >
-              <Button color="primary" onClick={handleImport}>
+              <Button className="btn-block" onClick={handleImport}>
                 Import
               </Button>
             </div>
@@ -1422,7 +1422,7 @@ const handleSearch = useCallback((searchTerm) => {
                       {!isEdit &&
                         <button
                           type="button"
-                          className="btn btn-danger save-customer mx-2"
+                          className="btn btn-danger save-customer mx-2 btn-block"
                           onClick={handleReset}
                         >
                           Reset
@@ -1430,7 +1430,7 @@ const handleSearch = useCallback((searchTerm) => {
                       }
                       <button
                         type="submit"
-                        className="btn btn-success save-customer"
+                        className="btn btn-success save-customer btn-block"
                       >
                         Save
                       </button>
