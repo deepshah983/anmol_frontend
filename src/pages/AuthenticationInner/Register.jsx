@@ -98,7 +98,7 @@ const Register = () => {
                           id="email"
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}

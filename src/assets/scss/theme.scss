@@ -58,9 +58,6 @@ body {
     }
   }
 
-  // #sidebar-menu ul li a.main.active{
-  //   color: #fff !important;
-  // }
 }
 
 #sidebar-menu {
@@ -497,6 +494,11 @@ span.flatpickr-weekday {
       width: 150px !important;
     }
   }
+  tbody{
+    tr{
+      vertical-align: middle;
+    }
+  }
 }
 
 .editor_email .ck-content {
@@ -667,8 +669,8 @@ input:-webkit-autofill:active {
 .select__menu,
 .css-1nmdiq5-menu {
   background-color: var(--#{$prefix}card-bg) !important;
-  box-shadow: 0 0 0 1px var(--#{$prefix}border-color),
-  0 4px 11px var(--#{$prefix}border-color) !important;
+  box-shadow: 0 0 0 0px var(--#{$prefix}border-color),
+  0 3px 3px #bbb4b4 !important;
 }
 
 .select2-selection__option--is-focused,
@@ -727,13 +729,6 @@ input:-webkit-autofill:active {
   color: rgb(222, 222, 31);
 }
 
-// body.vertical-collpsed .vertical-menu #sidebar-menu > ul > li > a,
-// .vertical-collpsed .vertical-menu #sidebar-menu > ul > li > ul a {
-//   text-overflow: ellipsis;
-//   display: block;
-//   overflow: hidden;
-// }
-
 .imgBoxSm {
   width: 110px;
   height: auto;
@@ -748,7 +743,6 @@ input:-webkit-autofill:active {
 .table thead tr th:last-child,
 .custom-header-css tbody tr td:last-child,
 tbody.myTbody tr td:last-child {
-  
   min-width: unset;
 }
 
@@ -757,7 +751,7 @@ tbody.myTbody tr td:last-child {
 }
 
 .table td a:hover {
-  color: #556ee6;
+  color: #a7844c;
 }
 
 textarea.form-control {
@@ -1233,6 +1227,12 @@ textarea.form-control {
 .myTbody tr td:first-child {
   min-width: 0 !important;
 }
+
+.myTbody td,
+.myTbody td button {
+    cursor: default !important;
+}
+
 tbody tr td:first-child .form-check, thead tr th:first-child .form-check{
   display: flex;
   justify-content: center;
@@ -1349,4 +1349,52 @@ tbody tr td:first-child .form-check, thead tr th:first-child .form-check{
 select[disabled] {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+#createStrategy,#treadSetting,#traingForm,#createClient,#assignStrategy,.form-horizontal{
+  .btn-block{
+    background-color: rgb(174 139 83 / 100%) !important;
+    color: #ffffff;
+    border: rgb(174 139 83 / 100%) !important;
+    padding: 8px 16px;
+  }  
+  .btn-block:hover{
+    background-color: rgba(186, 148, 88, 0.9) !important;
+    color: #ffffff;
+    border: rgb(174 139 83 / 100%) !important;
+  }
+}
+
+
+
+
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.no-arrows[type=number] {
+    -moz-appearance: textfield;
+}
+
+.text-success{
+  color:#a7844c !important;
+}
+
+#sidebar-menu .mm-show.mm-active li:hover a{
+  background-color: #eff2f7;
+}
+
+
+.custom-react-select__option--is-focused {
+  background-color: #a7844c !important;
+  color: #fff; /* Optional: text color for better readability */
+}
+
+/* Change background color for selected option in dropdown */
+.custom-react-select__option--is-selected {
+  background-color: #a7844c !important;
+  color: #fff; /* Optional: text color for better readability */
 }

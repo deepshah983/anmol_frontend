@@ -451,7 +451,7 @@ const Users = (props) => {
                   handleCheckingClick(customerData);
                 }}
               >
-                <i className="mdi mdi-account-check font-size-18" id="edittooltip" />
+                <i className="mdi mdi-account-check font-size-20" id="edittooltip" />
               </Link>
             </div>
           );
@@ -506,7 +506,7 @@ const Users = (props) => {
         },
       },
       {
-        Header: "Assign Stratagies",
+        Header: "Assign Strategies",
         accessor: "assignedstrategy",
         filterable: true,
         Cell: (cellProps) => {
@@ -684,7 +684,7 @@ const Users = (props) => {
                 ))}
               </select>
             </div> */}
-            <div className="col-sm-4">Total: {total}</div>
+            <div className="col-sm-4 font-size-15">Total: {total}</div>
           </div>
         </div>
         <ReactPaginate
@@ -809,6 +809,7 @@ const Users = (props) => {
                       <Input
                         name="phone"
                         type="number"
+                        className="no-arrows"
                         placeholder="Enter Mobile Number"
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}
@@ -895,7 +896,7 @@ const Users = (props) => {
                     <div className="text-end">
                       <button
                         type="submit"
-                        className="btn btn-success save-customer"
+                        className="btn btn-success save-customer btn-block"
                       >
                         Save
                       </button>
@@ -908,7 +909,7 @@ const Users = (props) => {
 
           <Modal isOpen={modalCheck} toggle={toggleCheck}>
             <ModalHeader toggle={toggleCheck} tag="h4">
-              {!!isEdit ? "My Tread Setting" : "My Tread Setting"}
+              {!!isEdit ? "My Trade Setting" : "My Trade Setting"}
             </ModalHeader>
             <ModalBody>
               <Form
@@ -927,7 +928,7 @@ const Users = (props) => {
                       <Input
                         name="userId"
                         type="text"
-                        placeholder="Select User ID"
+                        placeholder="Add User ID"
                         onChange={validationTreadSetting.handleChange}
                         onBlur={validationTreadSetting.handleBlur}
                         value={validationTreadSetting.values?.userId || ""}
@@ -948,7 +949,7 @@ const Users = (props) => {
                       <Input
                         name="pin"
                         type="text"
-                        placeholder="Select Pin"
+                        placeholder="Add Pin"
                         onChange={validationTreadSetting.handleChange}
                         onBlur={validationTreadSetting.handleBlur}
                         value={validationTreadSetting.values?.pin || ""}
@@ -969,7 +970,7 @@ const Users = (props) => {
                       <Input
                         name="userKey"
                         type="text"
-                        placeholder="Select User Key"
+                        placeholder="Add User Key"
                         onChange={validationTreadSetting.handleChange}
                         onBlur={validationTreadSetting.handleBlur}
                         value={validationTreadSetting.values?.userKey || ""}
@@ -986,12 +987,12 @@ const Users = (props) => {
                       ) : null}
                     </div>
                     <div className="mb-3">
-                      <Label className="form-label">App key<small className="asterisk">*</small></Label>
+                      <Label className="form-label">App Key<small className="asterisk">*</small></Label>
 
                       <Input
                         name="appKey"
                         type="text"
-                        placeholder="Select Appkey"
+                        placeholder="Add App Key"
                         onChange={validationTreadSetting.handleChange}
                         onBlur={validationTreadSetting.handleBlur}
                         value={validationTreadSetting.values?.appKey || ""}
@@ -1014,7 +1015,7 @@ const Users = (props) => {
                     <div className="text-end">
                       <button
                         type="submit"
-                        className="btn btn-success save-customer"
+                        className="btn btn-success save-customer btn-block"
                       >
                         Save
                       </button>
@@ -1028,7 +1029,7 @@ const Users = (props) => {
           {/* start assign strategy popup */}
           <Modal isOpen={modalAssignStrategy} toggle={toggleAssignStrategy}>
             <ModalHeader toggle={toggleAssignStrategy} tag="h4">
-              Stratagy
+              Strategy
             </ModalHeader>
             <ModalBody>
               <Form
@@ -1069,7 +1070,7 @@ const Users = (props) => {
                 <Row>
                   <Col>
                     <div className="d-flex justify-content-end">
-                      <Button color="success" type="submit">
+                      <Button color="success btn-block" type="submit">
                         Save
                       </Button>
                     </div>

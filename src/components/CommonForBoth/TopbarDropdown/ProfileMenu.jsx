@@ -42,10 +42,10 @@ const ProfileMenu = (props) => {
   return (
     <React.Fragment>
       <Dropdown isOpen={menu} onClick={() => setMenu((menu) => !menu)} className="d-inline-block" >
-        <DropdownToggle className="btn header-item " id="page-header-user-dropdown" tag="button" >
+        <DropdownToggle className="btn header-item" id="page-header-user-dropdown" tag="button" style={{ display: 'flex', alignItems: 'center' }}>
           <img className="rounded-circle header-profile-user" src={user1} alt="Header Avatar" />
           <span className="d-none d-xl-inline-block ms-2 me-1"  >{username}</span>
-          <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
+          <i className="mdi mdi-chevron-down d-none d-xl-inline-block" style={{ fontSize: '30px' }}  />
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
           <Link tag="a" to="/profile" className="dropdown-item">

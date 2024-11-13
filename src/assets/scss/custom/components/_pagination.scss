@@ -15,3 +15,19 @@
         line-height: 32px;
     }
   }
+  .pagination{
+    .prev-item a{
+        padding: 0px 8px; font-size: 20px;
+    }
+    .next-item a{
+        padding: 0px 8px; font-size: 20px;
+    }
+  }
+
+  .page-link.active, .active > .page-link {
+    z-index: 3;
+    color: var(--bs-pagination-active-color);
+    background-color: #a7844c;
+    border-color: #a7844c;
+    padding: 6.5px 10px;
+}

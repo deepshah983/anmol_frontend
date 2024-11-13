@@ -61,7 +61,7 @@ const Header = props => {
     event.preventDefault();
 
   const [isSidebarEnabled, setIsSidebarEnabled] = useState(true);
-  const [icon, setIcon] = useState(fa-times); // Initial icon
+  const [icon, setIcon] = useState(fa-bars); // Initial icon
 
   const handleToggle = () => {
       setIsSidebarEnabled(!isSidebarEnabled);
@@ -85,7 +85,7 @@ const Header = props => {
           style={{ cursor: 'default' }} 
         >
           <i
-            className={`fa fa-fw ${menuOpen ? 'fa-times' : 'fa-bars'}`}
+            className={`fa fa-fw ${menuOpen ? 'fa-bars' : 'fa-bars'}`}
             onClick={handleMenuToggle}
             style={{ cursor: 'pointer' }} 
           />

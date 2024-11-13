@@ -366,7 +366,7 @@ const StrategyManagement = () => {
                 ))}
               </select>
             </div> */}
-            <div className="col-sm-4">Total: {total}</div>
+            <div className="col-sm-4 font-size-15">Total: {total}</div>
           </div>
         </div>
         <ReactPaginate
@@ -450,7 +450,7 @@ const StrategyManagement = () => {
           >
             <Button
               color="secondary"
-              className="btn btn-secondary me-1 float-end"
+              className="btn btn-secondary me-1 float-end btn-block"
               onClick={handleActionOnSelected}
               disabled={selectedStrategies.length === 0}
             >
@@ -598,7 +598,7 @@ const StrategyManagement = () => {
           
           <div style={{ textAlign: "right" }}>
             <Col className="mb-3">
-              <Button color="primary" type="submit">
+              <Button color="primary" className="btn-block" type="submit">
                 {isEdit ? "Update" : "Submit"}
               </Button>
             </Col>

@@ -97,7 +97,7 @@ const Login = (props) => {
                   <Row>
                     <Col xs={12}>
                       <div className="text-primary p-4">
-                        <h5 className="text-primary m-0">Welcome Back !</h5>
+                        <h5 className="text-primary m-0">Welcome Back!</h5>
                       </div>
                     </Col>
                   </Row>
@@ -119,7 +119,7 @@ const Login = (props) => {
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -184,7 +184,7 @@ const Login = (props) => {
                       <div className="mt-1 text-center">
                         <Link to="/forgot-password" className="text-muted">
                           <i className="mdi mdi-lock me-1" />
-                          Forgot your password?
+                          Forgot Your Password?
                         </Link>
                       </div>
                     </Form>

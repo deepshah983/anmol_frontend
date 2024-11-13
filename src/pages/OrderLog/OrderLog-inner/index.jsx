@@ -470,7 +470,7 @@ const index = (props) => {
                     <div className="text-end">
                       <button
                         type="submit"
-                        className="btn btn-danger save-customer mx-2"
+                        className="btn btn-danger save-customer mx-2 btn-block"
                       >
                         Reset
                       </button>
@@ -490,7 +490,7 @@ const index = (props) => {
 
           <Modal isOpen={modalCheck} toggle={toggleCheck}>
             <ModalHeader toggle={toggleCheck} tag="h4">
-              {!!isEdit ? "My Tread Setting" : "My Tread Setting"}
+              {!!isEdit ? "My Trade Setting" : "My Trade Settings"}
             </ModalHeader>
             <ModalBody>
               <Form
@@ -582,7 +582,7 @@ const index = (props) => {
                     <div className="text-end">
                       <button
                         type="submit"
-                        className="btn btn-success save-customer"
+                        className="btn btn-success save-customer btn-block"
                       >
                         Save
                       </button>

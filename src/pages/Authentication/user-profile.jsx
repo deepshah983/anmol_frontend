@@ -157,7 +157,7 @@ const UserProfile = (props) => {
                         />
                         <Button
                           type="button"
-                          color="secondary"
+                          className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowOldPassword)}
                         >
                           {showOldPassword ? "Hide" : "Show"}
@@ -184,7 +184,7 @@ const UserProfile = (props) => {
                         />
                         <Button
                           type="button"
-                          color="secondary"
+                          className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowNewPassword)}
                         >
                           {showNewPassword ? "Hide" : "Show"}
@@ -211,7 +211,7 @@ const UserProfile = (props) => {
                         />
                         <Button
                           type="button"
-                          color="secondary"
+                          className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowConfirmPassword)}
                         >
                           {showConfirmPassword ? "Hide" : "Show"}
@@ -226,8 +226,8 @@ const UserProfile = (props) => {
                 <div className="text-end">
                   <button 
                     type="submit" 
-                    className="btn btn-primary"
-                    style={{ color: "#000000", backgroundColor: "#b18d57", border: "1px solid #b18d57" }}
+                    className="btn btn-primary btn-block"
+                    style={{ color: "#ffffff", backgroundColor: "#b18d57", border: "1px solid #b18d57" }}
                   >
                     Update
                   </button>
