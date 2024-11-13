@@ -17,6 +17,7 @@ import {
 import * as Yup from "yup";
 import { useFormik } from "formik";
 
+import { Eye, EyeOff } from "lucide-react";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
@@ -63,28 +64,35 @@ const UserProfile = (props) => {
   }, [dispatch]);
 
   const validation = useFormik({
+    // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
     initialValues: {
-      user_name: name || "",
+     
       user_id: id || "",
-      old_password: "",
-      new_password: "",
-      confirm_password: "",
+      old_password: (navigation && navigation.old_password) || "",
+      new_password: (navigation && navigation.new_password) || "",
+      confirm_password: (navigation && navigation.confirm_password) || "",
     },
     validationSchema: Yup.object({
-      user_name: Yup.string().required("Please Enter Your Username"),
       old_password: Yup.string().required("Please Enter Your Old Password"),
       new_password: Yup.string()
         .required("Please Enter Your New Password")
-        .min(6, "Password must be at least 6 characters long"),
+        .min(6, "Password must be at least 6 characters long"), // Adjust the minimum length as needed
       confirm_password: Yup.string()
         .required("Please Confirm Your New Password")
-        .oneOf([Yup.ref("new_password"), null], "New and Confirm Passwords must match")
-        .test("not-same-as-old", "New password must not be the same as the old password", function (value) {
-          const old_password = this.parent.old_password;
-          return value !== old_password;
-        }),
+        .oneOf(
+          [Yup.ref("new_password"), null],
+          "New and Confirm Passwords must match"
+        )
+        .test(
+          "not-same-as-old",
+          "New password must not be the same as the old password",
+          function (value) {
+            const old_password = this.parent.old_password;
+            return value !== old_password;
+          }
+        ),
     }),
 
     onSubmit: (values) => {
@@ -92,14 +100,14 @@ const UserProfile = (props) => {
     },
   });
 
-  const handleUpdate = (values) => { 
-    updateData(`/authorization/${values.user_id}/update-password`, values).then((res) => {
-      if (res.data.error) {
-        return error(res.data.message);
+  const handleUpdate = (values) => {
+    updateData("/authorization/change-password", values).then((res) => {
+      if (res?.data?.error) {
+        return error(res?.data?.message);
       }
-
-      localStorage.setItem("authUser", JSON.stringify(res.data.data));
-      return success(res.data.message);
+      validation.resetForm();
+      //localStorage.setItem("authUser", JSON.stringify(res?.data?.data));
+      return success(res?.data?.message);
     });
   };
 
@@ -123,24 +131,8 @@ const UserProfile = (props) => {
           >
             <Card>
               <CardBody>
-                <h4 className="card-title mb-4">Change User Name & Password</h4>
-                <div className="form-group mb-3">
-                  <Label className="form-label">User Name</Label>
-                  <Input
-                    name="user_name"
-                    className="form-control"
-                    placeholder="Enter User Name"
-                    type="text"
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.user_name || ""}
-                    invalid={validation.touched.user_name && validation.errors.user_name ? true : false}
-                  />
-                  {validation.touched.user_name && validation.errors.user_name ? (
-                    <FormFeedback type="invalid">{validation.errors.user_name}</FormFeedback>
-                  ) : null}
-                  <Input name="user_id" value={id} type="hidden" />
-                </div>
+                <h4 className="card-title mb-4">Change Password</h4>
+               
                 <div className="row">
                   <div className="col-md-4">
                     <div className="form-group mb-3">
@@ -153,19 +145,27 @@ const UserProfile = (props) => {
                           type={showOldPassword ? "text" : "password"} // Toggle input type
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
-                          invalid={validation.touched.old_password && validation.errors.old_password ? true : false}
+                          invalid={
+                            validation.touched.old_password &&
+                              validation.errors.old_password
+                              ? true
+                              : false
+                          }
                         />
                         <Button
                           type="button"
                           className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowOldPassword)}
                         >
-                          {showOldPassword ? "Hide" : "Show"}
+                          {showOldPassword ? <EyeOff /> : <Eye />}
                         </Button>
-                      </div>
-                      {validation.touched.old_password && validation.errors.old_password ? (
-                        <FormFeedback type="invalid">{validation.errors.old_password}</FormFeedback>
+                        {validation.touched.old_password &&
+                        validation.errors.old_password ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.old_password}
+                        </FormFeedback>
                       ) : null}
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-4">
@@ -187,12 +187,13 @@ const UserProfile = (props) => {
                           className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowNewPassword)}
                         >
-                          {showNewPassword ? "Hide" : "Show"}
+                          {showNewPassword ? <EyeOff /> : <Eye />}
                         </Button>
-                      </div>
-                      {validation.touched.new_password && validation.errors.new_password ? (
+                        {validation.touched.new_password && validation.errors.new_password ? (
                         <FormFeedback type="invalid">{validation.errors.new_password}</FormFeedback>
                       ) : null}
+                      </div>
+                      
                     </div>
                   </div>
                   <div className="col-md-4">
@@ -214,12 +215,13 @@ const UserProfile = (props) => {
                           className="btn-block"
                           onClick={() => togglePasswordVisibility(setShowConfirmPassword)}
                         >
-                          {showConfirmPassword ? "Hide" : "Show"}
+                          {showConfirmPassword ? <EyeOff /> : <Eye />}
                         </Button>
-                      </div>
-                      {validation.touched.confirm_password && validation.errors.confirm_password ? (
+                        {validation.touched.confirm_password && validation.errors.confirm_password ? (
                         <FormFeedback type="invalid">{validation.errors.confirm_password}</FormFeedback>
                       ) : null}
+                      </div>
+                     
                     </div>
                   </div>
                 </div>
