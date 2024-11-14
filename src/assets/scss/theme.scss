@@ -57,7 +57,9 @@ body {
       color: #fff !important;
     }
   }
-
+  .form-label.form-label{
+    font-size: 15px; font-weight: 500; margin-bottom: 5px;
+  }
 }
 
 #sidebar-menu {
@@ -1388,9 +1390,9 @@ select[disabled] {
 }
 
 #sidebar-menu .mm-show.mm-active .mm-active:hover a{
-  background-color: rgba(186, 148, 88, 0.9) !important;
-    color: #ffffff;
-    border: rgb(174 139 83 / 100%) !important;
+  background-color: #a7844c !important;
+  color: #ffffff;
+  border: #a7844c !important;
 }
 
 /* Change background color for selected option in dropdown */

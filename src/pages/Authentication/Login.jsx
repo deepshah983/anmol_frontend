@@ -181,8 +181,8 @@ const Login = (props) => {
                         </button>
                       </div>
 
-                      <div className="mt-1 text-center">
-                        <Link to="/forgot-password" className="text-muted">
+                      <div className="mt-3 text-center">
+                        <Link to="/forgot-password"  style={{ fontSize: "15px", fontWeight:"500", color:"#a7844c" }}>
                           <i className="mdi mdi-lock me-1" />
                           Forgot Your Password?
                         </Link>
