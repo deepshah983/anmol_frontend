@@ -164,13 +164,15 @@ const Login = (props) => {
                             {showPassword ? <EyeOff /> : <Eye />}
                           </span>
                         </div>
-                        {validation.touched.password &&
-                          validation.errors.password ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.password}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
+                        {validation.touched.password && validation.errors.password && (
+                        <div 
+                          className="invalid-feedback d-block" 
+                          style={{ fontSize: "12px", color: "red" }}
+                        >
+                          {validation.errors.password}
+                        </div>
+                      )}
+                            </div>
 
                       <div className="mt-3 d-grid">
                         <button
