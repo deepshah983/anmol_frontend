@@ -385,7 +385,7 @@ const changePassword = (values) => {
                 </CardBody>
               </Card>
               <div className="mt-3 text-center">
-                <p>
+                <p style={{ fontSize: "15px", fontWeight:"500" }}>
                   Go back to{" "}
                   <Link to="/login" className="font-weight-medium text-primary">
                     Login
