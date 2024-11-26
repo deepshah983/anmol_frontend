@@ -882,6 +882,7 @@ const handleSearch = useCallback((searchTerm) => {
           }
 
           setDeleteAllModal(false);
+          setSelectedStrategies([]);
           query.page = 0;
           setQuery(query);
           request();

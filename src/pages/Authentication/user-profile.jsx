@@ -100,15 +100,25 @@ const UserProfile = (props) => {
     },
   });
 
-  const handleUpdate = (values) => {
-    updateData("/authorization/change-password", values).then((res) => {
-      if (res?.data?.error) {
-        return error(res?.data?.message);
+  const handleUpdate = async (values) => {
+    try {
+      const res = await updateData("/authorization/change-password", values);
+      
+      if (res?.error) {
+        return error(res?.message);
       }
+      
       validation.resetForm();
       //localStorage.setItem("authUser", JSON.stringify(res?.data?.data));
       return success(res?.data?.message);
-    });
+  
+    } catch (err) {
+      // Handle different types of errors
+      console.log(err);
+      
+      const errorMessage = err?.response?.data?.message || err?.message || 'Something went wrong';
+      return error(errorMessage);
+    }
   };
 
   const togglePasswordVisibility = (setter) => {
@@ -145,6 +155,7 @@ const UserProfile = (props) => {
                           type={showOldPassword ? "text" : "password"} // Toggle input type
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
+                          value={validation.values.old_password || ""}
                           invalid={
                             validation.touched.old_password &&
                               validation.errors.old_password
