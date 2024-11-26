@@ -149,21 +149,21 @@ const Users = (props) => {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .required("Please Enter User Name")
+        .required("Please enter user name.")
         .min(4, "Name must be at least 4 characters"),
       email: Yup.string()
-        .required("Please Enter Email")
+        .required("Please enter email.")
         .email("Please enter a valid email address"),
       phone: Yup.string()
-        .required("Please Enter Mobile Number")
+        .required("Please enter mobile number.")
         .matches(/^\d+$/, "Phone number must contain only digits")
         .min(10, "Phone number must be at least 10 digits")
         .max(15, "Phone number must not exceed 15 digits"),
       entryBalance: Yup.number()
-        .required("Please Enter Entry Balance")
+        .required("Please enter entry balance.")
         .min(0, "Entry Balance must be at least 0"),
-      quantityMultiplier: Yup.number().required("Please Enter Quantity Multiplier").min(1, "Entry Balance must be at least 1"),
-      status: Yup.string().test('conditional-required', 'Please Select Status', function (value) {
+      quantityMultiplier: Yup.number().required("Please enter quantity multiplier.").min(1, "Entry Balance must be at least 1"),
+      status: Yup.string().test('conditional-required', 'Please select status.', function (value) {
         // If the initial status is 0, don't require a value
         if (navigation?.status === 0 || navigation?.status === '0') {
           return true;

@@ -78,6 +78,12 @@ ul {
         // @include border-left-radius($border-radius); //rtl
       }
     }
+    
+  }
+  .page-item{
+    .page-link{
+      padding: 6.5px 10px;
+    }
   }
 }
 

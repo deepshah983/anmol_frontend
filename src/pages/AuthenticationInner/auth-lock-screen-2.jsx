@@ -27,7 +27,7 @@ const LockScreen2 = (props) => {
       password: '',
     },
     validationSchema: Yup.object({
-      password: Yup.string().required("Please Enter Your Password"),
+      password: Yup.string().required("Please enter your password."),
     }),
     onSubmit: (values) => {
       console.log(values);

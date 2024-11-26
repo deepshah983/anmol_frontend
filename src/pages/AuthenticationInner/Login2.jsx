@@ -27,8 +27,8 @@ const Login2 = () => {
       password: '',
     },
     validationSchema: Yup.object({
-      username: Yup.string().required("Please Enter Your Username"),
-      password: Yup.string().required("Please Enter Your Password"),
+      username: Yup.string().required("Please enter your username."),
+      password: Yup.string().required("Please enter your password."),
     }),
     onSubmit: (values) => {
       console.log("values", values);

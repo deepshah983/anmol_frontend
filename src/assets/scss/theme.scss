@@ -1388,6 +1388,9 @@ select[disabled] {
 #sidebar-menu .mm-show.mm-active li:hover a{
   background-color: #eff2f7;
 }
+#sidebar-menu .list-unstyled li:hover a{
+  background-color: #eff2f7;
+}
 
 #sidebar-menu .mm-show.mm-active .mm-active:hover a{
   background-color: #a7844c !important;
@@ -1404,4 +1407,27 @@ select[disabled] {
 [type="invalid"] {
   font-size: 12px;
   color: red;
+}
+
+.pagination{
+  .page-item .page-link{
+    padding: 6.5px 10px !important;
+  }
+  .page-item.prev-item .page-link, .page-item.next-item .page-link{
+    padding:0px 6px !important;
+  }
+}
+
+
+@media only screen and (max-width : 1200px) {
+  .card-body .row .col-md-4 {
+    flex: 0 0 auto;
+    width: 50%;
+  }
+}
+@media only screen and (max-width : 767px) {
+  .card-body .row .col-md-4 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
 }

@@ -49,7 +49,7 @@ const ForgetPasswordPage = (props) => {
       email: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("Please Enter Your Email"),
+      email: Yup.string().required("Please enter your email."),
     }),
     onSubmit: (values) => {
      

@@ -402,7 +402,7 @@ const handleSearch = useCallback((searchTerm) => {
 
     validationSchema: Yup.object().shape({
       terminalSymbol: Yup.string().required("Please Select Terminal Symbol"),
-      optionType: Yup.string().required("Please Select Option Type"),
+      optionType: Yup.string().required("Please select option type."),
       dynamicExpiry: Yup.string().when('hasExpiry', {
         is: true,
         then: Yup.string().required("Please Select Dynamic Expiry"),
@@ -413,7 +413,7 @@ const handleSearch = useCallback((searchTerm) => {
         then: Yup.string().required("Please Select Dynamic Strike"),
         otherwise: Yup.string().notRequired(),
       }),
-      qtyType: Yup.string().required("Please select a quantity type"),
+      qtyType: Yup.string().required("Please select a quantity type."),
       quantity: Yup.number().when("qtyType", {
         is: "sl",
         then: Yup.number().required("Quantity is required").min(1, "Quantity must be positive")
@@ -426,10 +426,10 @@ const handleSearch = useCallback((searchTerm) => {
         is: "exposure",
         then: Yup.number().required("Round lot size is required").min(1, "Round lot size must be positive")
       }),
-      prodType: Yup.string().required("Please Select Prod Type"),
-      entryOrder: Yup.string().required("Please Select Entry Order"),
-      exitOrder: Yup.string().required("Please Select Exit Order"),
-      strategy: Yup.string().required("Please Select Strategy"),
+      prodType: Yup.string().required("Please select prod type."),
+      entryOrder: Yup.string().required("Please select entry order."),
+      exitOrder: Yup.string().required("Please select exit order."),
+      strategy: Yup.string().required("Please select strategy."),
 
       price: Yup.string().when('entryOrder', {
         is: 'SLL',
