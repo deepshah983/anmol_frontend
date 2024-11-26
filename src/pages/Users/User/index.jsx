@@ -209,7 +209,9 @@ const Users = (props) => {
 
       })
       .catch((err) => {
-        return error(err?.response?.data?.error);
+        console.log(err);
+        
+        return error(err?.response?.data?.message ? err?.response?.data?.message : err?.response?.data?.error);
       });
   };
 
@@ -229,7 +231,7 @@ const Users = (props) => {
         return success(response.data.message);
       })
       .catch((err) => {
-        return error(err?.response?.data?.error);
+        return error(err?.response?.data?.message ? err?.response?.data?.message : err?.response?.data?.error);
       });
   };
 
@@ -553,6 +555,7 @@ const Users = (props) => {
     if (modal) {
       setModal(false);
       setNav(null);
+      validation.resetForm();
     } else {
       setModal(true);
     }

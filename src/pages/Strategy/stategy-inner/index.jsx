@@ -249,9 +249,7 @@ const StrategyManagement = () => {
               onClick={() => handleStrategyClick(row.original)}
             >
               <i className="mdi mdi-pencil font-size-18" id="edittooltip" />
-              {/* <UncontrolledTooltip placement="top" target="edittooltip">
-                Edit
-              </UncontrolledTooltip> */}
+              
             </Link>
 
             <Link
@@ -260,9 +258,7 @@ const StrategyManagement = () => {
               onClick={() => onClickDelete(row.original)}
             >
               <i className="mdi mdi-delete font-size-18" id="deletetooltip" />
-              {/* <UncontrolledTooltip placement="top" target="deletetooltip">
-                Delete
-              </UncontrolledTooltip> */}
+              
             </Link>
           </div>
         ),
@@ -275,6 +271,7 @@ const StrategyManagement = () => {
     if (modal) {
       setModal(false);
       setStrategy(null);
+      validation.resetForm();
     } else {
       setModal(true);
     }
@@ -308,7 +305,7 @@ const StrategyManagement = () => {
           }
 
           setDeleteAllModal(false);
-         
+          setSelectedStrategies([]);
           request();
           return success(response.data.message);
         });
@@ -323,6 +320,7 @@ const StrategyManagement = () => {
 
    //delete all data
    const selectedDataDelete = () => {
+    
     if(selectedStrategies.length > 0){
     setDeleteAllModal(true);
     }else{
@@ -353,19 +351,6 @@ const StrategyManagement = () => {
       <div className="mt-2">
         <div className="container position-absolute">
           <div className="row">
-            {/* <div className="col-sm-1">
-              <select
-                className="form-select form-select-sm"
-                onChange={updateLimit}
-                value={query.limit}
-              >
-                {limit.map((value) => (
-                  <option value={value} key={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div> */}
             <div className="col-sm-4 font-size-15">Total: {total}</div>
           </div>
         </div>
