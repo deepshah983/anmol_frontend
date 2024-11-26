@@ -27,9 +27,9 @@ const Register2 = () => {
       password: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("Please Enter Your Email"),
-      username: Yup.string().required("Please Enter Your Username"),
-      password: Yup.string().required("Please Enter Your Password"),
+      email: Yup.string().required("Please enter your email."),
+      username: Yup.string().required("Please enter your username."),
+      password: Yup.string().required("Please enter your password."),
     }),
     onSubmit: (values) => {
       // console.log(values);

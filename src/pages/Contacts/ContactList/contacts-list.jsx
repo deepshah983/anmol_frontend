@@ -61,7 +61,7 @@ const ContactsList = (props) => {
       tags: Yup.array().required("Please Enter Tag"),
       email: Yup.string()
         .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Please Enter Valid Email")
-        .required("Please Enter Your Email"),
+        .required("Please enter your email."),
       projects: Yup.string().required("Please Enter Your Project"),
     }),
     onSubmit: (values) => {

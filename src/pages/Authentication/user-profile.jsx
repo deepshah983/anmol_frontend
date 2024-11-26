@@ -75,12 +75,12 @@ const UserProfile = (props) => {
       confirm_password: (navigation && navigation.confirm_password) || "",
     },
     validationSchema: Yup.object({
-      old_password: Yup.string().required("Please Enter Your Old Password"),
+      old_password: Yup.string().required("Please enter your old password."),
       new_password: Yup.string()
-        .required("Please Enter Your New Password")
+        .required("Please enter your new password.")
         .min(6, "Password must be at least 6 characters long"), // Adjust the minimum length as needed
       confirm_password: Yup.string()
-        .required("Please Confirm Your New Password")
+        .required("Please confirm your new password.")
         .oneOf(
           [Yup.ref("new_password"), null],
           "New and Confirm Passwords must match"

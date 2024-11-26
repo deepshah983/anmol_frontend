@@ -93,7 +93,7 @@ const StrategyManagement = () => {
       quantityMultiplier: (strategy?.quantityMultiplier) || "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter Strategy Name"),
+      name: Yup.string().required("Please enter strategy name."),
       // entryTime: Yup.string().required("Please Enter Entry Time"),
       // exitTime: Yup.string().required("Please Enter Exit Time"),
       // squareOffTime: Yup.string().required("Please Enter Square-off Time"),
