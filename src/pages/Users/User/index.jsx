@@ -248,10 +248,10 @@ const Users = (props) => {
       appKey: (navigation && navigation.appKey) || "",
     },
     validationSchema: Yup.object({
-      userId: Yup.string().required("Please Enter User Id"),
-      pin: Yup.string().required("Please Enter Pin"),
-      userKey: Yup.string().required("Please Enter userKey"),
-      appKey: Yup.string().required("Please Enter appKey"),
+      userId: Yup.string().required("Please enter user id."),
+      pin: Yup.string().required("Please enter pin."),
+      userKey: Yup.string().required("Please enter user key."),
+      appKey: Yup.string().required("Please enter app key."),
     }),
     onSubmit: (values) => {
 

@@ -1313,6 +1313,14 @@ tbody tr td:first-child .form-check, thead tr th:first-child .form-check{
     }
   }
 }
+.account-pages {
+    .mt-3.text-center a:hover{
+      color: rgba(186, 148, 88, 0.9) !important;
+    }
+    .mt-3.text-center p a:hover{
+      color: rgba(186, 148, 88, 0.9) !important;
+    }
+}
 
 @media only screen and (max-width : 480px) {
   .Toastify__toast {
@@ -1429,5 +1437,19 @@ select[disabled] {
   .card-body .row .col-md-4 {
     flex: 0 0 auto;
     width: 100%;
+  }
+}
+
+
+.input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+  margin-left: -1px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.navbar-brand-box .logo.logo-light .logo-sm{
+  max-width: 140px !important;
+  @media only screen and (max-width : 992px) {
+    max-width: 120px !important;
   }
 }

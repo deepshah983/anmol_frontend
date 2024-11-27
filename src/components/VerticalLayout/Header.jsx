@@ -95,7 +95,7 @@ const Header = props => {
           <div className="d-flex">
             <Link to="/dashboard" className="logo logo-light">
               <span className="logo-sm">
-                <img src={logoLightSvg} alt="" height="40" width="100%" style={{textAlign:"center"}} />
+                <img src={logoLightSvg} alt="vishal4wealth" height="40" style={{textAlign:"center", maxWidth: "140px"}} />
               </span>
             </Link>
           </div>

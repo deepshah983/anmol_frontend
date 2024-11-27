@@ -30,10 +30,10 @@ const Sidebar = (props) => {
 
           <Link to="/dashboard" className="logo logo-light">
             <span className="logo-sm">
-              <img src={logoLightSvg} alt="" height="25" />
+              <img src={logoLightSvg} alt="vishal4wealth" height="25" style={{ maxWidth: "140px" }} />
             </span>
             <span className="logo-lg">
-              <img src={logoLightPng} alt="" height="50" />
+              <img src={logoLightPng} alt="vishal4wealth" height="50" style={{ maxWidth: "140px" }} />
             </span>
           </Link>
         </div>
