@@ -80,10 +80,10 @@ const Header = (props) => {
 
               <Link to="/dashboard" className="logo logo-light">
                 <span className="logo-sm">
-                  <img src={logoLightSvg} alt="" height="22" />
+                  <img src={logoLightSvg} alt="vishal4wealth" height="22" style={{ maxWidth: "140px" }} />
                 </span>
                 <span className="logo-lg">
-                  <img src={logoLight} alt="" height="19" />
+                  <img src={logoLight} alt="vishal4wealth" height="19" style={{ maxWidth: "140px" }} />
                 </span>
               </Link>
             </div>
