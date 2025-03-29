@@ -13,7 +13,10 @@
     background-color: $footer-bg;
 
     @media (max-width: 991.98px) {
-        left: 0;
+        left: 0; 
+    }
+    @media (max-width: 576.98px) {
+        left: 0; text-align: center;    
     }
 }
   

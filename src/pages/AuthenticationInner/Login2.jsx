@@ -63,7 +63,7 @@ const Login2 = () => {
                     </div>
                     <div className="my-auto">
                       <div>
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary">Welcome Back!</h5>
                         <p className="text-muted">
                           Sign in to continue to Skote.
                         </p>
@@ -137,7 +137,7 @@ const Login2 = () => {
 
                           <div className="mt-3 d-grid">
                             <button
-                              className="btn btn-primary btn-block "
+                              className="btn btn-block "
                               type="submit"
                             >
                               Log In

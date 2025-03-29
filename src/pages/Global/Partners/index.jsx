@@ -34,7 +34,7 @@ import { Image, Order } from "../../NavigationCol";
 import { postData } from "../../../components/api";
 const index = (props) => {
   //meta title
-  document.title = "Partners | Anmol Admin & Dashboard Template";
+  document.title = "Partners | Vishal Wealth Admin & Dashboard Template";
 
   const [navs, setNavs] = useState([]);
   const [count, setCount] = useState(0);

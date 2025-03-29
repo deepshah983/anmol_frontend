@@ -27,9 +27,8 @@ const themeConfig = {
     customizer: false,
     scrollTop: true // Enable scroll to top button,
   },
-   backendUrl: "http://localhost:8000/api/",
-   //backendUrl: "https://ishan.projectdemo.company/api",
-   //backendUrl: "https://ishantechnologies.com/api",
+     //backendUrl: "https://vishal4wealth.projectdemo.company/api/",
+     backendUrl: "http://localhost:7000/api/",
   maxBulkOrders: 1000,
   functions
 }

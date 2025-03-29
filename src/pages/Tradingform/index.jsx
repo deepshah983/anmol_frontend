@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 //Import Breadcrumb
 import Breadcrumbs from "../../../src/components/Common/Breadcrumb";
+import withRouter from "../../components/Common/withRouter";
+import Tradingform from "./Tradingform/index";
 
 import {
   Container,
 } from "reactstrap";
 
-import { ToastElement } from "../../components/toast"; 
- 
-
+import { ToastElement } from "../../components/toast";
 
 const index = () => {
   // Tabs
@@ -24,12 +24,8 @@ const index = () => {
       <ToastElement />
       <div className="page-content">
         <Container fluid>
-          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Users" />
-          <div className="card">
-            <div className="card-body">
-              
-            </div>
-          </div>
+          <Breadcrumbs title="Dashboard" titleUrl="" breadcrumbItem="Watch List" />
+            <Tradingform />
         </Container>
       </div>
     </>

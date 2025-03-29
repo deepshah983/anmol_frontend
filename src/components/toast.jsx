@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const success = (message) => {
   toast.success(message, {
     position: "top-right",
-    autoClose: 5000,
+    autoClose: 1000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -18,7 +18,7 @@ const success = (message) => {
 const error = (message) => {
   toast.error(message, {
     position: "top-right",
-    autoClose: 5000,
+    autoClose: 1000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -32,7 +32,7 @@ const ToastElement = () => {
   return (
     <ToastContainer
       position="top-right"
-      autoClose={5000}
+      autoClose={1000}
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick

@@ -98,7 +98,7 @@ const Register = () => {
                           id="email"
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -149,7 +149,7 @@ const Register = () => {
 
                       <div className="mt-4 d-grid">
                         <button
-                          className="btn btn-primary btn-block "
+                          className="btn btn-block "
                           type="submit"
                         >
                           Register

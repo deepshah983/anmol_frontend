@@ -18,7 +18,7 @@ const Login = () => {
   const [show, setShow] = useState(false);
 
   //meta title
-  document.title = "Login | Anmol Admin & Dashboard Template";
+  document.title = "Login | Vishal Wealth Admin & Dashboard Template";
 
   // Form validation 
   const validation = useFormik({
@@ -48,7 +48,7 @@ const Login = () => {
                   <Row>
                     <Col className="col-7">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary">Welcome Back!</h5>
                         <p>Sign in to continue to Skote.</p>
                       </div>
                     </Col>
@@ -149,7 +149,7 @@ const Login = () => {
 
                       <div className="mt-3 d-grid">
                         <button
-                          className="btn btn-primary btn-block "
+                          className="btn btn-block "
                           type="submit"
                         >
                           Log In

@@ -23,7 +23,9 @@
       margin: 0 auto;
       height: $header-height;
       padding: 0 calc(#{$grid-gutter-width} * 0.5) 0 0 /*rtl: 0 0 0 calc(#{$grid-gutter-width} / 2) */;
-  
+      @media (max-width: 992.98px) {
+        padding: 0px;
+      }
       .dropdown .show {
           &.header-item {
               background-color: var(--#{$prefix}gray-100);
@@ -35,6 +37,7 @@
       padding: 0 1.5rem;
       text-align: center;
       width: $navbar-brand-box-width;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
   }
   
   .logo {
@@ -105,6 +108,9 @@
   
   .page-content {
       padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.75) $footer-height calc(#{$grid-gutter-width} * 0.75);
+      @media (max-width: 991.98px) {
+        padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
+      }
   }
   
   .header-item {
@@ -122,8 +128,12 @@
   .header-profile-user {
       height: 46px;
       width: 46px;
-      background-color: rgba($orange, 0.25);
+      background-color: rgba($yellow, 0.50);
       padding: 3px;
+      @media (max-width: 767.98px) {
+        height: 40px;
+        width: 40px;
+      }
   }
   
   .noti-icon {

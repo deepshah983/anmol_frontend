@@ -16,6 +16,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
+import profile from "../../assets/images/vishal-4-wealth-whithout-background-yellow.png";
 
 // Formik Validation
 import * as Yup from "yup";
@@ -28,13 +29,12 @@ import { postData } from '../../components/api';
 import { ToastElement, success, error } from "../../components/toast";
 
 // import images
-import profile from "../../assets/images/profile-img.png";
 //import logo from "../../assets/images/logo.svg";
-import logo from "../../assets/images/AngelOne-Logo.png";
+import logo from "../../assets/images/vishal-4-wealth.png";
 
 const ForgetPasswordPage = (props) => {
   //meta title
-    document.title = "Forget Password | Anmol Admin & Dashboard Template";
+    document.title = "Forget Password | Vishal Wealth Admin & Dashboard Template";
  
     const [isAuthEmail, setIsAuthEmail] = useState(null);
     const [isAuthOtp, setIsAuthOtp] = useState(null);
@@ -166,7 +166,7 @@ const changePassword = (values) => {
                   <div className="row mb-4">
                   <div className="col-xl-12 text-center">
                     <a href="/">
-                      <img src={logo} alt="Anmol Login" className="img-fluid" height="100px" width="230px" />
+                    <img src={profile} alt="Vishal Wealth Login" className="img-fluid" height="100px" width="230px" />
                     </a>
                   </div>
               </div>
@@ -174,20 +174,19 @@ const changePassword = (values) => {
           <Row className="justify-content-center">
             <Col md={8} lg={6} xl={5}>
               <Card className="overflow-hidden">
-                <div className="bg-primary bg-softbg-soft-primary">
+                <div className="bg-primary bg-soft">
                   <Row>
-                    <Col xs={7}>
+                    <Col xs={12}>
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome Back !</h5>
+                        <h5 className="text-primary mb-0">Welcome Back!</h5>
                       
                       </div>
                     </Col>
-                    <Col className="col-5 align-self-end">
-                      <img src={profile} alt="" className="img-fluid" />
+                    <Col className=" align-self-end">
                     </Col>
                   </Row>
                 </div>
-                <CardBody className="pt-0">
+                <CardBody className="pt-2">
                 {(isAuthEmail === null) ? ( 
                   <div className="p-2">
                     {forgetError && forgetError ? (
@@ -214,7 +213,7 @@ const changePassword = (values) => {
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Enter Email"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -232,10 +231,11 @@ const changePassword = (values) => {
                         ) : null}
                       </div>
                       <Row className="mb-3">
-                        <Col className="text-end">
+                        <Col className="text-end p-0">
                           <button
-                            className="btn btn-primary w-md "
+                            className="btn btn-block"
                             type="submit"
+                            style={{ width: "100%" }}
                           >
                             Verify
                           </button>
@@ -292,8 +292,9 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary w-md "
+                          className="btn btn-block"
                           type="submit"
+                          style={{ width: "100%" }}
                         >
                           Verify
                         </button>
@@ -370,8 +371,9 @@ const changePassword = (values) => {
                     <Row className="mb-3">
                       <Col className="text-end">
                         <button
-                          className="btn btn-primary w-md "
+                          className="btn btn-block"
                           type="submit"
+                          style={{ width: "100%" }}
                         >
                           Verify
                         </button>
@@ -382,8 +384,8 @@ const changePassword = (values) => {
                 }
                 </CardBody>
               </Card>
-              <div className="mt-5 text-center">
-                <p>
+              <div className="mt-3 text-center">
+                <p style={{ fontSize: "15px", fontWeight:"500" }}>
                   Go back to{" "}
                   <Link to="/login" className="font-weight-medium text-primary">
                     Login

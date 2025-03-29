@@ -10,3 +10,117 @@
         }
     }
 }
+
+.overflow-hidden{
+    background-color: #cccecd !important;
+}
+
+.logo-bg{
+    background: linear-gradient(90deg, rgb(255, 255, 255) 0%, rgb(166, 128, 73) 0%, rgb(189, 154, 100) 100%) !important;
+    display: inline-block;
+    padding: 12px;
+    border-radius: 100px;
+
+}
+
+.dashboard{
+    
+    .row{
+        @media (max-width: 576.98px) {
+            flex-direction: column; 
+        }
+        .col-xl-4{
+            
+            @media (max-width: 1599.98px) {
+                width:50% !important;
+            }
+            @media (max-width: 1199.98px) {
+                width:100% !important;
+            }
+            @media (max-width: 991.98px) {
+                width:50% !important;
+            }
+            @media (max-width: 767.98px) {
+                width:100% !important;
+            }
+            
+            .overflow-hidden{
+                @media (max-width: 576.98px) {
+                    padding: 15px;
+                }   
+            }
+        }
+        .col-9{
+            @media (max-width: 576.98px) {
+                width: 100%;
+            }
+            .text-primary{
+                @media (max-width: 576.98px) {
+                    padding: 0px !important;
+                }
+            } 
+            
+            .text-primary .text-primary{
+                font-size: 18px;
+                @media (max-width: 991.98px) {
+                     font-size: 16px;
+                }
+                @media (max-width: 576.98px) {
+                    padding-top: 10px !important;
+                }
+            }
+        }
+        .col-3{
+            @media (max-width: 576.98px) {
+                width: 100%;
+                justify-content: center;
+            }
+            .total-numbers{
+                @media (max-width: 576.98px) {
+                    padding: 0px; padding: 5px !important; 
+                }
+                .numbers{
+                    font-size: 22px;
+                    @media (max-width: 991.98px) {
+                        font-size: 18px;
+                    }
+                    @media (max-width: 576.98px) {
+                        margin-left: 0px !important;
+                    }
+                }
+            } 
+        }
+    }
+    .text-primary{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: 100%;
+        @media (max-width: 576.98px) {
+            flex-direction: column;
+        }
+        .text-primary{
+            color: #000 !important;
+            font-size: 18px;
+            padding-left: 10px;    
+        }
+    }
+    .total-numbers{
+            
+        .numbers{
+            margin: 0px 0px 0px 10px !important; 
+            color: #000 !important;
+         }
+    }
+    .col-3,.col-5{
+        display: flex;
+        justify-content: flex-end;
+    }
+} 
+    
+.user-page{
+    .card .card-body{
+        @media (max-width: 576.98px) {
+        }
+    }
+}
